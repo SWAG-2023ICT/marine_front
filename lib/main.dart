@@ -1,0 +1,37 @@
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'router.dart';
+
+void main() {
+  runApp(const MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  // This widget is the root of your application.
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp.router(
+      routerConfig: router,
+      debugShowCheckedModeBanner: false,
+      title: 'Flutter Demo',
+      theme: ThemeData(
+        useMaterial3: true,
+        primaryColor: Colors.blue.shade400,
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue.shade400),
+        appBarTheme: const AppBarTheme(
+          systemOverlayStyle: SystemUiOverlayStyle.light,
+        ),
+      ),
+      darkTheme: ThemeData(
+        useMaterial3: true,
+        primaryColor: Colors.blue.shade400,
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue.shade400),
+        appBarTheme: const AppBarTheme(
+          systemOverlayStyle: SystemUiOverlayStyle.dark,
+        ),
+      ),
+    );
+  }
+}
