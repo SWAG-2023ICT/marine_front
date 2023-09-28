@@ -5,6 +5,7 @@ import 'package:kpostal/kpostal.dart';
 
 import 'package:swag_marine_products/constants/gaps.dart';
 import 'package:swag_marine_products/screens/sign_in_up/widgets/bottom_button.dart';
+import 'package:swag_marine_products/screens/sign_in_up/widgets/centered_divider.dart';
 import 'package:swag_marine_products/widget_tools/swag_platform_dialog.dart';
 
 class SignUpFirst extends StatefulWidget {
@@ -27,7 +28,7 @@ class SignUpFirst extends StatefulWidget {
 
 class _SignUpFirstState extends State<SignUpFirst> {
   // ------------------ 공통 변수 및 메소드 ------------------
-  bool _isSubmitted = true;
+  bool _isSubmitted = false;
   bool _isBarrier = false;
 
   // 아이디 정규식
@@ -43,25 +44,68 @@ class _SignUpFirstState extends State<SignUpFirst> {
 
   void _onCheckSubmitted() {
     if (widget.isStored) {
+      _onCheckStoreData();
     } else {
-      setState(() {
-        _isSubmitted = (_userIdErrorText == null &&
-                _userIdController.text.trim().isNotEmpty) &&
-            (_userPasswordErrorText == null &&
-                _userPasswordController.text.trim().isNotEmpty) &&
-            (_userPasswordConfirmationErrorText == null &&
-                _userPasswordConfirmationController.text.trim().isNotEmpty) &&
-            (_userNameErrorText == null &&
-                _userNameController.text.trim().isNotEmpty) &&
-            (_userAddressErrorText == null &&
-                _userAddressController.text.trim().isNotEmpty) &&
-            (_userPhoneNumberErrorText == null &&
-                _userPhoneNumberAuthController.text.trim().isNotEmpty) &&
-            (_userPhoneNumberAuthErrorText == null &&
-                _userPhoneNumberAuthController.text.trim().isNotEmpty &&
-                _userPhoneNumberAuth);
-      });
+      // setState(() {
+      //   _isSubmitted = (_userIdErrorText == null &&
+      //           _userIdController.text.trim().isNotEmpty) &&
+      //       (_userPasswordErrorText == null &&
+      //           _userPasswordController.text.trim().isNotEmpty) &&
+      //       (_userPasswordConfirmationErrorText == null &&
+      //           _userPasswordConfirmationController.text.trim().isNotEmpty) &&
+      //       (_userNameErrorText == null &&
+      //           _userNameController.text.trim().isNotEmpty) &&
+      //       (_userAddressErrorText == null &&
+      //           _userAddressController.text.trim().isNotEmpty) &&
+      //       (_userPhoneNumberErrorText == null &&
+      //           _userPhoneNumberAuthController.text.trim().isNotEmpty) &&
+      //       (_userPhoneNumberAuthErrorText == null &&
+      //           _userPhoneNumberAuthController.text.trim().isNotEmpty &&
+      //           _userPhoneNumberAuth);
+      // });
+      _onCheckUserData();
     }
+  }
+
+  void _onCheckUserData() {
+    setState(() {
+      _isSubmitted = (_userIdErrorText == null &&
+              _userIdController.text.trim().isNotEmpty) &&
+          (_userPasswordErrorText == null &&
+              _userPasswordController.text.trim().isNotEmpty) &&
+          (_userPasswordConfirmationErrorText == null &&
+              _userPasswordConfirmationController.text.trim().isNotEmpty) &&
+          (_userNameErrorText == null &&
+              _userNameController.text.trim().isNotEmpty) &&
+          (_userAddressErrorText == null &&
+              _userAddressController.text.trim().isNotEmpty) &&
+          (_userPhoneNumberErrorText == null &&
+              _userPhoneNumberController.text.trim().isNotEmpty);
+    });
+  }
+
+  void _onCheckStoreData() {
+    setState(() {
+      _isSubmitted = (_storeIdErrorText == null &&
+              _storeIdController.text.trim().isNotEmpty) &&
+          (_storePasswordErrorText == null &&
+              _storePasswordController.text.trim().isNotEmpty) &&
+          (_storePasswordConfirmationErrorText == null &&
+              _storePasswordConfirmationController.text.trim().isNotEmpty) &&
+          (_storeNameErrorText == null &&
+              _storeNameController.text.trim().isNotEmpty) &&
+          (_storePhoneNumberErrorText == null &&
+              _storePhoneNumberController.text.trim().isNotEmpty &&
+              _storeBusinessNameAuth) &&
+          (_storeBusinessNameErrorText == null &&
+              _storeBusinessNameController.text.trim().isNotEmpty) &&
+          (_storeBusinessNumberErrorText == null &&
+              _storeBusinessNumberController.text.trim().isNotEmpty) &&
+          (_storeAddressErrorText == null &&
+              _storeAddressController.text.trim().isNotEmpty) &&
+          (_storeBusinessPhoneNumberErrorText == null &&
+              _storeBusinessPhoneNumberController.text.trim().isNotEmpty);
+    });
   }
 
   void _onFieldSubmitted(String value) {
@@ -217,20 +261,20 @@ class _SignUpFirstState extends State<SignUpFirst> {
       TextEditingController(); // pw
   final TextEditingController _storePasswordConfirmationController =
       TextEditingController(); // pw 확인
-  final TextEditingController _storeAddressController =
-      TextEditingController(); // 주소
-  final TextEditingController _storeAddressDetailController =
-      TextEditingController(); // 상세 주소
-  final TextEditingController _storePhoneNumberController =
-      TextEditingController(); // 전화번호
-  final TextEditingController _storePhoneNumberAuthController =
-      TextEditingController(); // 전화번호 인증 코드
   final TextEditingController _storeNameController =
       TextEditingController(); // 이름
+  final TextEditingController _storePhoneNumberController =
+      TextEditingController(); // 개인 전화번호
+  final TextEditingController _storePhoneNumberAuthController =
+      TextEditingController(); // 개인 전화번호 인증 코드
   final TextEditingController _storeBusinessNumberController =
       TextEditingController(); // 사업자 번호
   final TextEditingController _storeBusinessNameController =
       TextEditingController(); // 가게 이름
+  final TextEditingController _storeAddressController =
+      TextEditingController(); // 가게 주소
+  final TextEditingController _storeAddressDetailController =
+      TextEditingController(); // 가게 상세 주소
   final TextEditingController _storeBusinessPhoneNumberController =
       TextEditingController(); // 가게 전화번호
   final TextEditingController _storeBusinessPhoneNumberAuthController =
@@ -239,11 +283,15 @@ class _SignUpFirstState extends State<SignUpFirst> {
   String? _storeIdErrorText;
   String? _storePasswordErrorText;
   String? _storePasswordConfirmationErrorText;
-  String? _storeAddressErrorText;
-  String? _storePhoneNumberErrorText;
   String? _storeNameErrorText;
+  String? _storePhoneNumberErrorText;
   String? _storePhoneNumberAuthErrorText;
+  String? _storeBusinessNumberErrorText;
+  String? _storeBusinessNameErrorText;
+  String? _storeAddressErrorText;
+  String? _storeBusinessPhoneNumberErrorText;
   bool _storePhoneNumberAuth = false;
+  bool _storeBusinessNameAuth = false;
 
   // XXX-XX-XXXXX 또는 XXXXXXXXXXX 형식의 대한민국 사업자 번호 정규식
   final RegExp _businessNumberRegExp = RegExp(r'^\d{3}-\d{2}-\d{5}|\d{10}$');
@@ -312,6 +360,43 @@ class _SignUpFirstState extends State<SignUpFirst> {
     }
   }
 
+  void _validateStoreBusinessNumber(String value) {
+    if (value.isEmpty) {
+      setState(() {
+        _storeBusinessNumberErrorText = '사업자 번호를 입력하세요.';
+      });
+    } else if (!_businessNumberRegExp.hasMatch(value)) {
+      setState(() {
+        _storeBusinessNumberErrorText = "사업자 번호 규칙에 맞게 입력하세요.";
+      });
+    } else {
+      setState(() {
+        _storeBusinessNumberErrorText = null;
+      });
+      _onCheckSubmitted();
+    }
+  }
+
+  void _onCheckBusinessNumber() {
+    setState(() {
+      _storeBusinessNameAuth = !_storeBusinessNameAuth;
+    });
+    _onCheckSubmitted();
+  }
+
+  void _validateStoreBusinessName(String value) {
+    if (value.isEmpty) {
+      setState(() {
+        _storeBusinessNameErrorText = '가게명을 입력하세요.';
+      });
+    } else {
+      setState(() {
+        _storeBusinessNameErrorText = null;
+      });
+      _onCheckSubmitted();
+    }
+  }
+
   void _validateStorePhoneNumber(String value) {
     if (value.isEmpty) {
       setState(() {
@@ -352,6 +437,23 @@ class _SignUpFirstState extends State<SignUpFirst> {
     _onCheckSubmitted();
   }
 
+  void _validateStoreBusinessPhoneNumber(String value) {
+    if (value.isEmpty) {
+      setState(() {
+        _storeBusinessPhoneNumberErrorText = '전화번호를 입력하세요.';
+      });
+    } else if (!_phoneNumberRegExp.hasMatch(value)) {
+      setState(() {
+        _storeBusinessPhoneNumberErrorText = "전화번호 규칙에 맞게 입력하세요.";
+      });
+    } else {
+      setState(() {
+        _storeBusinessPhoneNumberErrorText = null;
+      });
+      _onCheckSubmitted();
+    }
+  }
+
   void _onCheckAuthStoreCode() {
     setState(() {
       _storePhoneNumberAuth = !_storePhoneNumberAuth;
@@ -368,26 +470,26 @@ class _SignUpFirstState extends State<SignUpFirst> {
   @override
   void dispose() {
     // 유저 정보
+    _userIdController.dispose();
+    _userPasswordController.dispose();
+    _userPasswordConfirmationController.dispose();
+    _userNameController.dispose();
+    _userPhoneNumberController.dispose();
+    _userPhoneNumberAuthController.dispose();
     _userAddressController.dispose();
     _userAddressDetailController.dispose();
-    _userIdController.dispose();
-    _userPasswordConfirmationController.dispose();
-    _userPasswordController.dispose();
-    _userNameController.dispose();
-    _userPhoneNumberAuthController.dispose();
-    _userPhoneNumberAuthController.dispose();
 
     // 가게 정보
-    _storeAddressController.dispose();
-    _storeAddressDetailController.dispose();
     _storeIdController.dispose();
-    _storePasswordConfirmationController.dispose();
     _storePasswordController.dispose();
+    _storePasswordConfirmationController.dispose();
     _storeNameController.dispose();
-    _storePhoneNumberAuthController.dispose();
+    _storePhoneNumberController.dispose();
     _storePhoneNumberAuthController.dispose();
     _storeBusinessNumberController.dispose();
     _storeBusinessNameController.dispose();
+    _storeAddressController.dispose();
+    _storeAddressDetailController.dispose();
     _storeBusinessPhoneNumberController.dispose();
     _storeBusinessPhoneNumberAuthController.dispose();
 
@@ -476,53 +578,56 @@ class _SignUpFirstState extends State<SignUpFirst> {
     return ListView(
       padding: const EdgeInsets.symmetric(vertical: 20),
       children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 20),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Expanded(
-                child: OutlinedButton(
-                  style: OutlinedButton.styleFrom(
-                    textStyle: const TextStyle(
-                      color: Colors.black,
-                    ),
-                    backgroundColor: widget.isStored
-                        ? Colors.white.withOpacity(0.6)
-                        : Colors.lightBlue.shade100,
-                    shape: const RoundedRectangleBorder(
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(10),
-                        bottomLeft: Radius.circular(10),
-                      ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Expanded(
+              child: OutlinedButton(
+                style: OutlinedButton.styleFrom(
+                  textStyle: const TextStyle(
+                    color: Colors.black,
+                  ),
+                  backgroundColor: widget.isStored
+                      ? Colors.white.withOpacity(0.6)
+                      : Colors.lightBlue.shade100,
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(10),
+                      bottomLeft: Radius.circular(10),
                     ),
                   ),
-                  onPressed: () => widget.onChangeUser(),
-                  child: const Text("유저"),
                 ),
+                onPressed: () {
+                  widget.onChangeUser();
+                  _onCheckUserData();
+                },
+                child: const Text("유저"),
               ),
-              Expanded(
-                child: OutlinedButton(
-                  style: OutlinedButton.styleFrom(
-                    textStyle: const TextStyle(
-                      color: Colors.black,
-                    ),
-                    backgroundColor: widget.isStored
-                        ? Colors.lightBlue.shade100
-                        : Colors.white.withOpacity(0.6),
-                    shape: const RoundedRectangleBorder(
-                      borderRadius: BorderRadius.only(
-                        topRight: Radius.circular(10),
-                        bottomRight: Radius.circular(10),
-                      ),
+            ),
+            Expanded(
+              child: OutlinedButton(
+                style: OutlinedButton.styleFrom(
+                  textStyle: const TextStyle(
+                    color: Colors.black,
+                  ),
+                  backgroundColor: widget.isStored
+                      ? Colors.lightBlue.shade100
+                      : Colors.white.withOpacity(0.6),
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.only(
+                      topRight: Radius.circular(10),
+                      bottomRight: Radius.circular(10),
                     ),
                   ),
-                  onPressed: () => widget.onChangeStore(),
-                  child: const Text("가게"),
                 ),
+                onPressed: () {
+                  widget.onChangeStore();
+                  _onCheckStoreData();
+                },
+                child: const Text("가게"),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
         Gaps.v10,
         Row(
@@ -613,53 +718,6 @@ class _SignUpFirstState extends State<SignUpFirst> {
           children: [
             Expanded(
               child: TextFormField(
-                controller: _userAddressController,
-                readOnly: true,
-                decoration: InputDecoration(
-                  labelText: '주소',
-                  errorText: _userAddressErrorText,
-                  prefixIcon: Icon(
-                    Icons.home_work_outlined,
-                    color: Colors.grey.shade600,
-                  ),
-                ),
-              ),
-            ),
-            ElevatedButton(
-              onPressed: _onSearchUserAddress,
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.all(24),
-                textStyle: const TextStyle(fontSize: 14),
-                shape: const RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(10),
-                  ),
-                ),
-              ),
-              child: const Text("주소 검색"),
-            ),
-          ],
-        ),
-        Gaps.v10,
-        TextFormField(
-          controller: _userAddressDetailController,
-          keyboardType: TextInputType.text,
-          decoration: InputDecoration(
-            labelText: '주소 상세 정보',
-            prefixIcon: Icon(
-              Icons.add_home_work_outlined,
-              color: Colors.grey.shade600,
-            ),
-          ),
-          onTap: onChangeBarrier,
-          onFieldSubmitted: _onFieldSubmitted,
-        ),
-        Gaps.v10,
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(
-              child: TextFormField(
                 controller: _userPhoneNumberController,
                 keyboardType: TextInputType.phone,
                 decoration: InputDecoration(
@@ -675,19 +733,20 @@ class _SignUpFirstState extends State<SignUpFirst> {
                 onFieldSubmitted: _onFieldSubmitted,
               ),
             ),
-            ElevatedButton(
-              onPressed: () {},
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.all(24),
-                textStyle: const TextStyle(fontSize: 14),
-                shape: const RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(10),
+            if (false)
+              ElevatedButton(
+                onPressed: () {},
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.all(24),
+                  textStyle: const TextStyle(fontSize: 14),
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(10),
+                    ),
                   ),
                 ),
+                child: const Text("인증 요청"),
               ),
-              child: const Text("인증 요청"),
-            ),
           ],
         ),
         // Gaps.v10,
@@ -741,6 +800,53 @@ class _SignUpFirstState extends State<SignUpFirst> {
               ),
             ),
           ),
+        Gaps.v10,
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: TextFormField(
+                controller: _userAddressController,
+                readOnly: true,
+                decoration: InputDecoration(
+                  labelText: '주소',
+                  errorText: _userAddressErrorText,
+                  prefixIcon: Icon(
+                    Icons.home_work_outlined,
+                    color: Colors.grey.shade600,
+                  ),
+                ),
+              ),
+            ),
+            ElevatedButton(
+              onPressed: _onSearchUserAddress,
+              style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.all(24),
+                textStyle: const TextStyle(fontSize: 14),
+                shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(10),
+                  ),
+                ),
+              ),
+              child: const Text("주소 검색"),
+            ),
+          ],
+        ),
+        Gaps.v10,
+        TextFormField(
+          controller: _userAddressDetailController,
+          keyboardType: TextInputType.text,
+          decoration: InputDecoration(
+            labelText: '주소 상세 정보',
+            prefixIcon: Icon(
+              Icons.add_home_work_outlined,
+              color: Colors.grey.shade600,
+            ),
+          ),
+          onTap: onChangeBarrier,
+          onFieldSubmitted: _onFieldSubmitted,
+        ),
       ],
     );
   }
@@ -749,54 +855,59 @@ class _SignUpFirstState extends State<SignUpFirst> {
     return ListView(
       padding: const EdgeInsets.symmetric(vertical: 20),
       children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 20),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Expanded(
-                child: OutlinedButton(
-                  style: OutlinedButton.styleFrom(
-                    textStyle: const TextStyle(
-                      color: Colors.black,
-                    ),
-                    backgroundColor: widget.isStored
-                        ? Colors.white.withOpacity(0.6)
-                        : Colors.lightBlue.shade100,
-                    shape: const RoundedRectangleBorder(
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(10),
-                        bottomLeft: Radius.circular(10),
-                      ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Expanded(
+              child: OutlinedButton(
+                style: OutlinedButton.styleFrom(
+                  textStyle: const TextStyle(
+                    color: Colors.black,
+                  ),
+                  backgroundColor: widget.isStored
+                      ? Colors.white.withOpacity(0.6)
+                      : Colors.lightBlue.shade100,
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(10),
+                      bottomLeft: Radius.circular(10),
                     ),
                   ),
-                  onPressed: () => widget.onChangeUser(),
-                  child: const Text("유저"),
                 ),
+                onPressed: () {
+                  widget.onChangeUser();
+                  _onCheckUserData();
+                },
+                child: const Text("유저"),
               ),
-              Expanded(
-                child: OutlinedButton(
-                  style: OutlinedButton.styleFrom(
-                    textStyle: const TextStyle(
-                      color: Colors.black,
-                    ),
-                    backgroundColor: widget.isStored
-                        ? Colors.lightBlue.shade100
-                        : Colors.white.withOpacity(0.6),
-                    shape: const RoundedRectangleBorder(
-                      borderRadius: BorderRadius.only(
-                        topRight: Radius.circular(10),
-                        bottomRight: Radius.circular(10),
-                      ),
+            ),
+            Expanded(
+              child: OutlinedButton(
+                style: OutlinedButton.styleFrom(
+                  textStyle: const TextStyle(
+                    color: Colors.black,
+                  ),
+                  backgroundColor: widget.isStored
+                      ? Colors.lightBlue.shade100
+                      : Colors.white.withOpacity(0.6),
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.only(
+                      topRight: Radius.circular(10),
+                      bottomRight: Radius.circular(10),
                     ),
                   ),
-                  onPressed: () => widget.onChangeStore(),
-                  child: const Text("가게"),
                 ),
+                onPressed: () {
+                  widget.onChangeStore();
+                  _onCheckStoreData();
+                },
+                child: const Text("가게"),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
+        Gaps.v10,
+        const CenteredDivider(text: "기초 정보"),
         Gaps.v10,
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -880,6 +991,161 @@ class _SignUpFirstState extends State<SignUpFirst> {
           onChanged: _validateStoreName,
           onFieldSubmitted: _onFieldSubmitted,
         ),
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: TextFormField(
+                controller: _storePhoneNumberController,
+                keyboardType: TextInputType.phone,
+                decoration: InputDecoration(
+                  labelText: '개인 전화번호',
+                  errorText: _storePhoneNumberErrorText,
+                  prefixIcon: Icon(
+                    Icons.phone_iphone_rounded,
+                    color: Colors.grey.shade600,
+                  ),
+                ),
+                onTap: onChangeBarrier,
+                onChanged: _validateStorePhoneNumber,
+                onFieldSubmitted: _onFieldSubmitted,
+              ),
+            ),
+            if (false)
+              ElevatedButton(
+                onPressed: () {},
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.all(24),
+                  textStyle: const TextStyle(fontSize: 14),
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(10),
+                    ),
+                  ),
+                ),
+                child: const Text("인증 요청"),
+              ),
+          ],
+        ),
+        // Gaps.v10,
+        if (false)
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: TextFormField(
+                  controller: _storePhoneNumberAuthController,
+                  keyboardType: TextInputType.phone,
+                  decoration: InputDecoration(
+                    labelText: '인증 코드',
+                    errorText: _storePhoneNumberAuthErrorText,
+                    prefixIcon: Icon(
+                      Icons.phonelink_lock_outlined,
+                      color: Colors.grey.shade600,
+                    ),
+                  ),
+                  onTap: onChangeBarrier,
+                  onChanged: _validateStorePhoneNumberAuth,
+                  onFieldSubmitted: _onFieldSubmitted,
+                ),
+              ),
+              ElevatedButton(
+                onPressed: _onCheckAuthStoreCode,
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.all(24),
+                  textStyle: const TextStyle(fontSize: 14),
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(10),
+                    ),
+                  ),
+                ),
+                child: const Text("인증 확인"),
+              ),
+            ],
+          ),
+        if (_storePhoneNumberAuth)
+          const Padding(
+            padding: EdgeInsets.symmetric(
+              horizontal: 10,
+              vertical: 4,
+            ),
+            child: Text(
+              "전화번호 인증 완료!",
+              style: TextStyle(
+                color: Colors.blue,
+                fontSize: 16,
+              ),
+            ),
+          ),
+        Gaps.v10,
+        const CenteredDivider(text: "사업자 정보"),
+        Gaps.v10,
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: TextFormField(
+                controller: _storeBusinessNumberController,
+                keyboardType: TextInputType.number,
+                decoration: InputDecoration(
+                  labelText: '사업자 번호',
+                  errorText: _storeBusinessNumberErrorText,
+                  prefixIcon: Icon(
+                    Icons.dialpad_outlined,
+                    color: Colors.grey.shade600,
+                  ),
+                ),
+                onTap: onChangeBarrier,
+                onChanged: _validateStoreBusinessNumber,
+                onFieldSubmitted: _onFieldSubmitted,
+              ),
+            ),
+            ElevatedButton(
+              onPressed: _onCheckBusinessNumber,
+              style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.all(24),
+                textStyle: const TextStyle(fontSize: 14),
+                shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(10),
+                  ),
+                ),
+              ),
+              child: const Text("인증 요청"),
+            ),
+          ],
+        ),
+        if (_storeBusinessNameAuth)
+          const Padding(
+            padding: EdgeInsets.symmetric(
+              horizontal: 10,
+              vertical: 4,
+            ),
+            child: Text(
+              "사업자 번호 인증 완료!",
+              style: TextStyle(
+                color: Colors.blue,
+                fontSize: 16,
+              ),
+            ),
+          ),
+        Gaps.v10,
+        TextFormField(
+          controller: _storeBusinessNameController,
+          keyboardType: TextInputType.name,
+          decoration: InputDecoration(
+            labelText: '가게 이름',
+            errorText: _storeBusinessNameErrorText,
+            prefixIcon: Icon(
+              Icons.store,
+              color: Colors.grey.shade600,
+            ),
+          ),
+          onTap: onChangeBarrier,
+          onChanged: _validateStoreBusinessName,
+          onFieldSubmitted: _onFieldSubmitted,
+        ),
         Gaps.v10,
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -889,7 +1155,7 @@ class _SignUpFirstState extends State<SignUpFirst> {
                 controller: _storeAddressController,
                 readOnly: true,
                 decoration: InputDecoration(
-                  labelText: '사용자 주소',
+                  labelText: '가게 주소',
                   errorText: _storeAddressErrorText,
                   prefixIcon: Icon(
                     Icons.home_work_outlined,
@@ -918,7 +1184,7 @@ class _SignUpFirstState extends State<SignUpFirst> {
           controller: _storeAddressDetailController,
           keyboardType: TextInputType.text,
           decoration: InputDecoration(
-            labelText: '주소 상세 정보',
+            labelText: '가게 주소 상세 정보',
             prefixIcon: Icon(
               Icons.add_home_work_outlined,
               color: Colors.grey.shade600,
@@ -933,125 +1199,37 @@ class _SignUpFirstState extends State<SignUpFirst> {
           children: [
             Expanded(
               child: TextFormField(
-                controller: _storePhoneNumberController,
-                keyboardType: TextInputType.phone,
-                decoration: InputDecoration(
-                  labelText: '전화번호',
-                  errorText: _storePhoneNumberErrorText,
-                  prefixIcon: Icon(
-                    Icons.phone_iphone_rounded,
-                    color: Colors.grey.shade600,
-                  ),
-                ),
-                onTap: onChangeBarrier,
-                onChanged: _validateStorePhoneNumber,
-                onFieldSubmitted: _onFieldSubmitted,
-              ),
-            ),
-            // if (false)
-            ElevatedButton(
-              onPressed: () {},
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.all(24),
-                textStyle: const TextStyle(fontSize: 14),
-                shape: const RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(10),
-                  ),
-                ),
-              ),
-              child: const Text("인증 요청"),
-            ),
-          ],
-        ),
-        Gaps.v10,
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(
-              child: TextFormField(
-                controller: _storePhoneNumberController,
+                controller: _storeBusinessPhoneNumberController,
                 keyboardType: TextInputType.phone,
                 decoration: InputDecoration(
                   labelText: '가게 전화번호',
-                  errorText: _storePhoneNumberErrorText,
+                  errorText: _storeBusinessPhoneNumberErrorText,
                   prefixIcon: Icon(
-                    Icons.phone_iphone_rounded,
+                    Icons.local_phone_outlined,
                     color: Colors.grey.shade600,
                   ),
                 ),
                 onTap: onChangeBarrier,
-                onChanged: _validateStorePhoneNumber,
+                onChanged: _validateStoreBusinessPhoneNumber,
                 onFieldSubmitted: _onFieldSubmitted,
               ),
             ),
-            // if (false)
-            ElevatedButton(
-              onPressed: () {},
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.all(24),
-                textStyle: const TextStyle(fontSize: 14),
-                shape: const RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(10),
+            if (false)
+              ElevatedButton(
+                onPressed: () {},
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.all(24),
+                  textStyle: const TextStyle(fontSize: 14),
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(10),
+                    ),
                   ),
                 ),
+                child: const Text("인증 요청"),
               ),
-              child: const Text("인증 요청"),
-            ),
           ],
         ),
-        Gaps.v10,
-        // if (false)
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(
-              child: TextFormField(
-                controller: _storePhoneNumberAuthController,
-                keyboardType: TextInputType.phone,
-                decoration: InputDecoration(
-                  labelText: '인증 코드',
-                  errorText: _storePhoneNumberAuthErrorText,
-                  prefixIcon: Icon(
-                    Icons.phonelink_lock_outlined,
-                    color: Colors.grey.shade600,
-                  ),
-                ),
-                onTap: onChangeBarrier,
-                onChanged: _validateStorePhoneNumberAuth,
-                onFieldSubmitted: _onFieldSubmitted,
-              ),
-            ),
-            ElevatedButton(
-              onPressed: _onCheckAuthStoreCode,
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.all(24),
-                textStyle: const TextStyle(fontSize: 14),
-                shape: const RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(10),
-                  ),
-                ),
-              ),
-              child: const Text("인증 확인"),
-            ),
-          ],
-        ),
-        if (_storePhoneNumberAuth)
-          const Padding(
-            padding: EdgeInsets.symmetric(
-              horizontal: 10,
-              vertical: 4,
-            ),
-            child: Text(
-              "전화번호 인증 완료!",
-              style: TextStyle(
-                color: Colors.blue,
-                fontSize: 16,
-              ),
-            ),
-          ),
       ],
     );
   }
