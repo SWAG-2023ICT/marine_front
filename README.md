@@ -47,10 +47,3 @@
 <img src="https://github.com/SWAG-2023ICT/marine_front/assets/77985708/aecb20cb-d803-4298-bc5e-818461d79b12.jpg" width="200" height="400"/>
 <img src="https://github.com/SWAG-2023ICT/marine_front/assets/77985708/4cd3e9c5-6ce6-4f39-aa02-126a5a2b362f.jpg" width="200" height="400"/>
 
-![KakaoTalk_20230928_193822148](https://github.com/SWAG-2023ICT/marine_front/assets/77985708/5446a36e-1d00-4c78-bfa2-519eab6d7c6f)
-![KakaoTalk_20230928_193745558_03](https://github.com/SWAG-2023ICT/marine_front/assets/77985708/09ee59d7-74ad-46bb-b0d7-5824d65cdef8)
-![KakaoTalk_20230928_193745558_02](https://github.com/SWAG-2023ICT/marine_front/assets/77985708/8d61ac55-3a63-4650-b5a9-3bc3a0a88690)
-![KakaoTalk_20230928_193745558_01](https://github.com/SWAG-2023ICT/marine_front/assets/77985708/aecb20cb-d803-4298-bc5e-818461d79b12)
-![KakaoTalk_20230928_193745558](https://github.com/SWAG-2023ICT/marine_front/assets/77985708/4cd3e9c5-6ce6-4f39-aa02-126a5a2b362f)
-
-
