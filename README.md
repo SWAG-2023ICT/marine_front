@@ -41,9 +41,9 @@
 ## 화면 프로토타입
 ### 로그인 & 회원가입
 
-![KakaoTalk_20230928_193822148](https://github.com/SWAG-2023ICT/marine_front/assets/77985708/62408601-cf7e-4f03-8515-5779cdfee3d2){: width="100" height="200"}
-![KakaoTalk_20230928_193745558](https://github.com/SWAG-2023ICT/marine_front/assets/77985708/1d5591dc-ccc0-4c41-a758-90ed79bd6d64){: width="100" height="200"}
-![KakaoTalk_20230928_193745558_01](https://github.com/SWAG-2023ICT/marine_front/assets/77985708/ca2813ac-335e-4bc0-a3bf-4fe99127bec5){: width="100" height="200"}
-![KakaoTalk_20230928_193745558_02](https://github.com/SWAG-2023ICT/marine_front/assets/77985708/488b0d59-b71d-48c8-ad6f-fe2834299fae){: width="100" height="200"}
-![KakaoTalk_20230928_193745558_03](https://github.com/SWAG-2023ICT/marine_front/assets/77985708/b9e32f08-f040-4680-8162-d6a90afc460d){: width="100" height="200"}
+![KakaoTalk_20230928_193822148](https://github.com/SWAG-2023ICT/marine_front/assets/77985708/62408601-cf7e-4f03-8515-5779cdfee3d2.png){: width="100" height="200"}
+![KakaoTalk_20230928_193745558](https://github.com/SWAG-2023ICT/marine_front/assets/77985708/1d5591dc-ccc0-4c41-a758-90ed79bd6d64.png){: width="100" height="200"}
+![KakaoTalk_20230928_193745558_01](https://github.com/SWAG-2023ICT/marine_front/assets/77985708/ca2813ac-335e-4bc0-a3bf-4fe99127bec5.png){: width="100" height="200"}
+![KakaoTalk_20230928_193745558_02](https://github.com/SWAG-2023ICT/marine_front/assets/77985708/488b0d59-b71d-48c8-ad6f-fe2834299fae.png){: width="100" height="200"}
+![KakaoTalk_20230928_193745558_03](https://github.com/SWAG-2023ICT/marine_front/assets/77985708/b9e32f08-f040-4680-8162-d6a90afc460d.png){: width="100" height="200"}
 
