@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:swag_marine_products/constants/gaps.dart';
-import 'package:swag_marine_products/screens/navigation_screen.dart';
+import 'package:swag_marine_products/screens/main_navigation/navigation_screen.dart';
 import 'package:swag_marine_products/screens/sign_in_up/sign_up_screen.dart';
 import 'package:swag_marine_products/storages/login_storage.dart';
 

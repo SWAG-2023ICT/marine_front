@@ -3,7 +3,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:swag_marine_products/constants/sizes.dart';
 import 'package:swag_marine_products/screens/menus/marine_graph_screen.dart';
 import 'package:swag_marine_products/screens/menus/marine_price_screen.dart';
-import 'package:swag_marine_products/screens/widgets/nav_tab.dart';
+import 'package:swag_marine_products/screens/main_navigation/widgets/nav_tab.dart';
 
 class NavigationScreen extends StatefulWidget {
   static const routeName = "main";

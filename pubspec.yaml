@@ -56,6 +56,9 @@ dependencies:
   # 카카오 주소 검색 라이브러리
   kpostal: ^0.5.1
 
+  # 갤러리, 카메라 라이브러리
+  image_picker: ^1.0.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

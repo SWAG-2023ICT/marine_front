@@ -1,5 +1,5 @@
 import 'package:go_router/go_router.dart';
-import 'package:swag_marine_products/screens/navigation_screen.dart';
+import 'package:swag_marine_products/screens/main_navigation/navigation_screen.dart';
 import 'package:swag_marine_products/screens/sign_in_up/sign_in_screen.dart';
 import 'package:swag_marine_products/screens/sign_in_up/sign_up_screen.dart';
 

@@ -690,42 +690,43 @@ class _SignUpFirstState extends State<SignUpFirst> {
             ),
           ],
         ),
-        Gaps.v10,
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(
-              child: TextFormField(
-                controller: _userPhoneNumberAuthController,
-                keyboardType: TextInputType.phone,
-                decoration: InputDecoration(
-                  labelText: '전화번호 인증',
-                  errorText: _userPhoneNumberAuthErrorText,
-                  prefixIcon: Icon(
-                    Icons.phonelink_lock_outlined,
-                    color: Colors.grey.shade600,
+        // Gaps.v10,
+        if (false)
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: TextFormField(
+                  controller: _userPhoneNumberAuthController,
+                  keyboardType: TextInputType.phone,
+                  decoration: InputDecoration(
+                    labelText: '전화번호 인증',
+                    errorText: _userPhoneNumberAuthErrorText,
+                    prefixIcon: Icon(
+                      Icons.phonelink_lock_outlined,
+                      color: Colors.grey.shade600,
+                    ),
                   ),
-                ),
-                onTap: onChangeBarrier,
-                onChanged: _validateUserPhoneNumberAuth,
-                onFieldSubmitted: _onFieldSubmitted,
-              ),
-            ),
-            ElevatedButton(
-              onPressed: _onCheckAuthUserCode,
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.all(24),
-                textStyle: const TextStyle(fontSize: 14),
-                shape: const RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(10),
-                  ),
+                  onTap: onChangeBarrier,
+                  onChanged: _validateUserPhoneNumberAuth,
+                  onFieldSubmitted: _onFieldSubmitted,
                 ),
               ),
-              child: const Text("인증 확인"),
-            ),
-          ],
-        ),
+              ElevatedButton(
+                onPressed: _onCheckAuthUserCode,
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.all(24),
+                  textStyle: const TextStyle(fontSize: 14),
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(10),
+                    ),
+                  ),
+                ),
+                child: const Text("인증 확인"),
+              ),
+            ],
+          ),
         if (_userPhoneNumberAuth)
           const Padding(
             padding: EdgeInsets.symmetric(
