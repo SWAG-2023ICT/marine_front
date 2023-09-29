@@ -66,9 +66,9 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                         horizontal: 4,
                         vertical: Sizes.size10,
                       ),
-                      child: const Column(
+                      child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
+                        children: const [
                           RadioactivityBanner(),
                           // Container(
                           //   child: const Column(
