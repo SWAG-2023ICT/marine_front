@@ -21,6 +21,7 @@ class _UserPriceScreenState extends State<UserPriceScreen> {
 
   final bool _isFirstLoadRunning = true;
   final bool _isLoadMoreRunning = false;
+  bool _isBarriered = false;
 
   Future<void> dispatchProductsList() async {
     final url = Uri.parse("${HttpIp.httpIp}/together/login");
@@ -50,6 +51,7 @@ class _UserPriceScreenState extends State<UserPriceScreen> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        resizeToAvoidBottomInset: false,
         body: Stack(
           children: [
             // 배경 하늘 이미지
@@ -115,6 +117,11 @@ class _UserPriceScreenState extends State<UserPriceScreen> {
                   // snap: true,
                   surfaceTintColor: Colors.white,
                   title: TextFormField(
+                    onTap: () {
+                      setState(() {
+                        _isBarriered = true;
+                      });
+                    },
                     decoration: const InputDecoration(
                       fillColor: Colors.white,
                       prefixIcon: Icon(Icons.search),
@@ -137,27 +144,45 @@ class _UserPriceScreenState extends State<UserPriceScreen> {
                   ],
                 )
               ],
-              body: ListView.separated(
-                padding: const EdgeInsets.symmetric(
-                  vertical: Sizes.size10,
-                  horizontal: Sizes.size20,
-                ),
-                itemBuilder: (context, index) => MarineProductCard(
-                    marineProduct: MarineProduct(
-                      dates: "경매일",
-                      mClassName: "품목",
-                      sClassName: "품종",
-                      gradeName: "등급",
-                      avgPrice: 15000,
-                      maxPrice: 20000,
-                      minPrice: 10000,
-                      sumAmt: 20,
-                      marketName: "도매시장",
-                      coName: "도매법인",
+              body: Stack(
+                children: [
+                  ListView.separated(
+                    padding: const EdgeInsets.symmetric(
+                      vertical: Sizes.size10,
+                      horizontal: Sizes.size20,
                     ),
-                    index: index),
-                separatorBuilder: (context, index) => Gaps.v10,
-                itemCount: 20,
+                    itemBuilder: (context, index) => MarineProductCard(
+                        marineProduct: MarineProduct(
+                          dates: "경매일",
+                          mClassName: "품목",
+                          sClassName: "품종",
+                          gradeName: "등급",
+                          avgPrice: 15000,
+                          maxPrice: 20000,
+                          minPrice: 10000,
+                          sumAmt: 20,
+                          marketName: "도매시장",
+                          coName: "도매법인",
+                        ),
+                        index: index),
+                    separatorBuilder: (context, index) => Gaps.v10,
+                    itemCount: 20,
+                  ),
+                  if (_isBarriered)
+                    ModalBarrier(
+                      // color: _barrierAnimation,
+                      color: Colors.transparent,
+                      // 자신을 클릭하면 onDismiss를 실행하는지에 대한 여부
+                      dismissible: true,
+                      // 자신을 클릭하면 실행되는 함수
+                      onDismiss: () {
+                        setState(() {
+                          _isBarriered = false;
+                          FocusScope.of(context).unfocus();
+                        });
+                      },
+                    ),
+                ],
               ),
             ),
           ],

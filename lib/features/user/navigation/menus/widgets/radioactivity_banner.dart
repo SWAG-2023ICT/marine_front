@@ -53,16 +53,16 @@ class RadioactivityBanner extends StatelessWidget {
             ),
           ],
         ),
-        children: [
+        children: const [
           Padding(
-            padding: const EdgeInsets.only(
+            padding: EdgeInsets.only(
               bottom: Sizes.size8,
               left: Sizes.size8,
               right: Sizes.size8,
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: const [
+              children: [
                 RadioactivityCard(
                   title: "전체 건 수",
                   num: 29,

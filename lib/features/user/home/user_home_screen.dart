@@ -23,11 +23,6 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
       child: GestureDetector(
         onTap: () => FocusScope.of(context).unfocus(),
         child: Scaffold(
-          // appBar: AppBar(
-          //   title: DropdownMenu(dropdownMenuEntries: [
-          //     DropdownButton(items: items, onChanged: onChanged)
-          //   ]),
-          // ),
           body: Stack(
             children: [
               Column(
@@ -66,9 +61,9 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                         horizontal: 4,
                         vertical: Sizes.size10,
                       ),
-                      child: Column(
+                      child: const Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
-                        children: const [
+                        children: [
                           RadioactivityBanner(),
                           // Container(
                           //   child: const Column(
@@ -124,18 +119,18 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                             );
                           },
                         ),
-                        HomeMenuButton(
-                          icon: Icons.bar_chart_outlined,
-                          color: Colors.purple,
-                          backgroundColor: Colors.purple.shade50,
-                          text: "통계",
-                          onClick: () {
-                            context.pushNamed(
-                              NavigationScreen.routeName,
-                              extra: NavigationScreenArgs(selectedIndex: 2),
-                            );
-                          },
-                        ),
+                        // HomeMenuButton(
+                        //   icon: Icons.bar_chart_outlined,
+                        //   color: Colors.purple,
+                        //   backgroundColor: Colors.purple.shade50,
+                        //   text: "통계",
+                        //   onClick: () {
+                        //     context.pushNamed(
+                        //       NavigationScreen.routeName,
+                        //       extra: NavigationScreenArgs(selectedIndex: 2),
+                        //     );
+                        //   },
+                        // ),
                         HomeMenuButton(
                           icon: Icons.account_circle_outlined,
                           color: Colors.brown,
@@ -148,17 +143,17 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                             );
                           },
                         ),
-                        HomeMenuButton(
-                          icon: Icons.bookmark,
-                          color: Colors.yellow.shade800,
-                          backgroundColor: Colors.yellow.shade50,
-                          text: "즐겨찾기",
-                          onClick: () {
-                            context.pushNamed(
-                              UserBookMarkScreen.routeName,
-                            );
-                          },
-                        ),
+                        // HomeMenuButton(
+                        //   icon: Icons.bookmark,
+                        //   color: Colors.yellow.shade800,
+                        //   backgroundColor: Colors.yellow.shade50,
+                        //   text: "즐겨찾기",
+                        //   onClick: () {
+                        //     context.pushNamed(
+                        //       UserBookMarkScreen.routeName,
+                        //     );
+                        //   },
+                        // ),
                         HomeMenuButton(
                           icon: Icons.settings_applications_outlined,
                           color: Colors.grey,

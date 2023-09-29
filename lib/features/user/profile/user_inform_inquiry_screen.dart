@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:swag_marine_products/constants/gaps.dart';
 import 'package:swag_marine_products/constants/sizes.dart';
 import 'package:swag_marine_products/features/sign_in_up/widgets/centered_divider.dart';
+import 'package:swag_marine_products/features/user/profile/user_inform_update_screen.dart';
 
 class UserInformInquiryScreen extends StatefulWidget {
   static const routeName = "user_inquiry_screen";
@@ -65,7 +67,14 @@ class _UserInformInquiryScreenState extends State<UserInformInquiryScreen> {
                     ),
                   ),
                   ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      context.pushNamed(
+                        UserInformUpdateScreen.routeName,
+                        extra: const UserInformUpdateScreenArgs(
+                          updateType: UpdateType.pw,
+                        ),
+                      );
+                    },
                     style: ElevatedButton.styleFrom(
                       padding: const EdgeInsets.all(24),
                       textStyle: const TextStyle(fontSize: 14),
@@ -97,7 +106,14 @@ class _UserInformInquiryScreenState extends State<UserInformInquiryScreen> {
                     ),
                   ),
                   ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      context.pushNamed(
+                        UserInformUpdateScreen.routeName,
+                        extra: const UserInformUpdateScreenArgs(
+                          updateType: UpdateType.name,
+                        ),
+                      );
+                    },
                     style: ElevatedButton.styleFrom(
                       padding: const EdgeInsets.all(24),
                       textStyle: const TextStyle(fontSize: 14),
@@ -129,7 +145,14 @@ class _UserInformInquiryScreenState extends State<UserInformInquiryScreen> {
                     ),
                   ),
                   ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      context.pushNamed(
+                        UserInformUpdateScreen.routeName,
+                        extra: const UserInformUpdateScreenArgs(
+                          updateType: UpdateType.phoneNumber,
+                        ),
+                      );
+                    },
                     style: ElevatedButton.styleFrom(
                       padding: const EdgeInsets.all(24),
                       textStyle: const TextStyle(fontSize: 14),

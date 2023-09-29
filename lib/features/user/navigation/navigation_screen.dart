@@ -62,11 +62,11 @@ class _NavigationScreenState extends State<NavigationScreen> {
             offstage: selectedIndex != 1,
             child: const UserPriceScreen(),
           ),
-          Offstage(
-            offstage: selectedIndex != 2,
-            //child: const SearchVolScreen(),
-            child: const UserGraphScreen(),
-          ),
+          // Offstage(
+          //   offstage: selectedIndex != 2,
+          //   //child: const SearchVolScreen(),
+          //   child: const UserGraphScreen(),
+          // ),
           Offstage(
             offstage: selectedIndex != 3,
             //child: const SearchVolScreen(),
@@ -111,14 +111,14 @@ class _NavigationScreenState extends State<NavigationScreen> {
                 onTap: () => _onTap(1),
                 selectedIndex: selectedIndex,
               ),
-              NavTab(
-                text: "통계",
-                isSelected: selectedIndex == 2,
-                unSelectedIcon: FontAwesomeIcons.chartLine,
-                selectedIcon: FontAwesomeIcons.chartLine,
-                onTap: () => _onTap(2),
-                selectedIndex: selectedIndex,
-              ),
+              // NavTab(
+              //   text: "통계",
+              //   isSelected: selectedIndex == 2,
+              //   unSelectedIcon: FontAwesomeIcons.chartLine,
+              //   selectedIcon: FontAwesomeIcons.chartLine,
+              //   onTap: () => _onTap(2),
+              //   selectedIndex: selectedIndex,
+              // ),
               NavTab(
                 text: "프로필",
                 isSelected: selectedIndex == 3,

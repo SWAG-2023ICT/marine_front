@@ -82,6 +82,29 @@ class _UserInformUpdateScreenState extends State<UserInformUpdateScreen> {
     }
   }
 
+  void _onSubmitted() {
+    if (widget.updateType == UpdateType.pw) {
+      print("이전 비밀번호 : ${_userPasswordBeforeController.text}");
+      print("변경 비밀번호 : ${_userPasswordController.text}");
+    } else if (widget.updateType == UpdateType.name) {
+      print("변경 이름 : ${_userNameController.text}");
+    } else if (widget.updateType == UpdateType.phoneNumber) {
+      print("변경 전화번호 : ${_userPhoneNumberController.text}");
+    } else {
+      swagPlatformDialog(
+        context: context,
+        title: "수정 오류!",
+        message: "비정상적인 접근입니다!",
+        actions: [
+          TextButton(
+            onPressed: () => context.pop(),
+            child: const Text("알겠습니다"),
+          ),
+        ],
+      );
+    }
+  }
+
   void _onFieldSubmitted(String value) {
     setState(() {
       _isBarrier = false;
@@ -124,7 +147,11 @@ class _UserInformUpdateScreenState extends State<UserInformUpdateScreen> {
       });
     } else if (!_passwordRegExp.hasMatch(value)) {
       setState(() {
-        _userPasswordErrorText = '영문자와 숫자, 특수기호를 포함한 8자 이상 입력하세요.';
+        _userPasswordErrorText = '영어 대/소문자와 숫자, 특수기호를 포함한 8자 이상 입력하세요.';
+      });
+    } else if (_userPasswordBeforeController.text == value) {
+      setState(() {
+        _userPasswordErrorText = '이전 비밀번호와 변경 비밀번호가 같으면 안됩니다!';
       });
     } else {
       setState(() {
@@ -158,7 +185,7 @@ class _UserInformUpdateScreenState extends State<UserInformUpdateScreen> {
       });
     } else if (!_passwordRegExp.hasMatch(value)) {
       setState(() {
-        _userPasswordBeforeErrorText = '영문자와 숫자, 특수기호를 포함한 8자 이상 입력하세요.';
+        _userPasswordBeforeErrorText = '영어 대/소문자와 숫자, 특수기호를 포함한 8자 이상 입력하세요.';
       });
     } else {
       setState(() {
@@ -265,7 +292,7 @@ class _UserInformUpdateScreenState extends State<UserInformUpdateScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               BottomButton(
-                onPressed: _isSubmitted ? () {} : null,
+                onPressed: _isSubmitted ? _onSubmitted : null,
                 text: "수정",
                 isClicked: _isSubmitted,
               ),
@@ -574,195 +601,5 @@ class _UserInformUpdateScreenState extends State<UserInformUpdateScreen> {
         child: Text("비정상적인 접근입니다!"),
       );
     }
-  }
-
-  Widget _userInfo() {
-    return ListView(
-      padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
-      children: [
-        TextFormField(
-          controller: _userPasswordController,
-          decoration: InputDecoration(
-            labelText: '비밀번호',
-            errorText: _userPasswordErrorText,
-            prefixIcon: Icon(
-              Icons.lock_outline,
-              color: Colors.grey.shade600,
-            ),
-          ),
-          obscureText: true,
-          onTap: onChangeBarrier,
-          onChanged: _validateUserPassword,
-          onFieldSubmitted: _onFieldSubmitted,
-        ),
-        Gaps.v10,
-        TextFormField(
-          controller: _userPasswordConfirmationController,
-          decoration: InputDecoration(
-            labelText: '비밀번호 확인',
-            errorText: _userPasswordConfirmationErrorText,
-            prefixIcon: Icon(
-              Icons.lock_person_outlined,
-              color: Colors.grey.shade600,
-            ),
-          ),
-          obscureText: true,
-          onTap: onChangeBarrier,
-          onChanged: _validateUserPasswordConfirmation,
-          onFieldSubmitted: _onFieldSubmitted,
-        ),
-        Gaps.v10,
-        TextFormField(
-          controller: _userNameController,
-          keyboardType: TextInputType.name,
-          decoration: InputDecoration(
-            labelText: '이름(실명)',
-            errorText: _userNameErrorText,
-            prefixIcon: Icon(
-              Icons.badge_outlined,
-              color: Colors.grey.shade600,
-            ),
-          ),
-          onTap: onChangeBarrier,
-          onChanged: _validateUserName,
-          onFieldSubmitted: _onFieldSubmitted,
-        ),
-        Gaps.v10,
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(
-              child: TextFormField(
-                controller: _userPhoneNumberController,
-                keyboardType: TextInputType.phone,
-                decoration: InputDecoration(
-                  labelText: '전화번호',
-                  errorText: _userPhoneNumberErrorText,
-                  prefixIcon: Icon(
-                    Icons.phone_iphone_rounded,
-                    color: Colors.grey.shade600,
-                  ),
-                ),
-                onTap: onChangeBarrier,
-                onChanged: _validateUserPhoneNumber,
-                onFieldSubmitted: _onFieldSubmitted,
-              ),
-            ),
-            if (false)
-              ElevatedButton(
-                onPressed: () {},
-                style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.all(24),
-                  textStyle: const TextStyle(fontSize: 14),
-                  shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(10),
-                    ),
-                  ),
-                ),
-                child: const Text("인증 요청"),
-              ),
-          ],
-        ),
-        // Gaps.v10,
-        if (false)
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                child: TextFormField(
-                  controller: _userPhoneNumberAuthController,
-                  keyboardType: TextInputType.phone,
-                  decoration: InputDecoration(
-                    labelText: '전화번호 인증',
-                    errorText: _userPhoneNumberAuthErrorText,
-                    prefixIcon: Icon(
-                      Icons.phonelink_lock_outlined,
-                      color: Colors.grey.shade600,
-                    ),
-                  ),
-                  onTap: onChangeBarrier,
-                  onChanged: _validateUserPhoneNumberAuth,
-                  onFieldSubmitted: _onFieldSubmitted,
-                ),
-              ),
-              ElevatedButton(
-                onPressed: _onCheckAuthUserCode,
-                style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.all(24),
-                  textStyle: const TextStyle(fontSize: 14),
-                  shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(10),
-                    ),
-                  ),
-                ),
-                child: const Text("인증 확인"),
-              ),
-            ],
-          ),
-        if (_userPhoneNumberAuth)
-          const Padding(
-            padding: EdgeInsets.symmetric(
-              horizontal: 10,
-              vertical: 4,
-            ),
-            child: Text(
-              "전화번호 인증 완료!",
-              style: TextStyle(
-                color: Colors.blue,
-                fontSize: 16,
-              ),
-            ),
-          ),
-        Gaps.v10,
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(
-              child: TextFormField(
-                controller: _userAddressController,
-                readOnly: true,
-                decoration: InputDecoration(
-                  labelText: '주소',
-                  errorText: _userAddressErrorText,
-                  prefixIcon: Icon(
-                    Icons.home_work_outlined,
-                    color: Colors.grey.shade600,
-                  ),
-                ),
-              ),
-            ),
-            ElevatedButton(
-              onPressed: _onSearchUserAddress,
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.all(24),
-                textStyle: const TextStyle(fontSize: 14),
-                shape: const RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(10),
-                  ),
-                ),
-              ),
-              child: const Text("주소 검색"),
-            ),
-          ],
-        ),
-        Gaps.v10,
-        TextFormField(
-          controller: _userAddressDetailController,
-          keyboardType: TextInputType.text,
-          decoration: InputDecoration(
-            labelText: '주소 상세 정보',
-            prefixIcon: Icon(
-              Icons.add_home_work_outlined,
-              color: Colors.grey.shade600,
-            ),
-          ),
-          onTap: onChangeBarrier,
-          onFieldSubmitted: _onFieldSubmitted,
-        ),
-      ],
-    );
   }
 }

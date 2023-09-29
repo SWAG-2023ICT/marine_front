@@ -10,6 +10,19 @@ class UserStoreScreen extends StatefulWidget {
 class _UserStoreScreenState extends State<UserStoreScreen> {
   @override
   Widget build(BuildContext context) {
-    return const Scaffold();
+    return Scaffold(
+      appBar: AppBar(
+        centerTitle: true,
+        title: const Text("Mariner"),
+      ),
+      body: NestedScrollView(
+        headerSliverBuilder: (context, innerBoxIsScrolled) => [
+          SliverToBoxAdapter(
+            child: Container(),
+          ),
+        ],
+        body: ListView(),
+      ),
+    );
   }
 }
