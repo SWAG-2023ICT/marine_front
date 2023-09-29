@@ -1,8 +1,8 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
 
-import 'package:swag_marine_products/screens/sign_in_up/widgets/sign_up_first.dart';
-import 'package:swag_marine_products/screens/sign_in_up/widgets/sign_up_second.dart';
+import 'package:swag_marine_products/features/sign_in_up/widgets/sign_up_first.dart';
+import 'package:swag_marine_products/features/sign_in_up/widgets/sign_up_second.dart';
 
 class SignUpScreenArgs {
   const SignUpScreenArgs({
@@ -26,10 +26,7 @@ class SignUpScreen extends StatefulWidget {
   State<SignUpScreen> createState() => _SignUpScreenState();
 }
 
-class _SignUpScreenState extends State<SignUpScreen>
-    with SingleTickerProviderStateMixin {
-  late TabController _tabController;
-
+class _SignUpScreenState extends State<SignUpScreen> {
   bool _isStored = false;
   int selectedIndex = 0;
 
@@ -44,14 +41,6 @@ class _SignUpScreenState extends State<SignUpScreen>
   void initState() {
     super.initState();
     _isStored = widget.isStored;
-    _tabController = TabController(initialIndex: 0, length: 2, vsync: this);
-  }
-
-  @override
-  void dispose() {
-    _tabController.dispose();
-
-    super.dispose();
   }
 
   @override

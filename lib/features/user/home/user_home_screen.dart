@@ -1,20 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:swag_marine_products/constants/sizes.dart';
-import 'package:swag_marine_products/screens/home/widgets/home_menu_button.dart';
-import 'package:swag_marine_products/screens/main_navigation/menus/widgets/radioactivity_banner.dart';
-import 'package:swag_marine_products/screens/main_navigation/navigation_screen.dart';
+import 'package:swag_marine_products/features/user/bookmark/user_bookmark_screen.dart';
+import 'package:swag_marine_products/features/user/home/widgets/home_menu_button.dart';
+import 'package:swag_marine_products/features/user/navigation/menus/widgets/radioactivity_banner.dart';
+import 'package:swag_marine_products/features/user/navigation/navigation_screen.dart';
+import 'package:swag_marine_products/features/user/profile/user_inform_screen.dart';
 
-class MarineHomeScreen extends StatefulWidget {
+class UserHomeScreen extends StatefulWidget {
   static const routeName = "home";
   static const routeURL = "/home";
-  const MarineHomeScreen({super.key});
+  const UserHomeScreen({super.key});
 
   @override
-  State<MarineHomeScreen> createState() => _MarineHomeScreenState();
+  State<UserHomeScreen> createState() => _UserHomeScreenState();
 }
 
-class _MarineHomeScreenState extends State<MarineHomeScreen> {
+class _UserHomeScreenState extends State<UserHomeScreen> {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -28,14 +30,32 @@ class _MarineHomeScreenState extends State<MarineHomeScreen> {
           // ),
           body: Stack(
             children: [
-              Opacity(
-                opacity: 0.6,
-                child: Image.asset(
-                  "assets/images/sea4.png",
-                  fit: BoxFit.cover,
-                  width: MediaQuery.of(context).size.width,
-                  height: MediaQuery.of(context).size.height,
-                ),
+              Column(
+                children: [
+                  Expanded(
+                    flex: 9,
+                    child: Opacity(
+                      opacity: 0.6,
+                      child: Image.asset(
+                        "assets/images/sea4.png",
+                        fit: BoxFit.cover,
+                        width: MediaQuery.of(context).size.width,
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    flex: 1,
+                    child: Opacity(
+                      opacity: 0.6,
+                      child: Image.asset(
+                        'assets/images/sand3.png', // 모래사장 이미지 경로
+                        fit: BoxFit.fill,
+                        repeat: ImageRepeat.repeat, // 이미지 반복 설정
+                        width: MediaQuery.of(context).size.width,
+                      ),
+                    ),
+                  ),
+                ],
               ),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -98,7 +118,10 @@ class _MarineHomeScreenState extends State<MarineHomeScreen> {
                           backgroundColor: Colors.green.shade50,
                           text: "도매시장",
                           onClick: () {
-                            print("도매시장 함수 실행!");
+                            context.pushNamed(
+                              NavigationScreen.routeName,
+                              extra: NavigationScreenArgs(selectedIndex: 1),
+                            );
                           },
                         ),
                         HomeMenuButton(
@@ -107,7 +130,10 @@ class _MarineHomeScreenState extends State<MarineHomeScreen> {
                           backgroundColor: Colors.purple.shade50,
                           text: "통계",
                           onClick: () {
-                            print("그래프 함수 실행!");
+                            context.pushNamed(
+                              NavigationScreen.routeName,
+                              extra: NavigationScreenArgs(selectedIndex: 2),
+                            );
                           },
                         ),
                         HomeMenuButton(
@@ -116,7 +142,10 @@ class _MarineHomeScreenState extends State<MarineHomeScreen> {
                           backgroundColor: Colors.brown.shade50,
                           text: "내정보",
                           onClick: () {
-                            print("내정보 함수 실행!");
+                            context.pushNamed(
+                              NavigationScreen.routeName,
+                              extra: NavigationScreenArgs(selectedIndex: 3),
+                            );
                           },
                         ),
                         HomeMenuButton(
@@ -125,7 +154,9 @@ class _MarineHomeScreenState extends State<MarineHomeScreen> {
                           backgroundColor: Colors.yellow.shade50,
                           text: "즐겨찾기",
                           onClick: () {
-                            print("좋아요 함수 실행!");
+                            context.pushNamed(
+                              UserBookMarkScreen.routeName,
+                            );
                           },
                         ),
                         HomeMenuButton(
@@ -134,7 +165,7 @@ class _MarineHomeScreenState extends State<MarineHomeScreen> {
                           backgroundColor: Colors.grey.shade50,
                           text: "설정",
                           onClick: () {
-                            print("설정 함수 실행!");
+                            context.pushNamed(UserInformScreen.routeName);
                           },
                         ),
                       ],

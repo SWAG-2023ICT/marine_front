@@ -7,17 +7,16 @@ import 'package:swag_marine_products/constants/sizes.dart';
 import 'package:swag_marine_products/models/marine_product.dart';
 
 import 'package:http/http.dart' as http;
-import 'package:swag_marine_products/screens/main_navigation/menus/widgets/marine_product_card.dart';
-import 'package:swag_marine_products/screens/main_navigation/menus/widgets/radioactivity_banner.dart';
+import 'package:swag_marine_products/features/user/navigation/menus/widgets/marine_product_card.dart';
 
-class MarinePriceScreen extends StatefulWidget {
-  const MarinePriceScreen({Key? key}) : super(key: key);
+class UserPriceScreen extends StatefulWidget {
+  const UserPriceScreen({Key? key}) : super(key: key);
 
   @override
-  State<MarinePriceScreen> createState() => _MarinePriceScreenState();
+  State<UserPriceScreen> createState() => _UserPriceScreenState();
 }
 
-class _MarinePriceScreenState extends State<MarinePriceScreen> {
+class _UserPriceScreenState extends State<UserPriceScreen> {
   List<MarineProduct>? _productsList;
 
   final bool _isFirstLoadRunning = true;
@@ -75,33 +74,68 @@ class _MarinePriceScreenState extends State<MarinePriceScreen> {
             ),
             NestedScrollView(
               headerSliverBuilder: (context, innerBoxIsScrolled) => [
-                SliverToBoxAdapter(
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      vertical: Sizes.size10,
-                      horizontal: Sizes.size14,
-                    ),
-                    child: const Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        RadioactivityBanner(),
-                        // Container(
-                        //   child: const Column(
-                        //     children: [
-                        //       Text(
-                        //         "오늘의 최저 가격! Top5!",
-                        //         style: TextStyle(
-                        //           fontSize: 16,
-                        //           fontWeight: FontWeight.bold,
-                        //         ),
-                        //       ),
-                        //     ],
-                        //   ),
-                        // ),
-                      ],
+                // SliverToBoxAdapter(
+                //   child: Container(
+                //     padding: const EdgeInsets.symmetric(
+                //       vertical: Sizes.size10,
+                //       horizontal: Sizes.size14,
+                //     ),
+                //     child: const Column(
+                //       crossAxisAlignment: CrossAxisAlignment.center,
+                //       children: [
+                //         Text(
+                //           "도매시장 가격",
+                //           style: TextStyle(
+                //             fontSize: 26,
+                //           ),
+                //         ),
+                //         // RadioactivityBanner(),
+                //         // Container(
+                //         //   child: const Column(
+                //         //     children: [
+                //         //       Text(
+                //         //         "오늘의 최저 가격! Top5!",
+                //         //         style: TextStyle(
+                //         //           fontSize: 16,
+                //         //           fontWeight: FontWeight.bold,
+                //         //         ),
+                //         //       ),
+                //         //     ],
+                //         //   ),
+                //         // ),
+                //       ],
+                //     ),
+                //   ),
+                // ),
+                SliverAppBar(
+                  automaticallyImplyLeading: false,
+                  centerTitle: true,
+                  pinned: true,
+                  // floating: true,
+                  // snap: true,
+                  surfaceTintColor: Colors.white,
+                  title: TextFormField(
+                    decoration: const InputDecoration(
+                      fillColor: Colors.white,
+                      prefixIcon: Icon(Icons.search),
                     ),
                   ),
-                ),
+                  actions: [
+                    ElevatedButton(
+                      onPressed: () {},
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.all(18),
+                        textStyle: const TextStyle(fontSize: 14),
+                        shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(10),
+                          ),
+                        ),
+                      ),
+                      child: const Text("검색"),
+                    ),
+                  ],
+                )
               ],
               body: ListView.separated(
                 padding: const EdgeInsets.symmetric(

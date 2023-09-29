@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:swag_marine_products/constants/sizes.dart';
-import 'package:swag_marine_products/screens/main_navigation/menus/marine_graph_screen.dart';
-import 'package:swag_marine_products/screens/main_navigation/menus/marine_price_screen.dart';
-import 'package:swag_marine_products/screens/main_navigation/menus/marine_profile_screen.dart';
-import 'package:swag_marine_products/screens/main_navigation/widgets/nav_tab.dart';
-import 'package:swag_marine_products/screens/main_navigation/menus/marine_store_screen.dart';
+import 'package:swag_marine_products/features/user/navigation/menus/user_graph_screen.dart';
+import 'package:swag_marine_products/features/user/navigation/menus/user_price_screen.dart';
+import 'package:swag_marine_products/features/user/navigation/menus/user_profile_screen.dart';
+import 'package:swag_marine_products/features/user/navigation/widgets/nav_tab.dart';
+import 'package:swag_marine_products/features/user/navigation/menus/user_store_screen.dart';
 
 class NavigationScreenArgs {
   NavigationScreenArgs({required this.selectedIndex});
@@ -14,8 +14,8 @@ class NavigationScreenArgs {
 }
 
 class NavigationScreen extends StatefulWidget {
-  static const routeName = "main";
-  static const routeURL = "/main";
+  static const routeName = "navigation";
+  static const routeURL = "navigation";
   const NavigationScreen({
     super.key,
     required this.selectedIndex,
@@ -38,6 +38,13 @@ class _NavigationScreenState extends State<NavigationScreen> {
   }
 
   @override
+  void initState() {
+    super.initState();
+
+    selectedIndex = widget.selectedIndex;
+  }
+
+  @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     print("width : ${size.width}");
@@ -49,21 +56,21 @@ class _NavigationScreenState extends State<NavigationScreen> {
           // 실제로 그 화면을 보고 있지 않더라도 랜더링 시켜주는 위젯
           Offstage(
             offstage: selectedIndex != 0,
-            child: const MarineStoreScreen(),
+            child: const UserStoreScreen(),
           ),
           Offstage(
             offstage: selectedIndex != 1,
-            child: const MarinePriceScreen(),
+            child: const UserPriceScreen(),
           ),
           Offstage(
             offstage: selectedIndex != 2,
             //child: const SearchVolScreen(),
-            child: const MarineGraphScreen(),
+            child: const UserGraphScreen(),
           ),
           Offstage(
             offstage: selectedIndex != 3,
             //child: const SearchVolScreen(),
-            child: const MarineProfileScreen(),
+            child: const UserProfileScreen(),
           ),
         ],
       ),

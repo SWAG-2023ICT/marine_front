@@ -12,11 +12,14 @@
 - images : 이미지
 - videos : 비디오
 
-#### screens : 페이지 별로 파일/폴더 생성
+#### features : 기능 별로 파일/폴더 생성
 
-- main_navigation : 메인 네비게이션 페이지(기초 틀)
-- menus : 네이베이션에 들어갈 내부 페이지
-- sign_in_up : 로그인/회원가입
+- user : 유저 기능 및 페이지가 포함되어 있는 폴더
+  1. home : 네비게이션으로 가기 전 페이지
+  2. navigation : 메인 네비게이션 및 하위 페이지 폴더
+  3. profile : 사용자 프로필 기능 폴더
+  4. sign_in_up : 로그인/회원가입
+- store : 가게 기능 및 페이지가 포함되어 있는 폴더
 
 #### constants : 정적으로 생성한 클래스들이 위치한 곳
 
@@ -39,6 +42,7 @@
 - kpostal: ^0.5.1 (카카오 주소 검색 라이브러리)
 
 ## 화면 프로토타입
+
 ### 로그인 & 회원가입
 
 <img src="https://github.com/SWAG-2023ICT/marine_front/assets/77985708/5446a36e-1d00-4c78-bfa2-519eab6d7c6f.jpg" width="200" height="450"/>
@@ -46,4 +50,3 @@
 <img src="https://github.com/SWAG-2023ICT/marine_front/assets/77985708/8d61ac55-3a63-4650-b5a9-3bc3a0a88690.jpg" width="200" height="450"/>
 <img src="https://github.com/SWAG-2023ICT/marine_front/assets/77985708/aecb20cb-d803-4298-bc5e-818461d79b12.jpg" width="200" height="450"/>
 <img src="https://github.com/SWAG-2023ICT/marine_front/assets/77985708/4cd3e9c5-6ce6-4f39-aa02-126a5a2b362f.jpg" width="200" height="450"/>
-

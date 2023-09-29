@@ -4,8 +4,8 @@ import 'package:go_router/go_router.dart';
 import 'package:kpostal/kpostal.dart';
 
 import 'package:swag_marine_products/constants/gaps.dart';
-import 'package:swag_marine_products/screens/sign_in_up/widgets/bottom_button.dart';
-import 'package:swag_marine_products/screens/sign_in_up/widgets/centered_divider.dart';
+import 'package:swag_marine_products/features/sign_in_up/widgets/bottom_button.dart';
+import 'package:swag_marine_products/features/sign_in_up/widgets/centered_divider.dart';
 import 'package:swag_marine_products/widget_tools/swag_platform_dialog.dart';
 
 class SignUpFirst extends StatefulWidget {

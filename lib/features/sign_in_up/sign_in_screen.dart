@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:swag_marine_products/constants/gaps.dart';
-import 'package:swag_marine_products/screens/home/marine_home_screen.dart';
-import 'package:swag_marine_products/screens/sign_in_up/sign_up_screen.dart';
+import 'package:swag_marine_products/features/user/home/user_home_screen.dart';
+import 'package:swag_marine_products/features/sign_in_up/sign_up_screen.dart';
 import 'package:swag_marine_products/storages/login_storage.dart';
 
 class SignInScreen extends StatefulWidget {
@@ -84,7 +84,7 @@ class _SignInScreenState extends State<SignInScreen> {
       );
     }
 
-    context.replaceNamed(MarineHomeScreen.routeName);
+    context.replaceNamed(UserHomeScreen.routeName);
   }
 
   Future<void> _onTapSignUp() async {
