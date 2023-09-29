@@ -1,4 +1,5 @@
 import 'package:go_router/go_router.dart';
+import 'package:swag_marine_products/screens/home/marine_home_screen.dart';
 import 'package:swag_marine_products/screens/main_navigation/navigation_screen.dart';
 import 'package:swag_marine_products/screens/sign_in_up/sign_in_screen.dart';
 import 'package:swag_marine_products/screens/sign_in_up/sign_up_screen.dart';
@@ -24,9 +25,24 @@ final router = GoRouter(
       },
     ),
     GoRoute(
+      name: MarineHomeScreen.routeName,
+      path: MarineHomeScreen.routeURL,
+      builder: (context, state) => const MarineHomeScreen(),
+    ),
+    GoRoute(
       name: NavigationScreen.routeName,
       path: NavigationScreen.routeURL,
-      builder: (context, state) => const NavigationScreen(),
+      builder: (context, state) {
+        if (state.extra != null) {
+          final args = state.extra as NavigationScreenArgs;
+          return NavigationScreen(
+            selectedIndex: args.selectedIndex,
+          );
+        }
+        return const NavigationScreen(
+          selectedIndex: 0,
+        );
+      },
     ),
   ],
 );

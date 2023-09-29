@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:swag_marine_products/constants/gaps.dart';
-import 'package:swag_marine_products/screens/main_navigation/navigation_screen.dart';
+import 'package:swag_marine_products/screens/home/marine_home_screen.dart';
 import 'package:swag_marine_products/screens/sign_in_up/sign_up_screen.dart';
 import 'package:swag_marine_products/storages/login_storage.dart';
 
@@ -22,7 +22,7 @@ class _SignInScreenState extends State<SignInScreen> {
 
   bool _rememberMe = false;
   bool _isStored = false;
-  bool _isSubmitted = false;
+  bool _isSubmitted = true;
   final List<bool> _isSelected = [false, true];
 
   final RegExp _idRegExp = RegExp(r'^[a-z0-9]+$'); // 아이디 정규식
@@ -48,14 +48,18 @@ class _SignInScreenState extends State<SignInScreen> {
     }
   }
 
+  // 비밀번호 정규식
+  final RegExp _passwordRegExp =
+      RegExp(r'^(?=.*[A-Z])(?=.*\d)(?=.*[\W_])[A-Za-z\d\W_]{8,}$');
+
   void _validatePassword(String value) {
     if (value.isEmpty) {
       setState(() {
         _passwordErrorText = '비밀번호를 입력하세요.';
       });
-    } else if (value.length < _minPasswordLength) {
+    } else if (!_passwordRegExp.hasMatch(value)) {
       setState(() {
-        _passwordErrorText = '비밀번호는 최소 $_minPasswordLength 글자 이상이어야 합니다.';
+        _passwordErrorText = '영문자와 숫자, 특수기호를 포함한 8자 이상 입력하세요.';
       });
     } else {
       setState(() {
@@ -80,7 +84,7 @@ class _SignInScreenState extends State<SignInScreen> {
       );
     }
 
-    context.replaceNamed(NavigationScreen.routeName);
+    context.replaceNamed(MarineHomeScreen.routeName);
   }
 
   Future<void> _onTapSignUp() async {

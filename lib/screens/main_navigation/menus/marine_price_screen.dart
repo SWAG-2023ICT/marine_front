@@ -7,8 +7,8 @@ import 'package:swag_marine_products/constants/sizes.dart';
 import 'package:swag_marine_products/models/marine_product.dart';
 
 import 'package:http/http.dart' as http;
-import 'package:swag_marine_products/screens/menus/widgets/marine_product_card.dart';
-import 'package:swag_marine_products/screens/menus/widgets/radioactivity_banner.dart';
+import 'package:swag_marine_products/screens/main_navigation/menus/widgets/marine_product_card.dart';
+import 'package:swag_marine_products/screens/main_navigation/menus/widgets/radioactivity_banner.dart';
 
 class MarinePriceScreen extends StatefulWidget {
   const MarinePriceScreen({Key? key}) : super(key: key);
