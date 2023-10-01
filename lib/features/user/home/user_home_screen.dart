@@ -6,6 +6,7 @@ import 'package:swag_marine_products/features/user/home/widgets/home_menu_button
 import 'package:swag_marine_products/features/user/navigation/menus/widgets/radioactivity_banner.dart';
 import 'package:swag_marine_products/features/user/navigation/navigation_screen.dart';
 import 'package:swag_marine_products/features/user/profile/user_inform_screen.dart';
+import 'package:swag_marine_products/storages/address_storage.dart';
 
 class UserHomeScreen extends StatefulWidget {
   static const routeName = "home";
@@ -17,6 +18,13 @@ class UserHomeScreen extends StatefulWidget {
 }
 
 class _UserHomeScreenState extends State<UserHomeScreen> {
+  @override
+  void initState() {
+    super.initState();
+
+    // AddressStorage.resetAddressList();
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(

@@ -238,13 +238,15 @@ class _SignUpFirstState extends State<SignUpFirst> {
   }
 
   void _onSearchUserAddress() async {
-    Kpostal result = await Navigator.push(
+    Kpostal? result = await Navigator.push(
         context, MaterialPageRoute(builder: (_) => KpostalView()));
-    print(result.address);
-    setState(() {
-      _userAddressController.text = result.address;
-    });
-    _onCheckSubmitted();
+    if (result != null) {
+      print(result.address);
+      setState(() {
+        _userAddressController.text = result.address;
+      });
+      _onCheckSubmitted();
+    }
   }
 
   void _onCheckAuthUserCode() {
@@ -428,13 +430,15 @@ class _SignUpFirstState extends State<SignUpFirst> {
   }
 
   void _onSearchStoreAddress() async {
-    Kpostal result = await Navigator.push(
+    Kpostal? result = await Navigator.push(
         context, MaterialPageRoute(builder: (_) => KpostalView()));
-    print(result.address);
-    setState(() {
-      _storeAddressController.text = result.address;
-    });
-    _onCheckSubmitted();
+    if (result != null) {
+      print(result.address);
+      setState(() {
+        _storeAddressController.text = result.address;
+      });
+      _onCheckSubmitted();
+    }
   }
 
   void _validateStoreBusinessPhoneNumber(String value) {

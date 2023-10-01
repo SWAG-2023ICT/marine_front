@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:swag_marine_products/constants/gaps.dart';
 import 'package:swag_marine_products/constants/sizes.dart';
 import 'package:swag_marine_products/features/sign_in_up/widgets/centered_divider.dart';
+import 'package:swag_marine_products/features/user/address/user_address_list.dart';
 import 'package:swag_marine_products/features/user/profile/user_inform_update_screen.dart';
 
 class UserInformInquiryScreen extends StatefulWidget {
@@ -19,7 +20,7 @@ class UserInformInquiryScreen extends StatefulWidget {
 }
 
 class _UserInformInquiryScreenState extends State<UserInformInquiryScreen> {
-  String _address = "주소 1";
+  final String _address = "주소 1";
 
   @override
   Widget build(BuildContext context) {
@@ -166,86 +167,8 @@ class _UserInformInquiryScreenState extends State<UserInformInquiryScreen> {
                   ),
                 ],
               ),
-              Gaps.v10,
-              const CenteredDivider(text: "주소 리스트"),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  ElevatedButton(
-                    onPressed: () {},
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.all(10),
-                      textStyle: const TextStyle(fontSize: 14),
-                      shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(10),
-                        ),
-                      ),
-                    ),
-                    child: const Text("추가"),
-                  ),
-                  Gaps.h10,
-                  ElevatedButton(
-                    onPressed: () {},
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.all(10),
-                      textStyle: const TextStyle(fontSize: 14),
-                      shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(10),
-                        ),
-                      ),
-                    ),
-                    child: const Text("적용"),
-                  ),
-                ],
-              ),
-              ListView.separated(
-                padding: const EdgeInsets.symmetric(vertical: 10),
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: 10,
-                shrinkWrap: true,
-                separatorBuilder: (context, index) => Gaps.v6,
-                itemBuilder: (context, index) {
-                  return Container(
-                    decoration: BoxDecoration(
-                      border: Border.all(width: 1),
-                      borderRadius: const BorderRadius.all(
-                        Radius.circular(20),
-                      ),
-                    ),
-                    child: RadioListTile(
-                      contentPadding: EdgeInsets.zero,
-                      value: "주소 ${index + 1}",
-                      groupValue: _address,
-                      onChanged: (value) {
-                        setState(() {
-                          _address = value!;
-                        });
-                      },
-                      title: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Expanded(
-                              child: Text(
-                            "주소 별명 ${index + 1}",
-                            maxLines: 2,
-                          )),
-                          IconButton(
-                            onPressed: () {},
-                            icon: const Icon(Icons.delete),
-                            iconSize: 30,
-                          ),
-                        ],
-                      ),
-                      subtitle: Text(
-                        "주소 ${index + 1}",
-                        maxLines: 3,
-                      ),
-                    ),
-                  );
-                },
-              ),
+              // Gaps.v10,
+              // const UserAddressList(),
             ],
           ),
         ),

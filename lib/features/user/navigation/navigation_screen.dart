@@ -46,9 +46,6 @@ class _NavigationScreenState extends State<NavigationScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
-    print("width : ${size.width}");
-    print("height : ${size.height}");
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: Stack(

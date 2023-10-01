@@ -63,9 +63,10 @@ class _UserProfileCardState extends State<UserProfileCard> {
       onTap: () {
         context.pushNamed(UserInformInquiryScreen.routeName);
       },
-      leading: const CircleAvatar(
+      leading: CircleAvatar(
         radius: 40,
-        child: FaIcon(
+        backgroundColor: Colors.blue.shade400,
+        child: const FaIcon(
           FontAwesomeIcons.solidCircleUser,
           size: 45,
           color: Colors.white,
