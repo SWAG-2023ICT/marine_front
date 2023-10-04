@@ -8,8 +8,8 @@ import 'package:http/http.dart' as http;
 import 'package:xml/xml.dart';
 
 class RadioactivityDetailScreen extends StatefulWidget {
-  static const routeName = "radioactivityDetail";
-  static const routeURL = "radioactivityDetail";
+  static const routeName = "radioactivity_detail";
+  static const routeURL = "radioactivity_detail";
   const RadioactivityDetailScreen({super.key});
 
   @override

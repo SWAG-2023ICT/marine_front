@@ -1,8 +1,10 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:swag_marine_products/constants/gaps.dart';
 import 'package:swag_marine_products/features/user/home/widgets/radioactivity_banner.dart';
+import 'package:swag_marine_products/features/user/order/user_order_screen.dart';
 
 class UserStoreScreen extends StatefulWidget {
   const UserStoreScreen({super.key});
@@ -37,6 +39,10 @@ class _UserStoreScreenState extends State<UserStoreScreen> {
   }
 
   Future<void> _onSearch() async {}
+
+  void _onTapStore() {
+    context.pushNamed(UserOrderScreen.routeName);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -145,54 +151,58 @@ class _UserStoreScreenState extends State<UserStoreScreen> {
                       //     ],
                       //   ),
                       // ),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Image.asset(
-                            "assets/images/fishShop.png",
-                            width: 100,
-                            height: 100,
-                          ),
-                          Gaps.h6,
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    const Expanded(
-                                      child: Text(
-                                        "[가게 이름]",
-                                        maxLines: 1,
-                                        style: TextStyle(
-                                          fontSize: 16,
+                      child: InkWell(
+                        onTap: _onTapStore,
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Image.asset(
+                              "assets/images/fishShop.png",
+                              width: 100,
+                              height: 100,
+                            ),
+                            Gaps.h6,
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      const Expanded(
+                                        child: Text(
+                                          "[가게 이름]",
+                                          maxLines: 1,
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.only(right: 10),
-                                      child: InkWell(
-                                        onTap: () {},
-                                        child:
-                                            const Icon(Icons.favorite_outline),
+                                      Padding(
+                                        padding:
+                                            const EdgeInsets.only(right: 10),
+                                        child: InkWell(
+                                          onTap: () {},
+                                          child: const Icon(
+                                              Icons.favorite_outline),
+                                        ),
                                       ),
-                                    ),
 
-                                    // IconButton(
-                                    //   onPressed: () {},
-                                    //   icon: const Icon(Icons.favorite_outline),
-                                    // ),
-                                  ],
-                                ),
-                                const Divider(),
-                                const Text("가게 주소 : ${"진주시 가좌동"}"),
-                                const Text("가게 번호 : ${"010-0000-0000"}"),
-                              ],
+                                      // IconButton(
+                                      //   onPressed: () {},
+                                      //   icon: const Icon(Icons.favorite_outline),
+                                      // ),
+                                    ],
+                                  ),
+                                  const Divider(),
+                                  const Text("가게 주소 : ${"진주시 가좌동"}"),
+                                  const Text("가게 번호 : ${"010-0000-0000"}"),
+                                ],
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
                   ),
