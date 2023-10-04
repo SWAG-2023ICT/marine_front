@@ -59,10 +59,10 @@ class _RadioactivityBannerState extends State<RadioactivityBanner> {
       final dailyTotCnt =
           xmlData.findAllElements('dailyTotCnt').first.innerText;
 
-      print(dailyDate);
-      print(dailyPassCnt);
-      print(dailyFailCnt);
-      print(dailyTotCnt);
+      // print(dailyDate);
+      // print(dailyPassCnt);
+      // print(dailyFailCnt);
+      // print(dailyTotCnt);
 
       final itemData = RadioactivityBannerModel(
         dailyDate: DateTime.parse(dailyDate),
@@ -155,7 +155,7 @@ class _RadioactivityBannerState extends State<RadioactivityBanner> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        "검사날짜 : [${DateFormat('yyyy-MM-dd').format(_bannerData!.dailyDate)}]",
+                        "검사날짜 : ${DateFormat('yyyy-MM-dd').format(_bannerData!.dailyDate)}",
                       ),
                       GestureDetector(
                         onTap: () => context

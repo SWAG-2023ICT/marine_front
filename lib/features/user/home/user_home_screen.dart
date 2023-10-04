@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:swag_marine_products/constants/sizes.dart';
-import 'package:swag_marine_products/features/user/bookmark/user_bookmark_screen.dart';
 import 'package:swag_marine_products/features/user/home/widgets/home_menu_button.dart';
 import 'package:swag_marine_products/features/user/home/widgets/radioactivity_banner.dart';
 import 'package:swag_marine_products/features/user/navigation/navigation_screen.dart';
 import 'package:swag_marine_products/features/user/profile/user_inform_screen.dart';
-import 'package:swag_marine_products/storages/address_storage.dart';
 
 class UserHomeScreen extends StatefulWidget {
   static const routeName = "home";
@@ -31,6 +29,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
       child: GestureDetector(
         onTap: () => FocusScope.of(context).unfocus(),
         child: Scaffold(
+          resizeToAvoidBottomInset: false,
           body: Stack(
             children: [
               Column(

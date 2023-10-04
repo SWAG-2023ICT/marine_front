@@ -8,7 +8,7 @@ import 'package:swag_marine_products/storages/login_storage.dart';
 
 class UserInformScreen extends StatelessWidget {
   static const routeName = "user_inform";
-  static const routeURL = "user_inform";
+  static const routeURL = "/user_inform";
   const UserInformScreen({super.key});
 
   // 로그아웃

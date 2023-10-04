@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:swag_marine_products/constants/gaps.dart';
 import 'package:swag_marine_products/constants/sizes.dart';
-import 'package:swag_marine_products/features/sign_in_up/widgets/centered_divider.dart';
-import 'package:swag_marine_products/features/user/address/user_address_list.dart';
 import 'package:swag_marine_products/features/user/profile/user_inform_update_screen.dart';
 
 class UserInformInquiryScreen extends StatefulWidget {

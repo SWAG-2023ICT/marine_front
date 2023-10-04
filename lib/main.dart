@@ -18,7 +18,7 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       theme: ThemeData(
         useMaterial3: true,
-        primaryColor: Colors.blue.shade400,
+        primaryColor: Colors.blue.shade200,
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue.shade400),
         appBarTheme: const AppBarTheme(
           systemOverlayStyle: SystemUiOverlayStyle.light,
@@ -26,10 +26,10 @@ class MyApp extends StatelessWidget {
       ),
       darkTheme: ThemeData(
         useMaterial3: true,
-        primaryColor: Colors.blue.shade400,
+        primaryColor: Colors.blue.shade200,
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue.shade400),
         appBarTheme: const AppBarTheme(
-          systemOverlayStyle: SystemUiOverlayStyle.dark,
+          systemOverlayStyle: SystemUiOverlayStyle.light,
         ),
       ),
     );
