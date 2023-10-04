@@ -7,6 +7,7 @@ import 'package:swag_marine_products/features/sign_in_up/sign_up_screen.dart';
 import 'package:swag_marine_products/features/user/profile/user_inform_inquiry_screen.dart';
 import 'package:swag_marine_products/features/user/profile/user_inform_screen.dart';
 import 'package:swag_marine_products/features/user/profile/user_inform_update_screen.dart';
+import 'package:swag_marine_products/features/user/radioactivity/radioactivity_detail_screen.dart';
 
 final router = GoRouter(
   routes: [
@@ -33,6 +34,11 @@ final router = GoRouter(
       path: UserHomeScreen.routeURL,
       builder: (context, state) => const UserHomeScreen(),
       routes: [
+        GoRoute(
+          path: RadioactivityDetailScreen.routeURL,
+          name: RadioactivityDetailScreen.routeName,
+          builder: (context, state) => const RadioactivityDetailScreen(),
+        ),
         GoRoute(
           name: NavigationScreen.routeName,
           path: NavigationScreen.routeURL,

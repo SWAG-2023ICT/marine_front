@@ -1,8 +1,9 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 import 'package:swag_marine_products/constants/gaps.dart';
 import 'package:swag_marine_products/constants/sizes.dart';
+import 'package:swag_marine_products/features/user/radioactivity/radioactivity_detail_screen.dart';
 import 'package:swag_marine_products/models/radioactivity_banner_model.dart';
 import 'package:xml/xml.dart';
 
@@ -17,54 +18,68 @@ class RadioactivityBanner extends StatefulWidget {
 }
 
 class _RadioactivityBannerState extends State<RadioactivityBanner> {
-  late RadioactivityBannerModel _bannerData;
+  RadioactivityBannerModel? _bannerData;
 
   bool _isFirstLoading = false;
 
   @override
   void initState() {
     super.initState();
+
+    _initBannerData();
   }
 
-  void initBannerData() async {
+  void _initBannerData() async {
     setState(() {
       _isFirstLoading = true;
     });
     final url = Uri.parse(
-        "https://www.nfqs.go.kr/hpmg/front/api/radioactivity/DailyRslt.do");
-    final headers = {'Content-Type': 'application/json'};
+        "https://www.nfqs.go.kr/hpmg/front/api/radioactivityDailyRslt.do");
+    final headers = {
+      'Content-Type': 'application/json',
+    };
     final data = {
       'cert_key':
-          '5F387470A18F43DEE7BEDB222FA91C524B6BB02A1711FDD4902AB163828DADEA'
+          '5F387470A18F43DEE7BEDB222FA91C524B6BB02A1711FDD4902AB163828DADEA',
+      'inspType': '01',
     };
 
-    final response =
-        await http.post(url, headers: headers, body: jsonEncode(data));
+    final response = await http.post(url, body: data);
 
     if (response.statusCode >= 200 && response.statusCode < 300) {
       final xmlData = XmlDocument.parse(response.body);
+      print(xmlData);
 
-      final dailyDate = xmlData.findAllElements('dailyDate').toString() ?? '';
+      // xmlData의 데이터를 RadioactivityBannerModel.fromJson으로 파싱하는 작업 추가
+      final dailyDate = xmlData.findAllElements('dailyDate').first.innerText;
       final dailyPassCnt =
-          xmlData.findAllElements('dailyPassCnt').toString() ?? '0';
+          xmlData.findAllElements('dailyPassCnt').first.innerText;
       final dailyFailCnt =
-          xmlData.findAllElements('dailyFailCnt').toString() ?? '0';
+          xmlData.findAllElements('dailyFailCnt').first.innerText;
       final dailyTotCnt =
-          xmlData.findAllElements('dailyTotCnt').toString() ?? '0';
+          xmlData.findAllElements('dailyTotCnt').first.innerText;
+
+      print(dailyDate);
+      print(dailyPassCnt);
+      print(dailyFailCnt);
+      print(dailyTotCnt);
+
+      final itemData = RadioactivityBannerModel(
+        dailyDate: DateTime.parse(dailyDate),
+        dailyPassCnt: int.parse(dailyPassCnt),
+        dailyFailCnt: int.parse(dailyFailCnt),
+        dailyTotCnt: int.parse(dailyTotCnt),
+      );
 
       setState(() {
-        final bannerData = RadioactivityBannerModel(
-          dailyDate: DateTime.parse(dailyDate),
-          dailyPassCnt: dailyPassCnt as int,
-          dailyFailCnt: dailyFailCnt as int,
-          dailyTotCnt: dailyTotCnt as int,
-        );
+        _bannerData = itemData;
       });
     } else {
+      if (!mounted) return;
       swagPlatformDialog(
         context: context,
         title: "통신 오류",
-        message: "방사능 결과를 받아오지 못했습니다",
+        message: "방사능 결과를 받아오지 못했습니다 ${response.statusCode} : ${response.body}",
         actions: [
           TextButton(
             onPressed: () => context.pop(),
@@ -85,18 +100,20 @@ class _RadioactivityBannerState extends State<RadioactivityBanner> {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.grey.shade100,
+        color: _isFirstLoading ? Colors.transparent : Colors.grey.shade100,
         borderRadius: const BorderRadius.all(
           Radius.circular(10.0),
         ),
-        boxShadow: const [
-          BoxShadow(
-            color: Colors.grey, // 그림자 색상
-            offset: Offset(1.5, 1.5), // 그림자 위치 (가로, 세로)
-            blurRadius: 5, // 그림자의 흐림 정도
-            spreadRadius: 0, // 그림자 확산 정도
-          ),
-        ],
+        boxShadow: _isFirstLoading
+            ? null
+            : [
+                const BoxShadow(
+                  color: Colors.grey, // 그림자 색상
+                  offset: Offset(1.5, 1.5), // 그림자 위치 (가로, 세로)
+                  blurRadius: 5, // 그림자의 흐림 정도
+                  spreadRadius: 0, // 그림자 확산 정도
+                ),
+              ],
       ),
       child: _isFirstLoading
           ? const CircularProgressIndicator.adaptive()
@@ -123,7 +140,7 @@ class _RadioactivityBannerState extends State<RadioactivityBanner> {
                   ),
                   Gaps.h6,
                   const Text(
-                    "수산물 일일 방사능 검사결과",
+                    "일일 방사능 검사결과",
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
@@ -131,8 +148,30 @@ class _RadioactivityBannerState extends State<RadioactivityBanner> {
                   ),
                 ],
               ),
-              trailing: Text("[${_bannerData.dailyDate}]"),
               children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        "검사날짜 : [${DateFormat('yyyy-MM-dd').format(_bannerData!.dailyDate)}]",
+                      ),
+                      GestureDetector(
+                        onTap: () => context
+                            .pushNamed(RadioactivityDetailScreen.routeName),
+                        child: const Text(
+                          "상세보기>",
+                          style: TextStyle(
+                            color: Colors.grey,
+                            fontSize: 16,
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+                Gaps.v10,
                 Padding(
                   padding: const EdgeInsets.only(
                     bottom: Sizes.size8,
@@ -144,17 +183,17 @@ class _RadioactivityBannerState extends State<RadioactivityBanner> {
                     children: [
                       RadioactivityCard(
                         title: "전체 건 수",
-                        num: _bannerData.dailyTotCnt,
+                        num: _bannerData!.dailyTotCnt,
                       ),
                       RadioactivityCard(
                         title: "적합 건 수",
-                        num: _bannerData.dailyPassCnt,
+                        num: _bannerData!.dailyPassCnt,
                         isNumBold: true,
                         numColor: Colors.blue,
                       ),
                       RadioactivityCard(
                         title: "부적합 건 수",
-                        num: _bannerData.dailyFailCnt,
+                        num: _bannerData!.dailyFailCnt,
                         isNumBold: true,
                         numColor: Colors.red,
                       ),

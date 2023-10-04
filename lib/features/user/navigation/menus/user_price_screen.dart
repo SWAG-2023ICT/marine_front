@@ -17,6 +17,8 @@ class UserPriceScreen extends StatefulWidget {
 }
 
 class _UserPriceScreenState extends State<UserPriceScreen> {
+  final TextEditingController _searchController = TextEditingController();
+
   List<MarineProduct>? _productsList;
 
   final bool _isFirstLoadRunning = true;
@@ -117,6 +119,7 @@ class _UserPriceScreenState extends State<UserPriceScreen> {
                   // snap: true,
                   surfaceTintColor: Colors.white,
                   title: TextFormField(
+                    controller: _searchController,
                     onTap: () {
                       setState(() {
                         _isBarriered = true;
