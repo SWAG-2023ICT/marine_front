@@ -6,10 +6,10 @@ import 'package:swag_marine_products/features/sign_in_up/sign_in_screen.dart';
 import 'package:swag_marine_products/features/user/profile/user_inform_inquiry_screen.dart';
 import 'package:swag_marine_products/storages/login_storage.dart';
 
-class UserInformScreen extends StatelessWidget {
-  static const routeName = "user_inform";
-  static const routeURL = "user_inform";
-  const UserInformScreen({super.key});
+class StoreInformScreen extends StatelessWidget {
+  static const routeName = "store_inform";
+  static const routeURL = "store_inform";
+  const StoreInformScreen({super.key});
 
   // 로그아웃
   void onLogoutTap(BuildContext context) {

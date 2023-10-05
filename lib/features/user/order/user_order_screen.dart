@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:swag_marine_products/constants/gaps.dart';
 import 'package:swag_marine_products/features/user/order/user_order_sheet.dart';
+import 'package:swag_marine_products/features/user/order/widgets/menu_card.dart';
 import 'package:swag_marine_products/models/product_model.dart';
 import 'package:swag_marine_products/widget_tools/swag_platform_dialog.dart';
 
@@ -19,6 +20,7 @@ class UserOrderScreen extends StatefulWidget {
 class _UserOrderScreenState extends State<UserOrderScreen> {
   List<ProductModel>? _productList;
 
+  bool _isFavorited = false;
   bool _isFirstLoading = false;
 
   @override
@@ -68,13 +70,10 @@ class _UserOrderScreenState extends State<UserOrderScreen> {
     });
   }
 
-  void _onProductTap() async {
-    showModalBottomSheet(
-      context: context,
-      builder: (context) => const UserOrderSheet(),
-      useSafeArea: true,
-      isScrollControlled: true,
-    );
+  void _onClickFavorite() {
+    setState(() {
+      _isFavorited = !_isFavorited;
+    });
   }
 
   @override
@@ -115,31 +114,53 @@ class _UserOrderScreenState extends State<UserOrderScreen> {
                       horizontal: 50,
                     ),
                     padding: const EdgeInsets.all(10),
-                    decoration: const BoxDecoration(
+                    decoration: BoxDecoration(
                       color: Colors.white,
-                      borderRadius: BorderRadius.all(
+                      borderRadius: const BorderRadius.all(
                         Radius.circular(10),
                       ),
+                      boxShadow: [
+                        BoxShadow(
+                          offset: const Offset(1.5, 1.5),
+                          blurRadius: 1,
+                          color: Colors.grey.shade400,
+                        ),
+                      ],
                     ),
-                    child: const Column(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          "가게 이름",
-                          style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
+                        ListTile(
+                          contentPadding: const EdgeInsets.only(left: 10),
+                          title: const Text(
+                            "가게 이름",
+                            style: TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          trailing: IconButton(
+                            onPressed: _onClickFavorite,
+                            icon: _isFavorited
+                                ? const Icon(
+                                    Icons.favorite,
+                                    size: 30,
+                                    color: Colors.red,
+                                  )
+                                : const Icon(
+                                    Icons.favorite_outline,
+                                    size: 30,
+                                  ),
                           ),
                         ),
-                        Text(
+                        const Text(
                           "전화번호 : 010-0000-0000",
-                          textAlign: TextAlign.start,
                           style: TextStyle(
                             fontSize: 16,
                           ),
                         ),
-                        Text(
+                        const Text(
                           "주소 : 진주시 가좌동",
-                          textAlign: TextAlign.start,
                           style: TextStyle(
                             fontSize: 16,
                           ),
@@ -153,77 +174,33 @@ class _UserOrderScreenState extends State<UserOrderScreen> {
                   ? const Center(
                       child: CircularProgressIndicator(),
                     )
-                  : ListView.separated(
-                      padding: const EdgeInsets.symmetric(horizontal: 10),
-                      itemCount: 20,
-                      separatorBuilder: (context, index) => const Divider(
-                        height: 0,
-                        color: Colors.black54,
-                      ),
-                      itemBuilder: (context, index) {
-                        String image;
-                        if (index % 3 == 0) {
-                          image = "assets/images/fish3.png";
-                        } else if (index % 2 == 0) {
-                          image = "assets/images/fish2.png";
-                        } else {
-                          image = "assets/images/fish.png";
-                        }
-                        return GestureDetector(
-                          onTap: _onProductTap,
-                          child: Container(
-                            decoration: const BoxDecoration(
-                              color: Colors.white,
-                              // border: Border(
-                              //   top: BorderSide(
-                              //     width: 0.5,
-                              //   ),
-                              //   bottom: BorderSide(
-                              //     width: 0.5,
-                              //   ),
-                              // ),
-                            ),
-                            child: Row(
-                              children: [
-                                const Expanded(
-                                  child: Padding(
-                                    padding:
-                                        EdgeInsets.symmetric(horizontal: 10),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          "OOO물고기",
-                                          style: TextStyle(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                        Gaps.v6,
-                                        Text(
-                                          "최저 가격 : ",
-                                          style: TextStyle(fontSize: 16),
-                                        ),
-                                        Text(
-                                          "원산지 : ",
-                                          style: TextStyle(fontSize: 16),
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                                Image.asset(
-                                  image,
-                                  width: 100,
-                                  height: 100,
-                                  fit: BoxFit.fill,
-                                ),
-                              ],
-                            ),
+                  : Container(
+                      decoration: const BoxDecoration(
+                        border: Border(
+                          top: BorderSide(
+                            color: Colors.black54,
                           ),
-                        );
-                      },
+                        ),
+                      ),
+                      child: ListView.separated(
+                        // padding: const EdgeInsets.symmetric(horizontal: 10),
+                        itemCount: 20,
+                        separatorBuilder: (context, index) => const Divider(
+                          height: 0,
+                          color: Colors.black54,
+                        ),
+                        itemBuilder: (context, index) {
+                          String image;
+                          if (index % 3 == 0) {
+                            image = "assets/images/fish3.png";
+                          } else if (index % 2 == 0) {
+                            image = "assets/images/fish2.png";
+                          } else {
+                            image = "assets/images/fish.png";
+                          }
+                          return MenuCard(image: image);
+                        },
+                      ),
                     ),
             ),
           ],

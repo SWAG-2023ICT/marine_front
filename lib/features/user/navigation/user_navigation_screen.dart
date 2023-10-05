@@ -1,21 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:swag_marine_products/constants/sizes.dart';
+import 'package:swag_marine_products/features/user/navigation/menus/user_bookmark_screen.dart';
 import 'package:swag_marine_products/features/user/navigation/menus/user_price_screen.dart';
 import 'package:swag_marine_products/features/user/navigation/menus/user_profile_screen.dart';
 import 'package:swag_marine_products/features/user/navigation/widgets/nav_tab.dart';
 import 'package:swag_marine_products/features/user/navigation/menus/user_store_screen.dart';
 
-class NavigationScreenArgs {
-  NavigationScreenArgs({required this.selectedIndex});
+class UserNavigationScreenArgs {
+  UserNavigationScreenArgs({required this.selectedIndex});
 
   final int selectedIndex;
 }
 
-class NavigationScreen extends StatefulWidget {
+class UserNavigationScreen extends StatefulWidget {
   static const routeName = "navigation";
   static const routeURL = "/navigation";
-  const NavigationScreen({
+  const UserNavigationScreen({
     super.key,
     required this.selectedIndex,
   });
@@ -23,10 +24,10 @@ class NavigationScreen extends StatefulWidget {
   final int selectedIndex;
 
   @override
-  State<NavigationScreen> createState() => _NavigationScreenState();
+  State<UserNavigationScreen> createState() => _UserNavigationScreenState();
 }
 
-class _NavigationScreenState extends State<NavigationScreen> {
+class _UserNavigationScreenState extends State<UserNavigationScreen> {
   int selectedIndex = 0;
 
   void _onTap(int index) {
@@ -64,7 +65,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
             ),
             Offstage(
               offstage: selectedIndex != 1,
-              child: const UserPriceScreen(),
+              child: const UserBookMarkScreen(),
             ),
             // Offstage(
             //   offstage: selectedIndex != 2,
@@ -79,20 +80,26 @@ class _NavigationScreenState extends State<NavigationScreen> {
           ],
         ),
         bottomNavigationBar: Container(
-          decoration: BoxDecoration(
-            // color: Colors.grey.shade50,
-            color: selectedIndex == 1
-                ? const Color.fromARGB(255, 152, 197, 255)
-                : null,
-            image: selectedIndex == 1
-                ? const DecorationImage(
-                    image: AssetImage(
-                      'assets/images/sand3.png',
-                    ), // 모래사장 이미지 경로
-                    fit: BoxFit.fill,
-                    repeat: ImageRepeat.repeat, // 이미지 반복 설정
-                  )
-                : null,
+          decoration: const BoxDecoration(
+            // color: selectedIndex == 1
+            //     ? const Color.fromARGB(255, 152, 197, 255)
+            //     : null,
+            // image: selectedIndex == 1
+            //     ? const DecorationImage(
+            //         image: AssetImage(
+            //           'assets/images/sand3.png',
+            //         ), // 모래사장 이미지 경로
+            //         fit: BoxFit.fill,
+            //         repeat: ImageRepeat.repeat, // 이미지 반복 설정
+            //       )
+            //     : null,
+            image: DecorationImage(
+              image: AssetImage(
+                'assets/images/sand3.png',
+              ), // 모래사장 이미지 경로
+              fit: BoxFit.fill,
+              repeat: ImageRepeat.repeat, // 이미지 반복 설정
+            ),
           ),
           child: Padding(
             padding: const EdgeInsets.all(Sizes.size12),
@@ -108,10 +115,10 @@ class _NavigationScreenState extends State<NavigationScreen> {
                   selectedIndex: selectedIndex,
                 ),
                 NavTab(
-                  text: "도매가격",
+                  text: "찜목록",
                   isSelected: selectedIndex == 1,
-                  unSelectedIcon: FontAwesomeIcons.dollarSign,
-                  selectedIcon: FontAwesomeIcons.dollarSign,
+                  unSelectedIcon: FontAwesomeIcons.heart,
+                  selectedIcon: FontAwesomeIcons.solidHeart,
                   onTap: () => _onTap(1),
                   selectedIndex: selectedIndex,
                 ),

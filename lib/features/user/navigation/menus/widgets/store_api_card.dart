@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:swag_marine_products/constants/sizes.dart';
-import 'package:swag_marine_products/models/marine_product.dart';
+import 'package:swag_marine_products/models/store_api_model.dart';
 
-class MarineProductCard extends StatelessWidget {
-  const MarineProductCard({
+class StoreAPICard extends StatelessWidget {
+  const StoreAPICard({
     super.key,
     required this.marineProduct,
     required this.index,
   });
   final int index;
-  final MarineProduct marineProduct;
+  final StoreAPIModel marineProduct;
 
   String _sumParsing(double value) {
     return value == value.floor() ? value.toInt().toString() : value.toString();

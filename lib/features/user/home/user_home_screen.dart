@@ -3,7 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:swag_marine_products/constants/sizes.dart';
 import 'package:swag_marine_products/features/user/home/widgets/home_menu_button.dart';
 import 'package:swag_marine_products/features/user/home/widgets/radioactivity_banner.dart';
-import 'package:swag_marine_products/features/user/navigation/navigation_screen.dart';
+import 'package:swag_marine_products/features/user/navigation/user_navigation_screen.dart';
 import 'package:swag_marine_products/features/user/profile/user_inform_screen.dart';
 
 class UserHomeScreen extends StatefulWidget {
@@ -109,8 +109,8 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                           text: "가게",
                           onClick: () {
                             context.pushNamed(
-                              NavigationScreen.routeName,
-                              extra: NavigationScreenArgs(selectedIndex: 0),
+                              UserNavigationScreen.routeName,
+                              extra: UserNavigationScreenArgs(selectedIndex: 0),
                             );
                           },
                         ),
@@ -121,8 +121,8 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                           text: "도매시장",
                           onClick: () {
                             context.pushNamed(
-                              NavigationScreen.routeName,
-                              extra: NavigationScreenArgs(selectedIndex: 1),
+                              UserNavigationScreen.routeName,
+                              extra: UserNavigationScreenArgs(selectedIndex: 1),
                             );
                           },
                         ),
@@ -145,8 +145,8 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                           text: "내정보",
                           onClick: () {
                             context.pushNamed(
-                              NavigationScreen.routeName,
-                              extra: NavigationScreenArgs(selectedIndex: 3),
+                              UserNavigationScreen.routeName,
+                              extra: UserNavigationScreenArgs(selectedIndex: 3),
                             );
                           },
                         ),

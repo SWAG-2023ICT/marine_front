@@ -1,5 +1,11 @@
 import 'package:go_router/go_router.dart';
-import 'package:swag_marine_products/features/user/navigation/navigation_screen.dart';
+import 'package:swag_marine_products/features/store/navigation/store_navigation_screen.dart';
+import 'package:swag_marine_products/features/store/profile/store_inform_inquiry_screen.dart';
+import 'package:swag_marine_products/features/store/profile/store_inform_screen.dart';
+import 'package:swag_marine_products/features/store/profile/store_inform_update_screen.dart';
+import 'package:swag_marine_products/features/store/profile/store_user_inform_inquiry_screen.dart';
+import 'package:swag_marine_products/features/store/profile/store_user_inform_update_screen.dart';
+import 'package:swag_marine_products/features/user/navigation/user_navigation_screen.dart';
 import 'package:swag_marine_products/features/sign_in_up/sign_in_screen.dart';
 import 'package:swag_marine_products/features/sign_in_up/sign_up_screen.dart';
 import 'package:swag_marine_products/features/user/order/user_order_screen.dart';
@@ -29,16 +35,16 @@ final router = GoRouter(
       },
     ),
     GoRoute(
-      name: NavigationScreen.routeName,
-      path: NavigationScreen.routeURL,
+      name: UserNavigationScreen.routeName,
+      path: UserNavigationScreen.routeURL,
       builder: (context, state) {
         if (state.extra != null) {
-          final args = state.extra as NavigationScreenArgs;
-          return NavigationScreen(
+          final args = state.extra as UserNavigationScreenArgs;
+          return UserNavigationScreen(
             selectedIndex: args.selectedIndex,
           );
         }
-        return const NavigationScreen(
+        return const UserNavigationScreen(
           selectedIndex: 0,
         );
       },
@@ -53,27 +59,27 @@ final router = GoRouter(
           name: UserOrderScreen.routeName,
           builder: (context, state) => const UserOrderScreen(),
         ),
-      ],
-    ),
-    GoRoute(
-      name: UserInformScreen.routeName,
-      path: UserInformScreen.routeURL,
-      builder: (context, state) => const UserInformScreen(),
-      routes: [
         GoRoute(
-          name: UserInformInquiryScreen.routeName,
-          path: UserInformInquiryScreen.routeURL,
-          builder: (context, state) => const UserInformInquiryScreen(),
+          name: UserInformScreen.routeName,
+          path: UserInformScreen.routeURL,
+          builder: (context, state) => const UserInformScreen(),
           routes: [
             GoRoute(
-              name: UserInformUpdateScreen.routeName,
-              path: UserInformUpdateScreen.routeURL,
-              builder: (context, state) {
-                final args = state.extra as UserInformUpdateScreenArgs;
-                return UserInformUpdateScreen(
-                  updateType: args.updateType,
-                );
-              },
+              name: UserInformInquiryScreen.routeName,
+              path: UserInformInquiryScreen.routeURL,
+              builder: (context, state) => const UserInformInquiryScreen(),
+              routes: [
+                GoRoute(
+                  name: UserInformUpdateScreen.routeName,
+                  path: UserInformUpdateScreen.routeURL,
+                  builder: (context, state) {
+                    final args = state.extra as UserInformUpdateScreenArgs;
+                    return UserInformUpdateScreen(
+                      updateType: args.updateType,
+                    );
+                  },
+                ),
+              ],
             ),
           ],
         ),
@@ -136,5 +142,63 @@ final router = GoRouter(
     //     ),
     //   ],
     // ),
+    GoRoute(
+      path: StoreNavigationScreen.routeURL,
+      name: StoreNavigationScreen.routeName,
+      builder: (context, state) {
+        if (state.extra != null) {
+          final args = state.extra as StoreNavigationScreenArgs;
+          return StoreNavigationScreen(
+            selectedIndex: args.selectedIndex,
+          );
+        }
+        return const StoreNavigationScreen(
+          selectedIndex: 0,
+        );
+      },
+      routes: [
+        GoRoute(
+          name: StoreInformScreen.routeName,
+          path: StoreInformScreen.routeURL,
+          builder: (context, state) => const StoreInformScreen(),
+          routes: [
+            GoRoute(
+              name: StoreInformInquiryScreen.routeName,
+              path: StoreInformInquiryScreen.routeURL,
+              builder: (context, state) => const StoreInformInquiryScreen(),
+              routes: [
+                GoRoute(
+                  name: StoreInformUpdateScreen.routeName,
+                  path: StoreInformUpdateScreen.routeURL,
+                  builder: (context, state) {
+                    final args = state.extra as StoreInformUpdateScreenArgs;
+                    return StoreInformUpdateScreen(
+                      updateType: args.updateType,
+                    );
+                  },
+                ),
+              ],
+            ),
+            GoRoute(
+              name: StoreUserInformInquiryScreen.routeName,
+              path: StoreUserInformInquiryScreen.routeURL,
+              builder: (context, state) => const StoreUserInformInquiryScreen(),
+              routes: [
+                GoRoute(
+                  name: StoreUserInformUpdateScreen.routeName,
+                  path: StoreUserInformUpdateScreen.routeURL,
+                  builder: (context, state) {
+                    final args = state.extra as StoreUserInformUpdateScreenArgs;
+                    return StoreUserInformUpdateScreen(
+                      updateType: args.updateType,
+                    );
+                  },
+                ),
+              ],
+            ),
+          ],
+        ),
+      ],
+    ),
   ],
 );

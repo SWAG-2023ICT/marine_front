@@ -54,7 +54,7 @@ class _UserOrderSheetState extends State<UserOrderSheet> {
                   onChanged: _onChangePrice,
                   title: Text("가격 ${index + 1}"),
                 ),
-              )
+              ),
             ],
           ),
         ),

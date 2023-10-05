@@ -4,10 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:swag_marine_products/constants/gaps.dart';
 import 'package:swag_marine_products/constants/http_ip.dart';
 import 'package:swag_marine_products/constants/sizes.dart';
-import 'package:swag_marine_products/models/marine_product.dart';
+import 'package:swag_marine_products/models/store_api_model.dart';
 
 import 'package:http/http.dart' as http;
-import 'package:swag_marine_products/features/user/navigation/menus/widgets/marine_product_card.dart';
+import 'package:swag_marine_products/features/user/navigation/menus/widgets/store_api_card.dart';
 
 class UserPriceScreen extends StatefulWidget {
   const UserPriceScreen({Key? key}) : super(key: key);
@@ -19,7 +19,7 @@ class UserPriceScreen extends StatefulWidget {
 class _UserPriceScreenState extends State<UserPriceScreen> {
   final TextEditingController _searchController = TextEditingController();
 
-  List<MarineProduct>? _productsList;
+  List<StoreAPIModel>? _productsList;
 
   final bool _isFirstLoadRunning = true;
   final bool _isLoadMoreRunning = false;
@@ -38,7 +38,7 @@ class _UserPriceScreenState extends State<UserPriceScreen> {
 
       setState(() {
         _productsList =
-            jsonResponse.map((data) => MarineProduct.fromJson(data)).toList();
+            jsonResponse.map((data) => StoreAPIModel.fromJson(data)).toList();
       });
     } else {
       HttpIp.errorPrint(
@@ -153,8 +153,8 @@ class _UserPriceScreenState extends State<UserPriceScreen> {
                     vertical: Sizes.size10,
                     horizontal: Sizes.size20,
                   ),
-                  itemBuilder: (context, index) => MarineProductCard(
-                      marineProduct: MarineProduct(
+                  itemBuilder: (context, index) => StoreAPICard(
+                      marineProduct: StoreAPIModel(
                         dates: "경매일",
                         mClassName: "품목",
                         sClassName: "품종",

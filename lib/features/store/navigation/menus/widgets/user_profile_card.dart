@@ -3,7 +3,6 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:swag_marine_products/constants/sizes.dart';
 import 'package:swag_marine_products/features/store/profile/store_user_inform_inquiry_screen.dart';
-import 'package:swag_marine_products/features/user/profile/user_inform_inquiry_screen.dart';
 
 class UserProfileCard extends StatefulWidget {
   const UserProfileCard({
@@ -72,9 +71,6 @@ class _UserProfileCardState extends State<UserProfileCard> {
           size: 45,
           color: Colors.white,
         ),
-        // backgroundImage: NetworkImage(
-        //   "https://avatars.githubusercontent.com/u/77985708?v=4",
-        // ),
       ),
       title: const Text(
         "이재현@dlwogus1027",
@@ -83,19 +79,7 @@ class _UserProfileCardState extends State<UserProfileCard> {
           fontSize: Sizes.size18,
         ),
       ),
-      subtitle:
-          // GestureDetector(
-          //   onTap: () {
-          //     // _showEditDialog(context);
-          //   },
-          //   child: Text(
-          //     widget.userData!.userDef ?? '',
-          //     style: TextStyle(
-          //       fontSize: Sizes.size14,
-          //     ),
-          //   ),
-          // ),
-          const Text(
+      subtitle: const Text(
         "01049049193",
         style: TextStyle(
           fontSize: Sizes.size14,
