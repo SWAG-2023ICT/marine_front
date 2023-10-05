@@ -1,4 +1,5 @@
 import 'package:go_router/go_router.dart';
+import 'package:swag_marine_products/features/store/menu/store_menu_add_screen.dart';
 import 'package:swag_marine_products/features/store/navigation/store_navigation_screen.dart';
 import 'package:swag_marine_products/features/store/profile/store_inform_inquiry_screen.dart';
 import 'package:swag_marine_products/features/store/profile/store_inform_screen.dart';
@@ -157,6 +158,11 @@ final router = GoRouter(
         );
       },
       routes: [
+        GoRoute(
+          path: StoreMenuAddScreen.routeURL,
+          name: StoreMenuAddScreen.routeName,
+          builder: (context, state) => const StoreMenuAddScreen(),
+        ),
         GoRoute(
           name: StoreInformScreen.routeName,
           path: StoreInformScreen.routeURL,

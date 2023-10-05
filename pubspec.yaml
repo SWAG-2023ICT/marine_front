@@ -62,7 +62,7 @@ dependencies:
   # xml 데이터 파싱 라이브러리
   xml: 6.3.0
 
-  # 날짜 형식 포맷 라이브러리
+  # 날짜, 단위 포맷 라이브러리
   intl: ^0.18.1
 
 dev_dependencies:

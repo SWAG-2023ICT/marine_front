@@ -107,7 +107,11 @@ class _StoreMenuCardState extends State<StoreMenuCard> {
                   child: SwitchListTile.adaptive(
                     value: _isSelled,
                     onChanged: _onChangeSelled,
-                    title: const Text("판매 여부"),
+                    title: const Text(
+                      "판매 여부",
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ),
                 ),
                 ElevatedButton(

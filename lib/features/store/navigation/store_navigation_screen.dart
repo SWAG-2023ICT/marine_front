@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:swag_marine_products/constants/sizes.dart';
+import 'package:swag_marine_products/features/store/navigation/menus/store_application_screen.dart';
 import 'package:swag_marine_products/features/store/navigation/menus/store_menu_screen.dart';
 import 'package:swag_marine_products/features/store/navigation/menus/store_order_screen.dart';
 import 'package:swag_marine_products/features/store/navigation/menus/store_profile_screen.dart';
@@ -71,6 +72,10 @@ class _StoreNavigationScreenState extends State<StoreNavigationScreen> {
               child: const StoreOrderScreen(),
             ),
             Offstage(
+              offstage: selectedIndex != 2,
+              child: const StoreApplicationScreen(),
+            ),
+            Offstage(
               offstage: selectedIndex != 3,
               //child: const SearchVolScreen(),
               child: const StoreProfileScreen(),
@@ -115,19 +120,19 @@ class _StoreNavigationScreenState extends State<StoreNavigationScreen> {
                 NavTab(
                   text: "주문",
                   isSelected: selectedIndex == 1,
-                  unSelectedIcon: FontAwesomeIcons.squareCheck,
-                  selectedIcon: FontAwesomeIcons.solidSquareCheck,
+                  unSelectedIcon: FontAwesomeIcons.fileLines,
+                  selectedIcon: FontAwesomeIcons.solidFileLines,
                   onTap: () => _onTap(1),
                   selectedIndex: selectedIndex,
                 ),
-                // NavTab(
-                //   text: "통계",
-                //   isSelected: selectedIndex == 2,
-                //   unSelectedIcon: FontAwesomeIcons.chartLine,
-                //   selectedIcon: FontAwesomeIcons.chartLine,
-                //   onTap: () => _onTap(2),
-                //   selectedIndex: selectedIndex,
-                // ),
+                NavTab(
+                  text: "신청",
+                  isSelected: selectedIndex == 2,
+                  unSelectedIcon: FontAwesomeIcons.squareCheck,
+                  selectedIcon: FontAwesomeIcons.solidSquareCheck,
+                  onTap: () => _onTap(2),
+                  selectedIndex: selectedIndex,
+                ),
                 NavTab(
                   text: "프로필",
                   isSelected: selectedIndex == 3,
