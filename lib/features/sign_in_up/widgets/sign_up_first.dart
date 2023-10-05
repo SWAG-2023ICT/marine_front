@@ -1,4 +1,7 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
+
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:kpostal/kpostal.dart';
@@ -7,6 +10,8 @@ import 'package:swag_marine_products/constants/gaps.dart';
 import 'package:swag_marine_products/features/sign_in_up/widgets/bottom_button.dart';
 import 'package:swag_marine_products/features/sign_in_up/widgets/centered_divider.dart';
 import 'package:swag_marine_products/widget_tools/swag_platform_dialog.dart';
+
+import 'package:http/http.dart' as http;
 
 class SignUpFirst extends StatefulWidget {
   const SignUpFirst({
@@ -87,7 +92,8 @@ class _SignUpFirstState extends State<SignUpFirst> {
   void _onCheckStoreData() {
     setState(() {
       _isSubmitted = (_storeIdErrorText == null &&
-              _storeIdController.text.trim().isNotEmpty) &&
+              _storeIdController.text.trim().isNotEmpty &&
+              _storeIdAuth) &&
           (_storePasswordErrorText == null &&
               _storePasswordController.text.trim().isNotEmpty) &&
           (_storePasswordConfirmationErrorText == null &&
@@ -96,11 +102,12 @@ class _SignUpFirstState extends State<SignUpFirst> {
               _storeNameController.text.trim().isNotEmpty) &&
           (_storePhoneNumberErrorText == null &&
               _storePhoneNumberController.text.trim().isNotEmpty &&
-              _storeBusinessNameAuth) &&
+              _storeBusinessNumberAuth) &&
           (_storeBusinessNameErrorText == null &&
               _storeBusinessNameController.text.trim().isNotEmpty) &&
           (_storeBusinessNumberErrorText == null &&
-              _storeBusinessNumberController.text.trim().isNotEmpty) &&
+              _storeBusinessNumberController.text.trim().isNotEmpty &&
+              _storeBusinessNumberAuth) &&
           (_storeAddressErrorText == null &&
               _storeAddressController.text.trim().isNotEmpty) &&
           (_storeBusinessPhoneNumberErrorText == null &&
@@ -292,8 +299,8 @@ class _SignUpFirstState extends State<SignUpFirst> {
   String? _storeBusinessNameErrorText;
   String? _storeAddressErrorText;
   String? _storeBusinessPhoneNumberErrorText;
-  bool _storePhoneNumberAuth = false;
-  bool _storeBusinessNameAuth = false;
+  bool _storeBusinessNumberAuth = false;
+  bool _storeIdAuth = false;
 
   // XXX-XX-XXXXX 또는 XXXXXXXXXXX 형식의 대한민국 사업자 번호 정규식
   final RegExp _businessNumberRegExp = RegExp(r'^\d{3}-\d{2}-\d{5}|\d{10}$');
@@ -313,6 +320,13 @@ class _SignUpFirstState extends State<SignUpFirst> {
       });
       _onCheckSubmitted();
     }
+  }
+
+  void _onCheckStoreId() {
+    setState(() {
+      _storeIdAuth = !_storeIdAuth;
+    });
+    _onCheckSubmitted();
   }
 
   void _validateStorePassword(String value) {
@@ -379,11 +393,68 @@ class _SignUpFirstState extends State<SignUpFirst> {
     }
   }
 
-  void _onCheckBusinessNumber() {
-    setState(() {
-      _storeBusinessNameAuth = !_storeBusinessNameAuth;
-    });
-    _onCheckSubmitted();
+  Future<void> _onCheckBusinessNumber() async {
+    final url = Uri.parse(
+        "https://api.odcloud.kr/api/nts-businessman/v1/status?serviceKey=ruiY%2FM1lKnueEvxNNnx1KXw4kK90YRKukDyuOP07X%2BmzQUHwM9Ps2V8PJgxUdazPH3Av%2F%2FIQaBtIxEgH8k%2FWeQ%3D%3D&returnType=JSON");
+    final headers = {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+    };
+    final data = {
+      'b_no': [_storeBusinessNumberController.text],
+    };
+
+    final response =
+        await http.post(url, headers: headers, body: jsonEncode(data));
+
+    if (response.statusCode == 200) {
+      print("통신 성공");
+      final jsonResponse = json.decode(response.body);
+      print(jsonResponse);
+      final List<dynamic> dataList = jsonResponse['data'];
+
+      final Map<String, dynamic> data = dataList[0];
+      final String bSttCd = data['b_stt_cd'];
+
+      if (bSttCd.isNotEmpty) {
+        if (int.parse(bSttCd) == 1) {
+          setState(() {
+            _storeBusinessNumberAuth = true;
+          });
+        }
+      } else {
+        if (!mounted) return;
+        swagPlatformDialog(
+          context: context,
+          title: "데이터 오류",
+          message: "데이터가 비어있습니다.",
+          actions: [
+            TextButton(
+              onPressed: () => context.pop(),
+              child: const Text(
+                "알겠습니다",
+              ),
+            ),
+          ],
+        );
+      }
+    } else {
+      if (!mounted) return;
+      swagPlatformDialog(
+        context: context,
+        title: "통신 오류",
+        message:
+            "사업자 등록 여부를 받아오지 못했습니다 ${response.statusCode} : ${response.body}",
+        actions: [
+          TextButton(
+            onPressed: () => context.pop(),
+            child: const Text(
+              "알겠습니다",
+            ),
+          ),
+        ],
+      );
+    }
   }
 
   void _validateStoreBusinessName(String value) {
@@ -456,13 +527,6 @@ class _SignUpFirstState extends State<SignUpFirst> {
       });
       _onCheckSubmitted();
     }
-  }
-
-  void _onCheckAuthStoreCode() {
-    setState(() {
-      _storePhoneNumberAuth = !_storePhoneNumberAuth;
-    });
-    _onCheckSubmitted();
   }
 
   // ------------------ 기본 메소드 ------------------
@@ -933,7 +997,7 @@ class _SignUpFirstState extends State<SignUpFirst> {
               ),
             ),
             ElevatedButton(
-              onPressed: () {},
+              onPressed: _onCheckStoreId,
               style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.all(24),
                 textStyle: const TextStyle(fontSize: 14),
@@ -1053,22 +1117,22 @@ class _SignUpFirstState extends State<SignUpFirst> {
                   onFieldSubmitted: _onFieldSubmitted,
                 ),
               ),
-              ElevatedButton(
-                onPressed: _onCheckAuthStoreCode,
-                style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.all(24),
-                  textStyle: const TextStyle(fontSize: 14),
-                  shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(10),
-                    ),
-                  ),
-                ),
-                child: const Text("인증 확인"),
-              ),
+              // ElevatedButton(
+              //   onPressed: _onCheckAuthStoreCode,
+              //   style: ElevatedButton.styleFrom(
+              //     padding: const EdgeInsets.all(24),
+              //     textStyle: const TextStyle(fontSize: 14),
+              //     shape: const RoundedRectangleBorder(
+              //       borderRadius: BorderRadius.all(
+              //         Radius.circular(10),
+              //       ),
+              //     ),
+              //   ),
+              //   child: const Text("인증 확인"),
+              // ),
             ],
           ),
-        if (_storePhoneNumberAuth)
+        if (false)
           const Padding(
             padding: EdgeInsets.symmetric(
               horizontal: 10,
@@ -1120,7 +1184,7 @@ class _SignUpFirstState extends State<SignUpFirst> {
             ),
           ],
         ),
-        if (_storeBusinessNameAuth)
+        if (_storeBusinessNumberAuth)
           const Padding(
             padding: EdgeInsets.symmetric(
               horizontal: 10,
