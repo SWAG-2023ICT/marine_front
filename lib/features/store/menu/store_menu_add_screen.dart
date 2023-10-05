@@ -7,6 +7,12 @@ import 'package:swag_marine_products/constants/gaps.dart';
 import 'package:swag_marine_products/features/sign_in_up/widgets/centered_divider.dart';
 import 'package:swag_marine_products/widget_tools/swag_platform_dialog.dart';
 
+enum WeightUnit {
+  g,
+  kg,
+  length,
+}
+
 class PriceModel {
   final String gram;
   final String price;
@@ -27,7 +33,7 @@ class StoreMenuAddScreen extends StatefulWidget {
 }
 
 class _StoreMenuAddScreenState extends State<StoreMenuAddScreen> {
-  String _origin = "국내산";
+  WeightUnit _weightUnit = WeightUnit.g;
   bool _isBarrier = false;
   bool _isSubmitted = false;
   bool _isPriceSubmitted = false;
@@ -36,7 +42,9 @@ class _StoreMenuAddScreenState extends State<StoreMenuAddScreen> {
 
   void _onCheckSubmitted() {
     setState(() {
-      _isSubmitted = (_productNameController.text.trim().isNotEmpty &&
+      _isSubmitted = (_productOriginController.text.trim().isNotEmpty &&
+              _productOriginErrorText == null) &&
+          (_productNameController.text.trim().isNotEmpty &&
               _productNameErrorText == null) &&
           (_productDescriptionController.text.trim().isNotEmpty &&
               _productDescriptionErrorText == null) &&
@@ -46,10 +54,11 @@ class _StoreMenuAddScreenState extends State<StoreMenuAddScreen> {
 
   void _onCheckPriceSubmitted() {
     setState(() {
-      _isPriceSubmitted = (_productGramController.text.trim().isNotEmpty &&
-              _productGramErrorText == null) &&
-          (_productPriceController.text.trim().isNotEmpty &&
-              _productPriceErrorText == null);
+      _isPriceSubmitted =
+          (_productWeightUnitController.text.trim().isNotEmpty &&
+                  _productWeightUnitErrorText == null) &&
+              (_productPriceController.text.trim().isNotEmpty &&
+                  _productPriceErrorText == null);
     });
   }
 
@@ -77,11 +86,30 @@ class _StoreMenuAddScreenState extends State<StoreMenuAddScreen> {
     }
   }
 
-  void _onChangeOrigin(String? value) {
+  void _onChangeOrigin(WeightUnit? value) {
     if (value == null) return;
     setState(() {
-      _origin = value;
+      _weightUnit = value;
     });
+  }
+
+  // ---------------- 원산지 ----------------
+
+  final TextEditingController _productOriginController =
+      TextEditingController();
+  String? _productOriginErrorText;
+
+  void _validateProductOrigin(String value) {
+    if (value.isEmpty) {
+      setState(() {
+        _productOriginErrorText = '원산지를 입력하세요.';
+      });
+    } else {
+      setState(() {
+        _productOriginErrorText = null;
+      });
+      _onCheckSubmitted();
+    }
   }
 
   // ---------------- 상품 이름 ----------------
@@ -123,17 +151,18 @@ class _StoreMenuAddScreenState extends State<StoreMenuAddScreen> {
 
   // ---------------- 그램(g) ----------------
 
-  final TextEditingController _productGramController = TextEditingController();
-  String? _productGramErrorText;
+  final TextEditingController _productWeightUnitController =
+      TextEditingController();
+  String? _productWeightUnitErrorText;
 
-  void _validateProductGram(String value) {
+  void _validateProductWeightUnit(String value) {
     if (value.isEmpty) {
       setState(() {
-        _productGramErrorText = '그램(g)을 입력하세요.';
+        _productWeightUnitErrorText = '무게를 입력하세요.';
       });
     } else {
       setState(() {
-        _productGramErrorText = null;
+        _productWeightUnitErrorText = null;
       });
       _onCheckPriceSubmitted();
     }
@@ -161,7 +190,7 @@ class _StoreMenuAddScreenState extends State<StoreMenuAddScreen> {
   void dispose() {
     _productNameController.dispose();
     _productDescriptionController.dispose();
-    _productGramController.dispose();
+    _productWeightUnitController.dispose();
     _productPriceController.dispose();
 
     super.dispose();
@@ -183,7 +212,7 @@ class _StoreMenuAddScreenState extends State<StoreMenuAddScreen> {
         child: ElevatedButton(
           onPressed: _isSubmitted
               ? () {
-                  print("제품 원산지 : $_origin");
+                  print("제품 원산지 : $_productOriginController.text");
                   print("제품 이름 : ${_productNameController.text}");
                   print("제품 설명 : ${_productDescriptionController.text}");
                   print("제품 가격 : ${_priceList.toString()}");
@@ -267,28 +296,19 @@ class _StoreMenuAddScreenState extends State<StoreMenuAddScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Row(
-                        children: [
-                          const Text(
-                            "원산지 :",
-                            style: TextStyle(fontSize: 18),
+                      TextFormField(
+                        controller: _productOriginController,
+                        decoration: InputDecoration(
+                          labelText: '원산지',
+                          errorText: _productOriginErrorText,
+                          prefixIcon: Icon(
+                            Icons.badge_outlined,
+                            color: Colors.grey.shade600,
                           ),
-                          Gaps.h6,
-                          DropdownButton(
-                            value: _origin,
-                            items: const [
-                              DropdownMenuItem(
-                                value: "국내산",
-                                child: Text("국내산"),
-                              ),
-                              DropdownMenuItem(
-                                value: "외국산",
-                                child: Text("외국산"),
-                              ),
-                            ],
-                            onChanged: _onChangeOrigin,
-                          ),
-                        ],
+                        ),
+                        onTap: onChangeBarrier,
+                        onChanged: _validateProductOrigin,
+                        onFieldSubmitted: _onFieldSubmitted,
                       ),
                       Gaps.v8,
                       TextFormField(
@@ -325,6 +345,29 @@ class _StoreMenuAddScreenState extends State<StoreMenuAddScreen> {
                 ),
                 Gaps.v10,
                 const CenteredDivider(text: "그램별(g) 가격"),
+                // Row(
+                //   children: [
+                //     const Text(
+                //       "무게 단위 :",
+                //       style: TextStyle(fontSize: 18),
+                //     ),
+                //     Gaps.h6,
+                //     DropdownButton(
+                //       value: _weightUnit,
+                //       items: const [
+                //         DropdownMenuItem(
+                //           value: WeightUnit.g,
+                //           child: Text("그램(g)"),
+                //         ),
+                //         DropdownMenuItem(
+                //           value: WeightUnit.kg,
+                //           child: Text("킬로그램(kg)"),
+                //         ),
+                //       ],
+                //       onChanged: _onChangeOrigin,
+                //     ),
+                //   ],
+                // ),
                 Gaps.v8,
                 ListView.builder(
                   shrinkWrap: true,
@@ -338,7 +381,7 @@ class _StoreMenuAddScreenState extends State<StoreMenuAddScreen> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          Text("${_priceList[index].gram}g"),
+                          Text(_priceList[index].gram),
                           const Text("-"),
                           Text("${_priceList[index].price}원"),
                           IconButton(
@@ -357,23 +400,116 @@ class _StoreMenuAddScreenState extends State<StoreMenuAddScreen> {
                 Gaps.v8,
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 10),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      GestureDetector(
+                        onTap: () => setState(() {
+                          _weightUnit = WeightUnit.g;
+                        }),
+                        child: Container(
+                          child: Row(
+                            children: [
+                              Radio.adaptive(
+                                value: WeightUnit.g,
+                                groupValue: _weightUnit,
+                                onChanged: (value) => setState(() {
+                                  if (value != null) {
+                                    _weightUnit = value;
+                                  }
+                                }),
+                              ),
+                              const Text("그램(g)"),
+                            ],
+                          ),
+                        ),
+                      ),
+                      GestureDetector(
+                        onTap: () => setState(() {
+                          _weightUnit = WeightUnit.kg;
+                        }),
+                        child: Container(
+                          child: Row(
+                            children: [
+                              Radio.adaptive(
+                                value: WeightUnit.kg,
+                                groupValue: _weightUnit,
+                                onChanged: (value) => setState(() {
+                                  if (value != null) {
+                                    _weightUnit = value;
+                                  }
+                                }),
+                              ),
+                              const Text("킬로그램(kg)"),
+                            ],
+                          ),
+                        ),
+                      ),
+                      GestureDetector(
+                        onTap: () => setState(() {
+                          _weightUnit = WeightUnit.length;
+                        }),
+                        child: Container(
+                          child: Row(
+                            children: [
+                              Radio.adaptive(
+                                value: WeightUnit.length,
+                                groupValue: _weightUnit,
+                                onChanged: (value) => setState(() {
+                                  if (value != null) {
+                                    _weightUnit = value;
+                                  }
+                                }),
+                              ),
+                              const Text("마리(개수)"),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Gaps.v8,
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
                   child: Column(
                     children: [
+                      // if (_weightUnit == WeightUnit.g)
                       TextFormField(
-                        controller: _productGramController,
+                        controller: _productWeightUnitController,
                         keyboardType: TextInputType.number,
                         decoration: InputDecoration(
-                          labelText: '그램(g)',
-                          errorText: _productGramErrorText,
+                          labelText: _weightUnit == WeightUnit.g
+                              ? '그램(g)'
+                              : _weightUnit == WeightUnit.kg
+                                  ? '킬로그램(kg)'
+                                  : "마리(개수)",
+                          errorText: _productWeightUnitErrorText,
                           prefixIcon: Icon(
                             Icons.scale_outlined,
                             color: Colors.grey.shade600,
                           ),
                         ),
                         onTap: onChangeBarrier,
-                        onChanged: _validateProductGram,
+                        onChanged: _validateProductWeightUnit,
                         onFieldSubmitted: _onFieldSubmitted,
                       ),
+                      // if (_weightUnit == WeightUnit.kg)
+                      //   TextFormField(
+                      //     controller: _productWeightUnitController,
+                      //     keyboardType: TextInputType.number,
+                      //     decoration: InputDecoration(
+                      //       labelText: '킬로그램(kg)',
+                      //       errorText: _productWeightUnitErrorText,
+                      //       prefixIcon: Icon(
+                      //         Icons.scale_outlined,
+                      //         color: Colors.grey.shade600,
+                      //       ),
+                      //     ),
+                      //     onTap: onChangeBarrier,
+                      //     onChanged: _validateProductWeightUnit,
+                      //     onFieldSubmitted: _onFieldSubmitted,
+                      //   ),
                       Gaps.v8,
                       TextFormField(
                         controller: _productPriceController,
@@ -402,35 +538,22 @@ class _StoreMenuAddScreenState extends State<StoreMenuAddScreen> {
                     ),
                     onPressed: _isPriceSubmitted
                         ? () {
-                            if (_priceList.any((item) =>
-                                item.gram == _productGramController.text)) {
-                              swagPlatformDialog(
-                                context: context,
-                                title: "가격 오류",
-                                message: "동일한 그램(g)이 존재합니다!",
-                                actions: [
-                                  TextButton(
-                                    onPressed: () {
-                                      context.pop();
-                                    },
-                                    child: const Text("알겠습니다"),
-                                  ),
-                                ],
+                            setState(() {
+                              _priceList.add(
+                                PriceModel(
+                                  gram: _productWeightUnitController.text +
+                                      (_weightUnit == WeightUnit.g
+                                          ? "g"
+                                          : _weightUnit == WeightUnit.kg
+                                              ? "kg"
+                                              : "마리"),
+                                  price: _productPriceController.text,
+                                ),
                               );
-                              return;
-                            } else {
-                              setState(() {
-                                _priceList.add(
-                                  PriceModel(
-                                    gram: _productGramController.text,
-                                    price: _productPriceController.text,
-                                  ),
-                                );
-                                _productGramController.text = "";
-                                _productPriceController.text = "";
-                              });
-                              _onCheckSubmitted();
-                            }
+                              _productWeightUnitController.text = "";
+                              _productPriceController.text = "";
+                            });
+                            _onCheckSubmitted();
                           }
                         : null,
                     child: const Text("추가"),

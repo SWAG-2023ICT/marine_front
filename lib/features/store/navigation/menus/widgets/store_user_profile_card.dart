@@ -4,16 +4,16 @@ import 'package:go_router/go_router.dart';
 import 'package:swag_marine_products/constants/sizes.dart';
 import 'package:swag_marine_products/features/store/profile/store_user_inform_inquiry_screen.dart';
 
-class UserProfileCard extends StatefulWidget {
-  const UserProfileCard({
+class StoreUserProfileCard extends StatefulWidget {
+  const StoreUserProfileCard({
     Key? key,
   }) : super(key: key);
 
   @override
-  State<UserProfileCard> createState() => _UserProfileCardState();
+  State<StoreUserProfileCard> createState() => _StoreUserProfileCardState();
 }
 
-class _UserProfileCardState extends State<UserProfileCard> {
+class _StoreUserProfileCardState extends State<StoreUserProfileCard> {
   // void _showEditDialog(BuildContext context) {
   //   showDialog(
   //     context: context,

@@ -1,13 +1,14 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:swag_marine_products/constants/gaps.dart';
 import 'package:swag_marine_products/features/sign_in_up/widgets/centered_divider.dart';
-import 'package:swag_marine_products/features/store/navigation/menus/widgets/store_profile_card.dart';
+import 'package:swag_marine_products/features/store/navigation/menus/widgets/store_user_profile_card.dart';
 import 'package:swag_marine_products/features/store/profile/store_inform_update_screen.dart';
-import 'package:swag_marine_products/features/user/address/user_address_list.dart';
 import 'package:swag_marine_products/features/user/navigation/menus/widgets/profile_button.dart';
 import 'package:swag_marine_products/features/user/profile/user_inform_screen.dart';
-import 'package:swag_marine_products/features/user/navigation/menus/widgets/user_profile_card.dart';
 
 class StoreProfileScreen extends StatefulWidget {
   const StoreProfileScreen({super.key});
@@ -17,7 +18,19 @@ class StoreProfileScreen extends StatefulWidget {
 }
 
 class _StoreProfileScreenState extends State<StoreProfileScreen> {
-  void _onChangeStoreImage() async {}
+  XFile? _productImage;
+
+  Future<void> _onChangeMenuImage(ImageSource imageSource) async {
+    final ImagePicker picker = ImagePicker(); //ImagePicker 초기화
+
+    //pickedFile에 ImagePicker로 가져온 이미지가 담긴다.
+    final XFile? pickedFile = await picker.pickImage(source: imageSource);
+    if (pickedFile != null) {
+      setState(() {
+        _productImage = XFile(pickedFile.path); //가져온 이미지를 _image에 저장
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +54,7 @@ class _StoreProfileScreenState extends State<StoreProfileScreen> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            const UserProfileCard(),
+            const StoreUserProfileCard(),
             const Padding(
               padding: EdgeInsets.symmetric(
                 horizontal: 30,
@@ -198,7 +211,8 @@ class _StoreProfileScreenState extends State<StoreProfileScreen> {
                         Row(
                           children: [
                             ElevatedButton(
-                              onPressed: _onChangeStoreImage,
+                              onPressed: () =>
+                                  _onChangeMenuImage(ImageSource.camera),
                               style: ElevatedButton.styleFrom(
                                 padding: const EdgeInsets.all(10),
                                 textStyle: const TextStyle(fontSize: 14),
@@ -212,7 +226,8 @@ class _StoreProfileScreenState extends State<StoreProfileScreen> {
                             ),
                             Gaps.h10,
                             ElevatedButton(
-                              onPressed: _onChangeStoreImage,
+                              onPressed: () =>
+                                  _onChangeMenuImage(ImageSource.gallery),
                               style: ElevatedButton.styleFrom(
                                 padding: const EdgeInsets.all(10),
                                 textStyle: const TextStyle(fontSize: 14),
@@ -229,10 +244,18 @@ class _StoreProfileScreenState extends State<StoreProfileScreen> {
                       ],
                     ),
                   ),
-                  Image.asset(
-                    "assets/images/fishShop.png",
-                    width: MediaQuery.of(context).size.width,
-                  ),
+                  if (_productImage != null)
+                    Image.file(
+                      File(_productImage!.path),
+                      width: MediaQuery.of(context).size.width,
+                      height: MediaQuery.of(context).size.width,
+                    ),
+                  if (_productImage == null)
+                    Image.asset(
+                      "assets/images/fishShop.png",
+                      width: MediaQuery.of(context).size.width,
+                      height: MediaQuery.of(context).size.width,
+                    ),
                 ],
               ),
             ),
