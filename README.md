@@ -67,7 +67,7 @@
 
 #### 즐겨찾기 페이지
 
-<img src="https://github.com/SWAG-2023ICT/marine_front/assets/77985708/6aa85b42-8b1d-4432-a465-85695a9a4e49.jpg" width="200" height="450"/>
+<img src="https://github.com/SWAG-2023ICT/marine_front/assets/77985708/12ff015f-714c-41d4-b483-9921032b714f.jpg" width="200" height="450"/>
 
 #### 마이 페이지
 
