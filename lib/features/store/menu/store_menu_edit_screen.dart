@@ -13,6 +13,11 @@ enum WeightUnit {
   length,
 }
 
+enum EditType {
+  add,
+  update,
+}
+
 class PriceModel {
   final String gram;
   final String price;
@@ -23,16 +28,29 @@ class PriceModel {
   });
 }
 
-class StoreMenuAddScreen extends StatefulWidget {
-  static const routeName = "store_menu_add";
-  static const routeURL = "store_menu_add";
-  const StoreMenuAddScreen({super.key});
+class StoreMenuEditScreenArgs {
+  const StoreMenuEditScreenArgs({
+    required this.editType,
+  });
 
-  @override
-  State<StoreMenuAddScreen> createState() => _StoreMenuAddScreenState();
+  final EditType editType;
 }
 
-class _StoreMenuAddScreenState extends State<StoreMenuAddScreen> {
+class StoreMenuEditScreen extends StatefulWidget {
+  static const routeName = "store_menu_edit";
+  static const routeURL = "store_menu_edit";
+  const StoreMenuEditScreen({
+    super.key,
+    required this.editType,
+  });
+
+  final EditType editType;
+
+  @override
+  State<StoreMenuEditScreen> createState() => _StoreMenuEditScreenState();
+}
+
+class _StoreMenuEditScreenState extends State<StoreMenuEditScreen> {
   WeightUnit _weightUnit = WeightUnit.g;
   bool _isBarrier = false;
   bool _isSubmitted = false;
@@ -192,6 +210,7 @@ class _StoreMenuAddScreenState extends State<StoreMenuAddScreen> {
     _productDescriptionController.dispose();
     _productWeightUnitController.dispose();
     _productPriceController.dispose();
+    _productOriginController.dispose();
 
     super.dispose();
   }

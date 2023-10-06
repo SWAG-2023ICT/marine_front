@@ -1,9 +1,11 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:kpostal/kpostal.dart';
 
 import 'package:swag_marine_products/constants/gaps.dart';
@@ -111,7 +113,8 @@ class _SignUpFirstState extends State<SignUpFirst> {
           (_storeAddressErrorText == null &&
               _storeAddressController.text.trim().isNotEmpty) &&
           (_storeBusinessPhoneNumberErrorText == null &&
-              _storeBusinessPhoneNumberController.text.trim().isNotEmpty);
+              _storeBusinessPhoneNumberController.text.trim().isNotEmpty) &&
+          (_storeImage != null);
     });
   }
 
@@ -301,6 +304,20 @@ class _SignUpFirstState extends State<SignUpFirst> {
   String? _storeBusinessPhoneNumberErrorText;
   bool _storeBusinessNumberAuth = false;
   bool _storeIdAuth = false;
+
+  XFile? _storeImage;
+
+  Future<void> _onChangeMenuImage(ImageSource imageSource) async {
+    final ImagePicker picker = ImagePicker(); //ImagePicker 초기화
+
+    //pickedFile에 ImagePicker로 가져온 이미지가 담긴다.
+    final XFile? pickedFile = await picker.pickImage(source: imageSource);
+    if (pickedFile != null) {
+      setState(() {
+        _storeImage = XFile(pickedFile.path); //가져온 이미지를 _image에 저장
+      });
+    }
+  }
 
   // XXX-XX-XXXXX 또는 XXXXXXXXXXX 형식의 대한민국 사업자 번호 정규식
   final RegExp _businessNumberRegExp = RegExp(r'^\d{3}-\d{2}-\d{5}|\d{10}$');
@@ -1298,6 +1315,63 @@ class _SignUpFirstState extends State<SignUpFirst> {
               ),
           ],
         ),
+        Gaps.v10,
+        const CenteredDivider(text: "가게 아이콘"),
+        Padding(
+          padding: const EdgeInsets.all(10),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text(
+                "이미지",
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              Row(
+                children: [
+                  ElevatedButton(
+                    onPressed: () => _onChangeMenuImage(ImageSource.camera),
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.all(10),
+                      textStyle: const TextStyle(fontSize: 14),
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(10),
+                        ),
+                      ),
+                    ),
+                    child: const Text("카메라"),
+                  ),
+                  Gaps.h10,
+                  ElevatedButton(
+                    onPressed: () => _onChangeMenuImage(ImageSource.gallery),
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.all(10),
+                      textStyle: const TextStyle(fontSize: 14),
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(10),
+                        ),
+                      ),
+                    ),
+                    child: const Text("갤러리"),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+        if (_storeImage != null)
+          Image.file(
+            File(_storeImage!.path),
+            width: MediaQuery.of(context).size.width,
+            height: MediaQuery.of(context).size.width,
+          ),
+        if (_storeImage == null)
+          Image.asset(
+            "assets/images/fishShop.png",
+            width: MediaQuery.of(context).size.width,
+            height: MediaQuery.of(context).size.width,
+          ),
       ],
     );
   }

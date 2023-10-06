@@ -42,6 +42,12 @@ class _UserStoreScreenState extends State<UserStoreScreen> {
   Future<void> _onSearch() async {}
 
   @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:swag_marine_products/constants/gaps.dart';
-import 'package:swag_marine_products/features/store/menu/store_menu_add_screen.dart';
+import 'package:swag_marine_products/features/store/menu/store_menu_edit_screen.dart';
 import 'package:swag_marine_products/features/store/navigation/menus/widgets/store_menu_card.dart';
 import 'package:swag_marine_products/features/user/order/user_order_screen.dart';
 import 'package:swag_marine_products/features/user/order/widgets/menu_card.dart';
@@ -96,7 +96,12 @@ class _StoreMenuScreenState extends State<StoreMenuScreen> {
                 actions: [
                   IconButton(
                     onPressed: () {
-                      context.pushNamed(StoreMenuAddScreen.routeName);
+                      context.pushNamed(
+                        StoreMenuEditScreen.routeName,
+                        extra: const StoreMenuEditScreenArgs(
+                          editType: EditType.add,
+                        ),
+                      );
                     },
                     icon: const Icon(
                       Icons.add_rounded,

@@ -1,5 +1,5 @@
 import 'package:go_router/go_router.dart';
-import 'package:swag_marine_products/features/store/menu/store_menu_add_screen.dart';
+import 'package:swag_marine_products/features/store/menu/store_menu_edit_screen.dart';
 import 'package:swag_marine_products/features/store/navigation/store_navigation_screen.dart';
 import 'package:swag_marine_products/features/store/profile/store_inform_inquiry_screen.dart';
 import 'package:swag_marine_products/features/store/profile/store_inform_screen.dart';
@@ -159,10 +159,15 @@ final router = GoRouter(
       },
       routes: [
         GoRoute(
-          path: StoreMenuAddScreen.routeURL,
-          name: StoreMenuAddScreen.routeName,
-          builder: (context, state) => const StoreMenuAddScreen(),
-        ),
+            path: StoreMenuEditScreen.routeURL,
+            name: StoreMenuEditScreen.routeName,
+            builder: (context, state) {
+              if (state.extra != null) {
+                final args = state.extra as StoreMenuEditScreenArgs;
+                return StoreMenuEditScreen(editType: args.editType);
+              }
+              return const StoreMenuEditScreen(editType: EditType.add);
+            }),
         GoRoute(
           name: StoreInformScreen.routeName,
           path: StoreInformScreen.routeURL,

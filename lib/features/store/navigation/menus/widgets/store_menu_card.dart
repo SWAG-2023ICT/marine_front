@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:swag_marine_products/constants/gaps.dart';
+import 'package:swag_marine_products/features/store/menu/store_menu_edit_screen.dart';
 import 'package:swag_marine_products/widget_tools/swag_platform_dialog.dart';
 
 class StoreMenuCard extends StatefulWidget {
@@ -115,7 +116,14 @@ class _StoreMenuCardState extends State<StoreMenuCard> {
                   ),
                 ),
                 ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    context.pushNamed(
+                      StoreMenuEditScreen.routeName,
+                      extra: const StoreMenuEditScreenArgs(
+                        editType: EditType.update,
+                      ),
+                    );
+                  },
                   child: const Text("수정"),
                 ),
                 Gaps.h10,

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
@@ -33,11 +35,9 @@ class _RadioactivityBannerState extends State<RadioactivityBanner> {
     setState(() {
       _isFirstLoading = true;
     });
+
     final url = Uri.parse(
         "https://www.nfqs.go.kr/hpmg/front/api/radioactivityDailyRslt.do");
-    final headers = {
-      'Content-Type': 'application/json',
-    };
     final data = {
       'cert_key':
           '5F387470A18F43DEE7BEDB222FA91C524B6BB02A1711FDD4902AB163828DADEA',
@@ -48,7 +48,6 @@ class _RadioactivityBannerState extends State<RadioactivityBanner> {
 
     if (response.statusCode >= 200 && response.statusCode < 300) {
       final xmlData = XmlDocument.parse(response.body);
-      print(xmlData);
 
       // xmlData의 데이터를 RadioactivityBannerModel.fromJson으로 파싱하는 작업 추가
       final dailyDate = xmlData.findAllElements('dailyDate').first.innerText;
@@ -59,20 +58,13 @@ class _RadioactivityBannerState extends State<RadioactivityBanner> {
       final dailyTotCnt =
           xmlData.findAllElements('dailyTotCnt').first.innerText;
 
-      // print(dailyDate);
-      // print(dailyPassCnt);
-      // print(dailyFailCnt);
-      // print(dailyTotCnt);
-
-      final itemData = RadioactivityBannerModel(
-        dailyDate: DateTime.parse(dailyDate),
-        dailyPassCnt: int.parse(dailyPassCnt),
-        dailyFailCnt: int.parse(dailyFailCnt),
-        dailyTotCnt: int.parse(dailyTotCnt),
-      );
-
       setState(() {
-        _bannerData = itemData;
+        _bannerData = RadioactivityBannerModel(
+          dailyDate: DateTime.parse(dailyDate),
+          dailyPassCnt: int.parse(dailyPassCnt),
+          dailyFailCnt: int.parse(dailyFailCnt),
+          dailyTotCnt: int.parse(dailyTotCnt),
+        );
       });
     } else {
       if (!mounted) return;
@@ -115,61 +107,59 @@ class _RadioactivityBannerState extends State<RadioactivityBanner> {
                 ),
               ],
       ),
-      child: _isFirstLoading
-          ? const CircularProgressIndicator.adaptive()
-          : ExpansionTile(
-              initiallyExpanded: true,
-              backgroundColor: Colors.white,
-              collapsedBackgroundColor: Colors.white,
-              shape: const RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(
-                  Radius.circular(10.0),
-                ),
+      child: ExpansionTile(
+        initiallyExpanded: true,
+        backgroundColor: Colors.white,
+        collapsedBackgroundColor: Colors.white,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(
+            Radius.circular(10.0),
+          ),
+        ),
+        collapsedShape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(
+            Radius.circular(10.0),
+          ),
+        ),
+        childrenPadding: const EdgeInsets.symmetric(horizontal: 10),
+        title: Row(
+          children: [
+            Image.asset(
+              "assets/images/radioactivity.png",
+              width: 16,
+              height: 16,
+            ),
+            Gaps.h6,
+            const Text(
+              "일일 방사능 검사결과",
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
               ),
-              collapsedShape: const RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(
-                  Radius.circular(10.0),
-                ),
-              ),
-              title: Row(
-                children: [
-                  Image.asset(
-                    "assets/images/radioactivity.png",
-                    width: 16,
-                    height: 16,
-                  ),
-                  Gaps.h6,
-                  const Text(
-                    "일일 방사능 검사결과",
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
+            ),
+          ],
+        ),
+        children: _isFirstLoading
+            ? [const CircularProgressIndicator.adaptive()]
+            : [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "검사날짜 : ${DateFormat('yyyy-MM-dd').format(_bannerData!.dailyDate)}",
                     ),
-                  ),
-                ],
-              ),
-              children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        "검사날짜 : ${DateFormat('yyyy-MM-dd').format(_bannerData!.dailyDate)}",
-                      ),
-                      GestureDetector(
-                        onTap: () => context
-                            .pushNamed(RadioactivityDetailScreen.routeName),
-                        child: const Text(
-                          "상세보기>",
-                          style: TextStyle(
-                            color: Colors.grey,
-                            fontSize: 16,
-                          ),
+                    GestureDetector(
+                      onTap: () => context
+                          .pushNamed(RadioactivityDetailScreen.routeName),
+                      child: const Text(
+                        "상세보기>",
+                        style: TextStyle(
+                          color: Colors.grey,
+                          fontSize: 16,
                         ),
-                      )
-                    ],
-                  ),
+                      ),
+                    )
+                  ],
                 ),
                 Gaps.v10,
                 Padding(
@@ -201,7 +191,7 @@ class _RadioactivityBannerState extends State<RadioactivityBanner> {
                   ),
                 ),
               ],
-            ),
+      ),
     );
   }
 }

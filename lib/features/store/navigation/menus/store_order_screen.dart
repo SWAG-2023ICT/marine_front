@@ -69,6 +69,14 @@ class _StoreOrderScreenState extends State<StoreOrderScreen> {
   }
 
   @override
+  void dispose() {
+    _invoiceNumberController.dispose();
+    _impossibleReasonController.dispose();
+
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),

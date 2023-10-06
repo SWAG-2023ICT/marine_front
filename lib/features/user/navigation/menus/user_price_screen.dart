@@ -50,6 +50,13 @@ class _UserPriceScreenState extends State<UserPriceScreen> {
   }
 
   @override
+  void dispose() {
+    _searchController.dispose();
+
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
