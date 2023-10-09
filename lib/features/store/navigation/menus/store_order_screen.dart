@@ -4,7 +4,6 @@ import 'package:swag_marine_products/features/sign_in_up/widgets/centered_divide
 import 'package:swag_marine_products/features/user/order/user_order_screen.dart';
 
 enum DeliveryStatus {
-  confirmation,
   prepared,
   shipping,
   completed,
@@ -24,7 +23,7 @@ class StoreOrderScreen extends StatefulWidget {
 }
 
 class _StoreOrderScreenState extends State<StoreOrderScreen> {
-  final DeliveryStatus _deliveryStatus = DeliveryStatus.confirmation;
+  final DeliveryStatus _deliveryStatus = DeliveryStatus.prepared;
   OrderStatus _orderStatus = OrderStatus.available;
 
   // ---------------- 송장 번호 ----------------
@@ -81,6 +80,7 @@ class _StoreOrderScreenState extends State<StoreOrderScreen> {
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
+        resizeToAvoidBottomInset: true,
         appBar: AppBar(
           centerTitle: true,
           backgroundColor: Colors.blue.shade50,
@@ -236,12 +236,6 @@ class _StoreOrderScreenState extends State<StoreOrderScreen> {
                         child: SegmentedButton(
                           showSelectedIcon: false,
                           segments: [
-                            ButtonSegment(
-                              enabled: _deliveryStatus ==
-                                  DeliveryStatus.confirmation,
-                              value: DeliveryStatus.confirmation,
-                              label: const Text('확인중'),
-                            ),
                             ButtonSegment(
                               enabled:
                                   _deliveryStatus == DeliveryStatus.prepared,

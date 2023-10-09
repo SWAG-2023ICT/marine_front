@@ -84,6 +84,7 @@ class _StoreNavigationScreenState extends State<StoreNavigationScreen> {
         ),
         bottomNavigationBar: Container(
           decoration: const BoxDecoration(
+            color: Colors.transparent,
             // color: selectedIndex == 1
             //     ? const Color.fromARGB(255, 152, 197, 255)
             //     : null,

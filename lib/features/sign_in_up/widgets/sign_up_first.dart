@@ -138,6 +138,7 @@ class _SignUpFirstState extends State<SignUpFirst> {
   final TextEditingController _userAddressController = TextEditingController();
   final TextEditingController _userAddressDetailController =
       TextEditingController();
+  String? _userAddressZipCode; // 유저 우편번호
   final TextEditingController _userPhoneNumberController =
       TextEditingController();
   final TextEditingController _userNameController = TextEditingController();
@@ -254,7 +255,9 @@ class _SignUpFirstState extends State<SignUpFirst> {
       print(result.address);
       setState(() {
         _userAddressController.text = result.address;
+        _userAddressZipCode = result.postCode;
       });
+      print(_userAddressZipCode);
       _onCheckSubmitted();
     }
   }
@@ -287,6 +290,7 @@ class _SignUpFirstState extends State<SignUpFirst> {
       TextEditingController(); // 가게 주소
   final TextEditingController _storeAddressDetailController =
       TextEditingController(); // 가게 상세 주소
+  String? _storeAddressZipCode; // 가게 우편번호
   final TextEditingController _storeBusinessPhoneNumberController =
       TextEditingController(); // 가게 전화번호
   final TextEditingController _storeBusinessPhoneNumberAuthController =
@@ -524,7 +528,9 @@ class _SignUpFirstState extends State<SignUpFirst> {
       print(result.address);
       setState(() {
         _storeAddressController.text = result.address;
+        _storeAddressZipCode = result.postCode;
       });
+      print(_storeAddressZipCode);
       _onCheckSubmitted();
     }
   }
