@@ -5,7 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:swag_marine_products/constants/gaps.dart';
 import 'package:swag_marine_products/constants/http_ip.dart';
 import 'package:swag_marine_products/features/user/navigation/menus/widgets/store_card.dart';
-import 'package:swag_marine_products/models/product_model.dart';
+import 'package:swag_marine_products/models/database/product_model.dart';
 
 import 'package:http/http.dart' as http;
 import 'package:swag_marine_products/widget_tools/swag_platform_dialog.dart';

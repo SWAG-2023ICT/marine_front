@@ -6,7 +6,7 @@ import 'package:swag_marine_products/features/store/menu/store_menu_edit_screen.
 import 'package:swag_marine_products/features/store/navigation/menus/widgets/store_menu_card.dart';
 import 'package:swag_marine_products/features/user/order/user_order_screen.dart';
 import 'package:swag_marine_products/features/user/order/widgets/menu_card.dart';
-import 'package:swag_marine_products/models/product_model.dart';
+import 'package:swag_marine_products/models/database/product_model.dart';
 
 import 'package:http/http.dart' as http;
 import 'package:swag_marine_products/widget_tools/swag_platform_dialog.dart';

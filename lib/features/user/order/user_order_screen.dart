@@ -6,7 +6,7 @@ import 'package:swag_marine_products/constants/gaps.dart';
 import 'package:swag_marine_products/constants/http_ip.dart';
 import 'package:swag_marine_products/features/user/order/user_order_sheet.dart';
 import 'package:swag_marine_products/features/user/order/widgets/menu_card.dart';
-import 'package:swag_marine_products/models/product_model.dart';
+import 'package:swag_marine_products/models/database/product_model.dart';
 import 'package:swag_marine_products/widget_tools/swag_platform_dialog.dart';
 
 import 'package:http/http.dart' as http;

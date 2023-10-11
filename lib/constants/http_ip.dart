@@ -3,7 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:swag_marine_products/widget_tools/swag_platform_dialog.dart';
 
 class HttpIp {
-  static const httpIp = "http://61.39.251.231:80";
+  static const httpIp = "http://61.39.251.231:8080";
 
   static void errorPrint({
     required BuildContext context,

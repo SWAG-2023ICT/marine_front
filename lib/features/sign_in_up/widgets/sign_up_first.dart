@@ -51,13 +51,104 @@ class _SignUpFirstState extends State<SignUpFirst> {
       r'^(02|0[3-9][0-9]{1,2})-[0-9]{3,4}-[0-9]{4}$|^(02|0[3-9][0-9]{1,2})[0-9]{7,8}$|^01[0-9]{9}$|^070-[0-9]{4}-[0-9]{4}$|^070[0-9]{8}$');
 
   void _onSubmit() async {
-    final url = Uri.parse("${HttpIp.httpIp}/");
+    if (!widget.isStored) {
+      final url = Uri.parse("${HttpIp.httpIp}/marine/users");
+      final headers = {'Content-Type': 'application/json'};
+      final data = {
+        'userId': _userIdController.text.trim(),
+        'password': _userPasswordConfirmationController.text.trim(),
+        'name': _userNameController.text.trim(),
+        'phoneNumber': _userPhoneNumberController.text.trim(),
+        'destinations': [
+          {
+            'zipCode': _userAddressZipCode,
+            'destinationName':
+                "${_userAddressController.text.trim()},${_userAddressDetailController.text.trim()}",
+            'destinationAddress':
+                "${_userAddressController.text.trim()},${_userAddressDetailController.text.trim()}",
+            'defaultStatus': true,
+            'userId': _userIdController.text.trim(),
+          }
+        ],
+      };
+      final response =
+          await http.post(url, headers: headers, body: jsonEncode(data));
+
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        print("회원가입 - 유저 : 성공!");
+        context.pop();
+      } else {
+        if (!mounted) return;
+        HttpIp.errorPrint(
+          context: context,
+          title: "통신 오류",
+          message: response.body,
+        );
+      }
+    } else {
+      final url = Uri.parse("${HttpIp.httpIp}/marine/stores");
+      final headers = {'Content-Type': 'application/json'};
+      final data = {
+        'userId': _userIdController.text.trim(),
+        'password': _userPasswordConfirmationController.text.trim(),
+        'name': _userNameController.text.trim(),
+        'phoneNumber': _userPhoneNumberController.text.trim(),
+        'storeId': _storeBusinessNumberController.text.trim(),
+        "storeName": _storeNameController.text.trim(),
+        "storePhoneNumber": _storePhoneNumberController.text.trim(),
+        "storeAddress":
+            "${_storeAddressController.text.trim()},${_storeAddressDetailController.text.trim()}",
+        "storeImage": [File(_storeImage!.path)],
+      };
+      final response =
+          await http.post(url, headers: headers, body: jsonEncode(data));
+
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        print("회원가입 - 가게 : 성공!");
+        context.pop();
+      } else {
+        if (!mounted) return;
+        HttpIp.errorPrint(
+          context: context,
+          title: "통신 오류",
+          message: response.body,
+        );
+      }
+    }
+  }
+
+  Future<void> _onCheckUserId() async {
+    final url = Uri.parse(
+        "${HttpIp.httpIp}/marine/users/${_userIdController.text.trim()}");
     final headers = {'Content-Type': 'application/json'};
-    final data = {};
-    final response =
-        await http.post(url, headers: headers, body: jsonEncode(data));
+    final response = await http.get(url, headers: headers);
 
     if (response.statusCode >= 200 && response.statusCode < 300) {
+      print("아이디 인증 - 유저 : 성공!");
+      setState(() {
+        _userIdAuth = true;
+      });
+    } else {
+      if (!mounted) return;
+      HttpIp.errorPrint(
+        context: context,
+        title: "통신 오류",
+        message: response.body,
+      );
+    }
+  }
+
+  Future<void> _onCheckStoreId() async {
+    final url = Uri.parse(
+        "${HttpIp.httpIp}/marine/users/${_storeIdController.text.trim()}");
+    final headers = {'Content-Type': 'application/json'};
+    final response = await http.get(url, headers: headers);
+
+    if (response.statusCode >= 200 && response.statusCode < 300) {
+      print("아이디 인증 - 가게 : 성공!");
+      setState(() {
+        _storeIdAuth = true;
+      });
     } else {
       if (!mounted) return;
       HttpIp.errorPrint(
@@ -96,7 +187,8 @@ class _SignUpFirstState extends State<SignUpFirst> {
   void _onCheckUserData() {
     setState(() {
       _isSubmitted = (_userIdErrorText == null &&
-              _userIdController.text.trim().isNotEmpty) &&
+              _userIdController.text.trim().isNotEmpty &&
+              _userIdAuth) &&
           (_userPasswordErrorText == null &&
               _userPasswordController.text.trim().isNotEmpty) &&
           (_userPasswordConfirmationErrorText == null &&
@@ -171,6 +263,7 @@ class _SignUpFirstState extends State<SignUpFirst> {
   String? _userPhoneNumberErrorText;
   String? _userNameErrorText;
   String? _userPhoneNumberAuthErrorText;
+  bool _userIdAuth = false;
   bool _userPhoneNumberAuth = false;
 
   void _validateUserId(String value) {
@@ -340,6 +433,7 @@ class _SignUpFirstState extends State<SignUpFirst> {
         _storeImage = XFile(pickedFile.path); //가져온 이미지를 _image에 저장
       });
     }
+    _onCheckSubmitted();
   }
 
   // XXX-XX-XXXXX 또는 XXXXXXXXXXX 형식의 대한민국 사업자 번호 정규식
@@ -360,13 +454,6 @@ class _SignUpFirstState extends State<SignUpFirst> {
       });
       _onCheckSubmitted();
     }
-  }
-
-  void _onCheckStoreId() {
-    setState(() {
-      _storeIdAuth = !_storeIdAuth;
-    });
-    _onCheckSubmitted();
   }
 
   void _validateStorePassword(String value) {
@@ -743,7 +830,7 @@ class _SignUpFirstState extends State<SignUpFirst> {
               ),
             ),
             ElevatedButton(
-              onPressed: () {},
+              onPressed: _onCheckUserId,
               style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.all(24),
                 textStyle: const TextStyle(fontSize: 14),
@@ -757,6 +844,20 @@ class _SignUpFirstState extends State<SignUpFirst> {
             ),
           ],
         ),
+        if (_userIdAuth)
+          const Padding(
+            padding: EdgeInsets.symmetric(
+              horizontal: 10,
+              vertical: 4,
+            ),
+            child: Text(
+              "아이디 인증 완료!",
+              style: TextStyle(
+                color: Colors.blue,
+                fontSize: 16,
+              ),
+            ),
+          ),
         Gaps.v10,
         TextFormField(
           controller: _userPasswordController,
@@ -1036,6 +1137,20 @@ class _SignUpFirstState extends State<SignUpFirst> {
             ),
           ],
         ),
+        if (_storeIdAuth)
+          const Padding(
+            padding: EdgeInsets.symmetric(
+              horizontal: 10,
+              vertical: 4,
+            ),
+            child: Text(
+              "아이디 인증 완료!",
+              style: TextStyle(
+                color: Colors.blue,
+                fontSize: 16,
+              ),
+            ),
+          ),
         Gaps.v10,
         TextFormField(
           controller: _storePasswordController,
