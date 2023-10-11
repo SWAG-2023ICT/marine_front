@@ -1,9 +1,14 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:kpostal/kpostal.dart';
 import 'package:swag_marine_products/constants/gaps.dart';
+import 'package:swag_marine_products/constants/http_ip.dart';
 import 'package:swag_marine_products/features/sign_in_up/widgets/bottom_button.dart';
 import 'package:swag_marine_products/widget_tools/swag_platform_dialog.dart';
+
+import 'package:http/http.dart' as http;
 
 enum UpdateType {
   pw,
@@ -82,14 +87,68 @@ class _UserInformUpdateScreenState extends State<UserInformUpdateScreen> {
     }
   }
 
-  void _onSubmitted() {
+  void _onSubmitted() async {
     if (widget.updateType == UpdateType.pw) {
       print("이전 비밀번호 : ${_userPasswordBeforeController.text}");
       print("변경 비밀번호 : ${_userPasswordController.text}");
+
+      if (false) {
+        final url = Uri.parse("${HttpIp.httpIp}/");
+        final headers = {'Content-Type': 'application/json'};
+        final data = {};
+        final response =
+            await http.post(url, headers: headers, body: jsonEncode(data));
+
+        if (response.statusCode >= 200 && response.statusCode < 300) {
+        } else {
+          if (!mounted) return;
+          HttpIp.errorPrint(
+            context: context,
+            title: "통신 오류",
+            message: response.body,
+          );
+        }
+      }
     } else if (widget.updateType == UpdateType.name) {
       print("변경 이름 : ${_userNameController.text}");
+
+      if (false) {
+        final url = Uri.parse("${HttpIp.httpIp}/");
+        final headers = {'Content-Type': 'application/json'};
+        final data = {};
+        final response =
+            await http.post(url, headers: headers, body: jsonEncode(data));
+
+        if (response.statusCode >= 200 && response.statusCode < 300) {
+        } else {
+          if (!mounted) return;
+          HttpIp.errorPrint(
+            context: context,
+            title: "통신 오류",
+            message: response.body,
+          );
+        }
+      }
     } else if (widget.updateType == UpdateType.phoneNumber) {
       print("변경 전화번호 : ${_userPhoneNumberController.text}");
+
+      if (false) {
+        final url = Uri.parse("${HttpIp.httpIp}/");
+        final headers = {'Content-Type': 'application/json'};
+        final data = {};
+        final response =
+            await http.post(url, headers: headers, body: jsonEncode(data));
+
+        if (response.statusCode >= 200 && response.statusCode < 300) {
+        } else {
+          if (!mounted) return;
+          HttpIp.errorPrint(
+            context: context,
+            title: "통신 오류",
+            message: response.body,
+          );
+        }
+      }
     } else {
       swagPlatformDialog(
         context: context,

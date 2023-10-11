@@ -21,32 +21,47 @@ class _UserPriceScreenState extends State<UserPriceScreen> {
 
   List<StoreAPIModel>? _productsList;
 
-  final bool _isFirstLoadRunning = true;
+  bool _isFirstLoadRunning = true;
   final bool _isLoadMoreRunning = false;
   bool _isBarriered = false;
 
-  Future<void> dispatchProductsList() async {
-    final url = Uri.parse("${HttpIp.httpIp}/together/login");
-    final headers = {'Content-Type': 'application/json'};
-    // final data = {"userEmail": loginData};
+  @override
+  void initState() {
+    super.initState();
 
-    final response = await http.get(url, headers: headers);
+    // _dispatchProductsList();
+  }
 
-    if (!mounted) return;
-    if (response.statusCode == 200) {
-      final jsonResponse = jsonDecode(response.body) as List<dynamic>;
+  Future<void> _dispatchProductsList() async {
+    setState(() {
+      _isFirstLoadRunning = true;
+    });
 
-      setState(() {
-        _productsList =
-            jsonResponse.map((data) => StoreAPIModel.fromJson(data)).toList();
-      });
-    } else {
-      HttpIp.errorPrint(
-        context: context,
-        title: "수산물 호출 요류",
-        message: "수산물 가격 목록을 불러오는데 실패했습니다!",
-      );
+    if (false) {
+      final url = Uri.parse("${HttpIp.httpIp}/");
+      final headers = {'Content-Type': 'application/json'};
+      final data = {};
+      final response =
+          await http.post(url, headers: headers, body: jsonEncode(data));
+
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+      } else {
+        if (!mounted) return;
+        HttpIp.errorPrint(
+          context: context,
+          title: "통신 오류",
+          message: response.body,
+        );
+      }
     }
+
+    setState(() {
+      _isFirstLoadRunning = false;
+    });
+  }
+
+  Future<void> _onRefresh() async {
+    _dispatchProductsList();
   }
 
   @override
@@ -155,28 +170,35 @@ class _UserPriceScreenState extends State<UserPriceScreen> {
             ],
             body: Stack(
               children: [
-                ListView.separated(
-                  padding: const EdgeInsets.symmetric(
-                    vertical: Sizes.size10,
-                    horizontal: Sizes.size20,
-                  ),
-                  itemBuilder: (context, index) => StoreAPICard(
-                      marineProduct: StoreAPIModel(
-                        dates: "경매일",
-                        mClassName: "품목",
-                        sClassName: "품종",
-                        gradeName: "등급",
-                        avgPrice: 15000,
-                        maxPrice: 20000,
-                        minPrice: 10000,
-                        sumAmt: 20,
-                        marketName: "도매시장",
-                        coName: "도매법인",
+                _isFirstLoadRunning
+                    ? const Center(
+                        child: CircularProgressIndicator.adaptive(),
+                      )
+                    : RefreshIndicator.adaptive(
+                        onRefresh: _onRefresh,
+                        child: ListView.separated(
+                          padding: const EdgeInsets.symmetric(
+                            vertical: Sizes.size10,
+                            horizontal: Sizes.size20,
+                          ),
+                          itemBuilder: (context, index) => StoreAPICard(
+                              marineProduct: StoreAPIModel(
+                                dates: "경매일",
+                                mClassName: "품목",
+                                sClassName: "품종",
+                                gradeName: "등급",
+                                avgPrice: 15000,
+                                maxPrice: 20000,
+                                minPrice: 10000,
+                                sumAmt: 20,
+                                marketName: "도매시장",
+                                coName: "도매법인",
+                              ),
+                              index: index),
+                          separatorBuilder: (context, index) => Gaps.v10,
+                          itemCount: 20,
+                        ),
                       ),
-                      index: index),
-                  separatorBuilder: (context, index) => Gaps.v10,
-                  itemCount: 20,
-                ),
                 if (_isBarriered)
                   ModalBarrier(
                     // color: _barrierAnimation,

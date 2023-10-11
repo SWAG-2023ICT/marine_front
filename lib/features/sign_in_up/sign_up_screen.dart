@@ -79,17 +79,17 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 },
               ),
             ),
-            Offstage(
-              offstage: selectedIndex != 1,
-              //child: const SearchVolScreen(),
-              child: SignUpSecond(
-                onBeforePage: () {
-                  setState(() {
-                    _onTap(0);
-                  });
-                },
-              ),
-            ),
+            // Offstage(
+            //   offstage: selectedIndex != 1,
+            //   //child: const SearchVolScreen(),
+            //   child: SignUpSecond(
+            //     onBeforePage: () {
+            //       setState(() {
+            //         _onTap(0);
+            //       });
+            //     },
+            //   ),
+            // ),
           ],
         ),
       ),

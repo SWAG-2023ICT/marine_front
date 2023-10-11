@@ -1,11 +1,15 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
+import 'package:swag_marine_products/constants/http_ip.dart';
 import 'package:swag_marine_products/constants/sizes.dart';
 import 'package:swag_marine_products/widget_tools/swag_platform_dialog.dart';
+
+import 'package:http/http.dart' as http;
 
 class UserOrderSheet extends StatefulWidget {
   const UserOrderSheet({super.key});
@@ -19,6 +23,50 @@ class _UserOrderSheetState extends State<UserOrderSheet> {
 
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _phoneNumberController = TextEditingController();
+
+  Future<void> _onSubmit() async {
+    if (false) {
+      final url = Uri.parse("${HttpIp.httpIp}/");
+      final headers = {'Content-Type': 'application/json'};
+      final data = {};
+      final response =
+          await http.post(url, headers: headers, body: jsonEncode(data));
+
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+      } else {
+        if (!mounted) return;
+        HttpIp.errorPrint(
+          context: context,
+          title: "통신 오류",
+          message: response.body,
+        );
+      }
+    }
+    context.pop();
+    context.pop();
+  }
+
+  Future<void> _onOtherSubmit() async {
+    if (false) {
+      final url = Uri.parse("${HttpIp.httpIp}/");
+      final headers = {'Content-Type': 'application/json'};
+      final data = {};
+      final response =
+          await http.post(url, headers: headers, body: jsonEncode(data));
+
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+      } else {
+        if (!mounted) return;
+        HttpIp.errorPrint(
+          context: context,
+          title: "통신 오류",
+          message: response.body,
+        );
+      }
+    }
+    context.pop();
+    context.pop();
+  }
 
   void _onChangePrice(String? changeValue) {
     if (changeValue == null) return;
@@ -91,10 +139,7 @@ class _UserOrderSheetState extends State<UserOrderSheet> {
                     ),
                     actions: [
                       ElevatedButton(
-                        onPressed: () {
-                          print(_nameController.text);
-                          print(_phoneNumberController.text);
-                        },
+                        onPressed: _onOtherSubmit,
                         child: const Text("주문"),
                       )
                     ],
@@ -158,10 +203,7 @@ class _UserOrderSheetState extends State<UserOrderSheet> {
             child: const Text("아니오"),
           ),
           TextButton(
-            onPressed: () {
-              context.pop();
-              context.pop();
-            },
+            onPressed: _onSubmit,
             child: const Text("예"),
           ),
         ]);

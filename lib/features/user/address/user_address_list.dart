@@ -1,10 +1,15 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:swag_marine_products/constants/gaps.dart';
+import 'package:swag_marine_products/constants/http_ip.dart';
 import 'package:swag_marine_products/features/sign_in_up/widgets/centered_divider.dart';
 import 'package:swag_marine_products/features/user/address/user_address_edit.dart';
 import 'package:swag_marine_products/storages/address_storage.dart';
 import 'package:swag_marine_products/widget_tools/swag_platform_dialog.dart';
+
+import 'package:http/http.dart' as http;
 
 class UserAddressList extends StatefulWidget {
   const UserAddressList({Key? key}) : super(key: key);
@@ -17,7 +22,7 @@ class _UserAddressListState extends State<UserAddressList> {
   String _address = "우리집";
   bool _isFirstLoading = false;
 
-  List<Map<String, String>> _addressList = [];
+  final List<Map<String, String>> _addressList = [];
 
   @override
   void initState() {
@@ -31,7 +36,23 @@ class _UserAddressListState extends State<UserAddressList> {
       _isFirstLoading = true;
     });
 
-    _addressList = await AddressStorage.getAddressList();
+    if (false) {
+      final url = Uri.parse("${HttpIp.httpIp}/");
+      final headers = {'Content-Type': 'application/json'};
+      final data = {};
+      final response =
+          await http.post(url, headers: headers, body: jsonEncode(data));
+
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+      } else {
+        if (!mounted) return;
+        HttpIp.errorPrint(
+          context: context,
+          title: "통신 오류",
+          message: response.body,
+        );
+      }
+    }
 
     setState(() {
       _isFirstLoading = false;
@@ -55,8 +76,31 @@ class _UserAddressListState extends State<UserAddressList> {
   }
 
   void _onClickApplyButton() async {
-    final addressList = await AddressStorage.getAddressList();
-    print(addressList);
+    setState(() {
+      _isFirstLoading = true;
+    });
+
+    if (false) {
+      final url = Uri.parse("${HttpIp.httpIp}/");
+      final headers = {'Content-Type': 'application/json'};
+      final data = {};
+      final response =
+          await http.post(url, headers: headers, body: jsonEncode(data));
+
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+      } else {
+        if (!mounted) return;
+        HttpIp.errorPrint(
+          context: context,
+          title: "통신 오류",
+          message: response.body,
+        );
+      }
+    }
+
+    setState(() {
+      _isFirstLoading = false;
+    });
   }
 
   void _onClickUpdateButton(Map<String, String> data) async {
@@ -122,9 +166,33 @@ class _UserAddressListState extends State<UserAddressList> {
         ],
       );
     } else {
-      await AddressStorage.removeAddressList(key);
+      setState(() {
+        _isFirstLoading = true;
+      });
+
+      if (false) {
+        final url = Uri.parse("${HttpIp.httpIp}/");
+        final headers = {'Content-Type': 'application/json'};
+        final data = {};
+        final response =
+            await http.post(url, headers: headers, body: jsonEncode(data));
+
+        if (response.statusCode >= 200 && response.statusCode < 300) {
+        } else {
+          if (!mounted) return;
+          HttpIp.errorPrint(
+            context: context,
+            title: "통신 오류",
+            message: response.body,
+          );
+        }
+      }
 
       _initAddressList();
+
+      setState(() {
+        _isFirstLoading = false;
+      });
     }
   }
 

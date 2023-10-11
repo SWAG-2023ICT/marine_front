@@ -1,8 +1,13 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:swag_marine_products/constants/gaps.dart';
+import 'package:swag_marine_products/constants/http_ip.dart';
 import 'package:swag_marine_products/features/store/menu/store_menu_edit_screen.dart';
 import 'package:swag_marine_products/widget_tools/swag_platform_dialog.dart';
+
+import 'package:http/http.dart' as http;
 
 class StoreMenuCard extends StatefulWidget {
   const StoreMenuCard({
@@ -23,6 +28,26 @@ class _StoreMenuCardState extends State<StoreMenuCard> {
     setState(() {
       _isSelled = value;
     });
+  }
+
+  Future<void> _onDeleteMenu() async {
+    if (false) {
+      final url = Uri.parse("${HttpIp.httpIp}/");
+      final headers = {'Content-Type': 'application/json'};
+      final data = {};
+      final response =
+          await http.post(url, headers: headers, body: jsonEncode(data));
+
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+      } else {
+        if (!mounted) return;
+        HttpIp.errorPrint(
+          context: context,
+          title: "통신 오류",
+          message: response.body,
+        );
+      }
+    }
   }
 
   @override
@@ -139,7 +164,7 @@ class _StoreMenuCardState extends State<StoreMenuCard> {
                           child: const Text("아니오"),
                         ),
                         TextButton(
-                          onPressed: () => context.pop(),
+                          onPressed: _onDeleteMenu,
                           child: const Text("예"),
                         ),
                       ],

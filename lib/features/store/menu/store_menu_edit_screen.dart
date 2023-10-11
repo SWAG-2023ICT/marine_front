@@ -1,11 +1,15 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:swag_marine_products/constants/gaps.dart';
+import 'package:swag_marine_products/constants/http_ip.dart';
 import 'package:swag_marine_products/features/sign_in_up/widgets/centered_divider.dart';
 import 'package:swag_marine_products/widget_tools/swag_platform_dialog.dart';
+
+import 'package:http/http.dart' as http;
 
 enum WeightUnit {
   g,
@@ -57,6 +61,32 @@ class _StoreMenuEditScreenState extends State<StoreMenuEditScreen> {
   bool _isPriceSubmitted = false;
   final List<PriceModel> _priceList = [];
   XFile? _productImage;
+
+  void _onSubmit() async {
+    print("제품 원산지 : $_productOriginController.text");
+    print("제품 이름 : ${_productNameController.text}");
+    print("제품 설명 : ${_productDescriptionController.text}");
+    print("제품 가격 : ${_priceList.toString()}");
+    print("제품 사진 : $_productImage");
+
+    if (false) {
+      final url = Uri.parse("${HttpIp.httpIp}/");
+      final headers = {'Content-Type': 'application/json'};
+      final data = {};
+      final response =
+          await http.post(url, headers: headers, body: jsonEncode(data));
+
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+      } else {
+        if (!mounted) return;
+        HttpIp.errorPrint(
+          context: context,
+          title: "통신 오류",
+          message: response.body,
+        );
+      }
+    }
+  }
 
   void _onCheckSubmitted() {
     setState(() {
@@ -229,15 +259,7 @@ class _StoreMenuEditScreenState extends State<StoreMenuEditScreen> {
           horizontal: 10,
         ),
         child: ElevatedButton(
-          onPressed: _isSubmitted
-              ? () {
-                  print("제품 원산지 : $_productOriginController.text");
-                  print("제품 이름 : ${_productNameController.text}");
-                  print("제품 설명 : ${_productDescriptionController.text}");
-                  print("제품 가격 : ${_priceList.toString()}");
-                  print("제품 사진 : $_productImage");
-                }
-              : null,
+          onPressed: _isSubmitted ? _onSubmit : null,
           child: const Text("등록"),
         ),
       ),

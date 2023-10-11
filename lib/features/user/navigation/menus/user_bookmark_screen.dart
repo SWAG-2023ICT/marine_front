@@ -1,6 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:swag_marine_products/constants/gaps.dart';
+import 'package:swag_marine_products/constants/http_ip.dart';
 import 'package:swag_marine_products/features/user/navigation/menus/widgets/store_card.dart';
 import 'package:swag_marine_products/models/product_model.dart';
 
@@ -33,36 +36,22 @@ class _UserBookMarkScreenState extends State<UserBookMarkScreen> {
       _isFirtstLoading = true;
     });
 
-    final url = Uri.parse("");
-    final headers = {
-      'Content-Type': 'application/json',
-    };
-    final data = {
-      '': '',
-    };
+    if (false) {
+      final url = Uri.parse("${HttpIp.httpIp}/");
+      final headers = {'Content-Type': 'application/json'};
+      final data = {};
+      final response =
+          await http.post(url, headers: headers, body: jsonEncode(data));
 
-    final response = await http.post(url, body: data);
-
-    if (response.statusCode >= 200 && response.statusCode < 300) {
-      setState(() {
-        // _productList = jsonResponse;
-      });
-    } else {
-      if (!mounted) return;
-      swagPlatformDialog(
-        context: context,
-        title: "통신 오류",
-        message:
-            "북마크 리스트를 받아오지 못했습니다 ${response.statusCode} : ${response.body}",
-        actions: [
-          TextButton(
-            onPressed: () => context.pop(),
-            child: const Text(
-              "알겠습니다",
-            ),
-          ),
-        ],
-      );
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+      } else {
+        if (!mounted) return;
+        HttpIp.errorPrint(
+          context: context,
+          title: "통신 오류",
+          message: response.body,
+        );
+      }
     }
 
     setState(() {
@@ -70,7 +59,9 @@ class _UserBookMarkScreenState extends State<UserBookMarkScreen> {
     });
   }
 
-  Future<void> _onRefresh() async {}
+  Future<void> _onRefresh() async {
+    await _initBookmarkList();
+  }
 
   @override
   Widget build(BuildContext context) {

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:swag_marine_products/constants/gaps.dart';
+import 'package:swag_marine_products/constants/http_ip.dart';
 import 'package:swag_marine_products/features/store/menu/store_menu_edit_screen.dart';
 import 'package:swag_marine_products/features/store/navigation/menus/widgets/store_menu_card.dart';
 import 'package:swag_marine_products/features/user/order/user_order_screen.dart';
@@ -20,7 +21,6 @@ class StoreMenuScreen extends StatefulWidget {
 class _StoreMenuScreenState extends State<StoreMenuScreen> {
   List<ProductModel>? _productList;
 
-  final bool _isFavorited = false;
   bool _isFirstLoading = false;
 
   @override
@@ -34,7 +34,7 @@ class _StoreMenuScreenState extends State<StoreMenuScreen> {
     setState(() {
       _isFirstLoading = true;
     });
-    final url = Uri.parse("");
+    final url = Uri.parse("${HttpIp.httpIp}/");
     final headers = {
       'Content-Type': 'application/json',
     };
@@ -50,24 +50,20 @@ class _StoreMenuScreenState extends State<StoreMenuScreen> {
       });
     } else {
       if (!mounted) return;
-      swagPlatformDialog(
+      HttpIp.errorPrint(
         context: context,
         title: "통신 오류",
-        message: "상품 리스트를 받아오지 못했습니다 ${response.statusCode} : ${response.body}",
-        actions: [
-          TextButton(
-            onPressed: () => context.pop(),
-            child: const Text(
-              "알겠습니다",
-            ),
-          ),
-        ],
+        message: response.body,
       );
     }
 
     setState(() {
       _isFirstLoading = false;
     });
+  }
+
+  Future<void> _onRefresh() async {
+    _initBannerData();
   }
 
   @override
@@ -172,21 +168,24 @@ class _StoreMenuScreenState extends State<StoreMenuScreen> {
                 ? const Center(
                     child: CircularProgressIndicator(),
                   )
-                : ListView.separated(
-                    // padding: const EdgeInsets.symmetric(horizontal: 10),
-                    itemCount: 10,
-                    separatorBuilder: (context, index) => Gaps.v6,
-                    itemBuilder: (context, index) {
-                      String image;
-                      if (index % 3 == 0) {
-                        image = "assets/images/fish3.png";
-                      } else if (index % 2 == 0) {
-                        image = "assets/images/fish2.png";
-                      } else {
-                        image = "assets/images/fish.png";
-                      }
-                      return StoreMenuCard(image: image);
-                    },
+                : RefreshIndicator.adaptive(
+                    onRefresh: _onRefresh,
+                    child: ListView.separated(
+                      // padding: const EdgeInsets.symmetric(horizontal: 10),
+                      itemCount: 10,
+                      separatorBuilder: (context, index) => Gaps.v6,
+                      itemBuilder: (context, index) {
+                        String image;
+                        if (index % 3 == 0) {
+                          image = "assets/images/fish3.png";
+                        } else if (index % 2 == 0) {
+                          image = "assets/images/fish2.png";
+                        } else {
+                          image = "assets/images/fish.png";
+                        }
+                        return StoreMenuCard(image: image);
+                      },
+                    ),
                   ),
           ),
         ],

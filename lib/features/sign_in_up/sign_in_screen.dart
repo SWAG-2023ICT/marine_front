@@ -1,10 +1,16 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:swag_marine_products/constants/gaps.dart';
+import 'package:swag_marine_products/constants/http_ip.dart';
 import 'package:swag_marine_products/features/sign_in_up/sign_up_screen.dart';
 import 'package:swag_marine_products/features/store/navigation/store_navigation_screen.dart';
 import 'package:swag_marine_products/features/user/navigation/user_navigation_screen.dart';
 import 'package:swag_marine_products/storages/login_storage.dart';
+
+import 'package:http/http.dart' as http;
+import 'package:swag_marine_products/widget_tools/swag_platform_dialog.dart';
 
 class SignInScreen extends StatefulWidget {
   static const routeName = "signIn";
@@ -94,6 +100,22 @@ class _SignInScreenState extends State<SignInScreen> {
 
   Future<void> _onTapSignUp() async {
     await context.pushNamed(SignUpScreen.routeName);
+
+    final url = Uri.parse("${HttpIp.httpIp}/");
+    final headers = {'Content-Type': 'application/json'};
+    final data = {};
+    final response =
+        await http.post(url, headers: headers, body: jsonEncode(data));
+
+    if (response.statusCode >= 200 && response.statusCode < 300) {
+    } else {
+      if (!mounted) return;
+      HttpIp.errorPrint(
+        context: context,
+        title: "통신 오류",
+        message: response.body,
+      );
+    }
   }
 
   @override

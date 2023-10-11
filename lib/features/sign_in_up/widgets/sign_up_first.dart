@@ -9,6 +9,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:kpostal/kpostal.dart';
 
 import 'package:swag_marine_products/constants/gaps.dart';
+import 'package:swag_marine_products/constants/http_ip.dart';
 import 'package:swag_marine_products/features/sign_in_up/widgets/bottom_button.dart';
 import 'package:swag_marine_products/features/sign_in_up/widgets/centered_divider.dart';
 import 'package:swag_marine_products/widget_tools/swag_platform_dialog.dart';
@@ -48,6 +49,24 @@ class _SignUpFirstState extends State<SignUpFirst> {
   // 전화번호 정규식
   final RegExp _phoneNumberRegExp = RegExp(
       r'^(02|0[3-9][0-9]{1,2})-[0-9]{3,4}-[0-9]{4}$|^(02|0[3-9][0-9]{1,2})[0-9]{7,8}$|^01[0-9]{9}$|^070-[0-9]{4}-[0-9]{4}$|^070[0-9]{8}$');
+
+  void _onSubmit() async {
+    final url = Uri.parse("${HttpIp.httpIp}/");
+    final headers = {'Content-Type': 'application/json'};
+    final data = {};
+    final response =
+        await http.post(url, headers: headers, body: jsonEncode(data));
+
+    if (response.statusCode >= 200 && response.statusCode < 300) {
+    } else {
+      if (!mounted) return;
+      HttpIp.errorPrint(
+        context: context,
+        title: "통신 오류",
+        message: response.body,
+      );
+    }
+  }
 
   void _onCheckSubmitted() {
     if (widget.isStored) {
@@ -445,35 +464,18 @@ class _SignUpFirstState extends State<SignUpFirst> {
         }
       } else {
         if (!mounted) return;
-        swagPlatformDialog(
+        HttpIp.errorPrint(
           context: context,
           title: "데이터 오류",
           message: "데이터가 비어있습니다.",
-          actions: [
-            TextButton(
-              onPressed: () => context.pop(),
-              child: const Text(
-                "알겠습니다",
-              ),
-            ),
-          ],
         );
       }
     } else {
       if (!mounted) return;
-      swagPlatformDialog(
+      HttpIp.errorPrint(
         context: context,
         title: "통신 오류",
-        message:
-            "사업자 등록 여부를 받아오지 못했습니다 ${response.statusCode} : ${response.body}",
-        actions: [
-          TextButton(
-            onPressed: () => context.pop(),
-            child: const Text(
-              "알겠습니다",
-            ),
-          ),
-        ],
+        message: "사업자 등록 여부를 받아오지 못했습니다.",
       );
     }
   }
@@ -632,8 +634,8 @@ class _SignUpFirstState extends State<SignUpFirst> {
               ),
               Gaps.h10,
               BottomButton(
-                onPressed: _isSubmitted ? () => widget.onNextPage() : null,
-                text: "다음",
+                onPressed: _isSubmitted ? _onSubmit : null,
+                text: "회원가입",
                 isClicked: _isSubmitted,
               ),
             ],

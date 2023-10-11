@@ -1,6 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:swag_marine_products/constants/gaps.dart';
+import 'package:swag_marine_products/constants/http_ip.dart';
 import 'package:swag_marine_products/features/user/order/user_order_sheet.dart';
 import 'package:swag_marine_products/features/user/order/widgets/menu_card.dart';
 import 'package:swag_marine_products/models/product_model.dart';
@@ -34,40 +37,32 @@ class _UserOrderScreenState extends State<UserOrderScreen> {
     setState(() {
       _isFirstLoading = true;
     });
-    final url = Uri.parse("");
-    final headers = {
-      'Content-Type': 'application/json',
-    };
-    final data = {
-      '': '',
-    };
 
-    final response = await http.post(url, body: data);
+    if (false) {
+      final url = Uri.parse("${HttpIp.httpIp}/");
+      final headers = {'Content-Type': 'application/json'};
+      final data = {};
+      final response =
+          await http.post(url, headers: headers, body: jsonEncode(data));
 
-    if (response.statusCode >= 200 && response.statusCode < 300) {
-      setState(() {
-        // _productList = jsonResponse;
-      });
-    } else {
-      if (!mounted) return;
-      swagPlatformDialog(
-        context: context,
-        title: "통신 오류",
-        message: "상품 리스트를 받아오지 못했습니다 ${response.statusCode} : ${response.body}",
-        actions: [
-          TextButton(
-            onPressed: () => context.pop(),
-            child: const Text(
-              "알겠습니다",
-            ),
-          ),
-        ],
-      );
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+      } else {
+        if (!mounted) return;
+        HttpIp.errorPrint(
+          context: context,
+          title: "통신 오류",
+          message: response.body,
+        );
+      }
     }
 
     setState(() {
       _isFirstLoading = false;
     });
+  }
+
+  Future<void> _onRefresh() async {
+    _initBannerData();
   }
 
   void _onClickFavorite() {
@@ -182,24 +177,27 @@ class _UserOrderScreenState extends State<UserOrderScreen> {
                           ),
                         ),
                       ),
-                      child: ListView.separated(
-                        // padding: const EdgeInsets.symmetric(horizontal: 10),
-                        itemCount: 20,
-                        separatorBuilder: (context, index) => const Divider(
-                          height: 0,
-                          color: Colors.black54,
+                      child: RefreshIndicator.adaptive(
+                        onRefresh: _onRefresh,
+                        child: ListView.separated(
+                          // padding: const EdgeInsets.symmetric(horizontal: 10),
+                          itemCount: 20,
+                          separatorBuilder: (context, index) => const Divider(
+                            height: 0,
+                            color: Colors.black54,
+                          ),
+                          itemBuilder: (context, index) {
+                            String image;
+                            if (index % 3 == 0) {
+                              image = "assets/images/fish3.png";
+                            } else if (index % 2 == 0) {
+                              image = "assets/images/fish2.png";
+                            } else {
+                              image = "assets/images/fish.png";
+                            }
+                            return MenuCard(image: image);
+                          },
                         ),
-                        itemBuilder: (context, index) {
-                          String image;
-                          if (index % 3 == 0) {
-                            image = "assets/images/fish3.png";
-                          } else if (index % 2 == 0) {
-                            image = "assets/images/fish2.png";
-                          } else {
-                            image = "assets/images/fish.png";
-                          }
-                          return MenuCard(image: image);
-                        },
                       ),
                     ),
             ),

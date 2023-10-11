@@ -1,7 +1,6 @@
 import 'package:go_router/go_router.dart';
 import 'package:swag_marine_products/features/store/menu/store_menu_edit_screen.dart';
 import 'package:swag_marine_products/features/store/navigation/store_navigation_screen.dart';
-import 'package:swag_marine_products/features/store/profile/store_inform_inquiry_screen.dart';
 import 'package:swag_marine_products/features/store/profile/store_inform_screen.dart';
 import 'package:swag_marine_products/features/store/profile/store_inform_update_screen.dart';
 import 'package:swag_marine_products/features/store/profile/store_user_inform_inquiry_screen.dart';
@@ -174,21 +173,14 @@ final router = GoRouter(
           builder: (context, state) => const StoreInformScreen(),
           routes: [
             GoRoute(
-              name: StoreInformInquiryScreen.routeName,
-              path: StoreInformInquiryScreen.routeURL,
-              builder: (context, state) => const StoreInformInquiryScreen(),
-              routes: [
-                GoRoute(
-                  name: StoreInformUpdateScreen.routeName,
-                  path: StoreInformUpdateScreen.routeURL,
-                  builder: (context, state) {
-                    final args = state.extra as StoreInformUpdateScreenArgs;
-                    return StoreInformUpdateScreen(
-                      updateType: args.updateType,
-                    );
-                  },
-                ),
-              ],
+              name: StoreInformUpdateScreen.routeName,
+              path: StoreInformUpdateScreen.routeURL,
+              builder: (context, state) {
+                final args = state.extra as StoreInformUpdateScreenArgs;
+                return StoreInformUpdateScreen(
+                  updateType: args.updateType,
+                );
+              },
             ),
             GoRoute(
               name: StoreUserInformInquiryScreen.routeName,

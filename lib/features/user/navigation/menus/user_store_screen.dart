@@ -1,11 +1,15 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:swag_marine_products/constants/gaps.dart';
+import 'package:swag_marine_products/constants/http_ip.dart';
 import 'package:swag_marine_products/features/user/home/widgets/radioactivity_banner.dart';
 import 'package:swag_marine_products/features/user/navigation/menus/widgets/store_card.dart';
 import 'package:swag_marine_products/features/user/order/user_order_screen.dart';
+
+import 'package:http/http.dart' as http;
 
 class UserStoreScreen extends StatefulWidget {
   const UserStoreScreen({super.key});
@@ -32,14 +36,60 @@ class _UserStoreScreenState extends State<UserStoreScreen> {
       _isFirstLoading = true;
     });
 
-    sleep(const Duration(milliseconds: 100));
+    if (false) {
+      final url = Uri.parse("${HttpIp.httpIp}/");
+      final headers = {'Content-Type': 'application/json'};
+      final data = {};
+      final response =
+          await http.post(url, headers: headers, body: jsonEncode(data));
+
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+      } else {
+        if (!mounted) return;
+        HttpIp.errorPrint(
+          context: context,
+          title: "통신 오류",
+          message: response.body,
+        );
+      }
+    }
 
     setState(() {
       _isFirstLoading = false;
     });
   }
 
-  Future<void> _onSearch() async {}
+  Future<void> _onRefresh() async {
+    _initStoreList();
+  }
+
+  Future<void> _onSearch() async {
+    setState(() {
+      _isFirstLoading = true;
+    });
+
+    if (false) {
+      final url = Uri.parse("${HttpIp.httpIp}/");
+      final headers = {'Content-Type': 'application/json'};
+      final data = {};
+      final response =
+          await http.post(url, headers: headers, body: jsonEncode(data));
+
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+      } else {
+        if (!mounted) return;
+        HttpIp.errorPrint(
+          context: context,
+          title: "통신 오류",
+          message: response.body,
+        );
+      }
+    }
+
+    setState(() {
+      _isFirstLoading = false;
+    });
+  }
 
   @override
   void dispose() {
@@ -115,9 +165,12 @@ class _UserStoreScreenState extends State<UserStoreScreen> {
                 ? const Center(
                     child: CircularProgressIndicator(),
                   )
-                : ListView.builder(
-                    itemCount: 20,
-                    itemBuilder: (context, index) => const StoreCard(),
+                : RefreshIndicator.adaptive(
+                    onRefresh: _onRefresh,
+                    child: ListView.builder(
+                      itemCount: 20,
+                      itemBuilder: (context, index) => const StoreCard(),
+                    ),
                   ),
           ),
           if (_isBarriered)
