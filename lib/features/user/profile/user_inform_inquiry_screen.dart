@@ -1,8 +1,16 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import 'package:swag_marine_products/constants/gaps.dart';
+import 'package:swag_marine_products/constants/http_ip.dart';
 import 'package:swag_marine_products/constants/sizes.dart';
 import 'package:swag_marine_products/features/user/profile/user_inform_update_screen.dart';
+import 'package:swag_marine_products/models/database/user_model.dart';
+import 'package:swag_marine_products/providers/user_provider.dart';
+
+import 'package:http/http.dart' as http;
 
 class UserInformInquiryScreen extends StatefulWidget {
   static const routeName = "user_inquiry_screen";
@@ -18,159 +26,206 @@ class UserInformInquiryScreen extends StatefulWidget {
 }
 
 class _UserInformInquiryScreenState extends State<UserInformInquiryScreen> {
-  final String _address = "주소 1";
+  UserModel? _userData;
+
+  bool _isFirstLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _initUserData();
+  }
+
+  Future<void> _initUserData() async {
+    setState(() {
+      _isFirstLoading = true;
+    });
+
+    final url = Uri.parse(
+        "${HttpIp.httpIp}/marine/users/${context.read<UserProvider>().userId}");
+    final headers = {'Content-Type': 'application/json'};
+    final response = await http.get(url, headers: headers);
+
+    if (response.statusCode >= 200) {
+      print("유저 정보 호출 : 성공!");
+      print(response.body);
+      print(response.headers);
+
+      final jsonResponse = UserModel.fromJson(jsonDecode(response.body));
+
+      setState(() {
+        _userData = jsonResponse;
+      });
+    } else {
+      if (!mounted) return;
+      HttpIp.errorPrint(
+        context: context,
+        title: "통신 오류",
+        message: response.body,
+      );
+    }
+
+    setState(() {
+      _isFirstLoading = false;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    DateTime? birthday = DateTime.now();
-
     return Scaffold(
       appBar: AppBar(
         title: const Text(
           "회원 정보",
         ),
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(
-              horizontal: Sizes.size24, vertical: Sizes.size8),
-          child: Column(
-            children: [
-              TextFormField(
-                initialValue: "dlwogus1027",
-                readOnly: true,
-                decoration: InputDecoration(
-                  labelText: "아이디",
-                  prefixIcon: Icon(
-                    Icons.person_outline,
-                    color: Colors.grey.shade600,
-                  ),
+      body: _isFirstLoading
+          ? const Center(
+              child: CircularProgressIndicator.adaptive(),
+            )
+          : SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                    horizontal: Sizes.size24, vertical: Sizes.size8),
+                child: Column(
+                  children: [
+                    TextFormField(
+                      initialValue: _userData!.userId,
+                      readOnly: true,
+                      decoration: InputDecoration(
+                        labelText: "아이디",
+                        prefixIcon: Icon(
+                          Icons.person_outline,
+                          color: Colors.grey.shade600,
+                        ),
+                      ),
+                    ),
+                    Gaps.v10,
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Expanded(
+                        //   child: TextFormField(
+                        //     initialValue: _userData!.password,
+                        //     readOnly: true,
+                        //     obscureText: true,
+                        //     decoration: InputDecoration(
+                        //       labelText: "비밀번호",
+                        //       prefixIcon: Icon(
+                        //         Icons.lock_person_outlined,
+                        //         color: Colors.grey.shade600,
+                        //       ),
+                        //     ),
+                        //   ),
+                        // ),
+                        Expanded(
+                          child: ElevatedButton(
+                            onPressed: () {
+                              context.pushNamed(
+                                UserInformUpdateScreen.routeName,
+                                extra: const UserInformUpdateScreenArgs(
+                                  updateType: UpdateType.pw,
+                                ),
+                              );
+                            },
+                            style: ElevatedButton.styleFrom(
+                              padding: const EdgeInsets.all(24),
+                              textStyle: const TextStyle(fontSize: 14),
+                              shape: const RoundedRectangleBorder(
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(10),
+                                ),
+                              ),
+                            ),
+                            child: const Text("비밀번호 수정"),
+                          ),
+                        ),
+                      ],
+                    ),
+                    Gaps.v10,
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: TextFormField(
+                            initialValue: _userData!.name,
+                            readOnly: true,
+                            decoration: InputDecoration(
+                              labelText: "이름(실명)",
+                              prefixIcon: Icon(
+                                Icons.badge_outlined,
+                                color: Colors.grey.shade600,
+                              ),
+                            ),
+                          ),
+                        ),
+                        ElevatedButton(
+                          onPressed: () {
+                            context.pushNamed(
+                              UserInformUpdateScreen.routeName,
+                              extra: const UserInformUpdateScreenArgs(
+                                updateType: UpdateType.name,
+                              ),
+                            );
+                          },
+                          style: ElevatedButton.styleFrom(
+                            padding: const EdgeInsets.all(24),
+                            textStyle: const TextStyle(fontSize: 14),
+                            shape: const RoundedRectangleBorder(
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(10),
+                              ),
+                            ),
+                          ),
+                          child: const Text("수정"),
+                        ),
+                      ],
+                    ),
+                    Gaps.v10,
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: TextFormField(
+                            initialValue: _userData!.phoneNumber,
+                            readOnly: true,
+                            decoration: InputDecoration(
+                              labelText: "전화번호",
+                              prefixIcon: Icon(
+                                Icons.phone_iphone_rounded,
+                                color: Colors.grey.shade600,
+                              ),
+                            ),
+                          ),
+                        ),
+                        ElevatedButton(
+                          onPressed: () {
+                            context.pushNamed(
+                              UserInformUpdateScreen.routeName,
+                              extra: const UserInformUpdateScreenArgs(
+                                updateType: UpdateType.phoneNumber,
+                              ),
+                            );
+                          },
+                          style: ElevatedButton.styleFrom(
+                            padding: const EdgeInsets.all(24),
+                            textStyle: const TextStyle(fontSize: 14),
+                            shape: const RoundedRectangleBorder(
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(10),
+                              ),
+                            ),
+                          ),
+                          child: const Text("수정"),
+                        ),
+                      ],
+                    ),
+                    // Gaps.v10,
+                    // const UserAddressList(),
+                  ],
                 ),
               ),
-              Gaps.v10,
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(
-                    child: TextFormField(
-                      initialValue: "Wogus@2356",
-                      readOnly: true,
-                      obscureText: true,
-                      decoration: InputDecoration(
-                        labelText: "비밀번호",
-                        prefixIcon: Icon(
-                          Icons.lock_person_outlined,
-                          color: Colors.grey.shade600,
-                        ),
-                      ),
-                    ),
-                  ),
-                  ElevatedButton(
-                    onPressed: () {
-                      context.pushNamed(
-                        UserInformUpdateScreen.routeName,
-                        extra: const UserInformUpdateScreenArgs(
-                          updateType: UpdateType.pw,
-                        ),
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.all(24),
-                      textStyle: const TextStyle(fontSize: 14),
-                      shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(10),
-                        ),
-                      ),
-                    ),
-                    child: const Text("수정"),
-                  ),
-                ],
-              ),
-              Gaps.v10,
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(
-                    child: TextFormField(
-                      initialValue: "이재현",
-                      readOnly: true,
-                      decoration: InputDecoration(
-                        labelText: "이름(실명)",
-                        prefixIcon: Icon(
-                          Icons.badge_outlined,
-                          color: Colors.grey.shade600,
-                        ),
-                      ),
-                    ),
-                  ),
-                  ElevatedButton(
-                    onPressed: () {
-                      context.pushNamed(
-                        UserInformUpdateScreen.routeName,
-                        extra: const UserInformUpdateScreenArgs(
-                          updateType: UpdateType.name,
-                        ),
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.all(24),
-                      textStyle: const TextStyle(fontSize: 14),
-                      shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(10),
-                        ),
-                      ),
-                    ),
-                    child: const Text("수정"),
-                  ),
-                ],
-              ),
-              Gaps.v10,
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(
-                    child: TextFormField(
-                      initialValue: "01049049193",
-                      readOnly: true,
-                      decoration: InputDecoration(
-                        labelText: "전화번호",
-                        prefixIcon: Icon(
-                          Icons.phone_iphone_rounded,
-                          color: Colors.grey.shade600,
-                        ),
-                      ),
-                    ),
-                  ),
-                  ElevatedButton(
-                    onPressed: () {
-                      context.pushNamed(
-                        UserInformUpdateScreen.routeName,
-                        extra: const UserInformUpdateScreenArgs(
-                          updateType: UpdateType.phoneNumber,
-                        ),
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.all(24),
-                      textStyle: const TextStyle(fontSize: 14),
-                      shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(10),
-                        ),
-                      ),
-                    ),
-                    child: const Text("수정"),
-                  ),
-                ],
-              ),
-              // Gaps.v10,
-              // const UserAddressList(),
-            ],
-          ),
-        ),
-      ),
+            ),
     );
   }
 }

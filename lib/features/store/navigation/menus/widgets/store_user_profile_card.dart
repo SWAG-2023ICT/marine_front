@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import 'package:swag_marine_products/constants/sizes.dart';
 import 'package:swag_marine_products/features/store/profile/store_user_inform_inquiry_screen.dart';
+import 'package:swag_marine_products/providers/store_provider.dart';
 
 class StoreUserProfileCard extends StatefulWidget {
   const StoreUserProfileCard({
@@ -72,19 +74,19 @@ class _StoreUserProfileCardState extends State<StoreUserProfileCard> {
           color: Colors.white,
         ),
       ),
-      title: const Text(
-        "이재현@dlwogus1027",
-        style: TextStyle(
+      title: Text(
+        context.watch<StoreProvider>().storeId!,
+        style: const TextStyle(
           fontWeight: FontWeight.w600,
           fontSize: Sizes.size18,
         ),
       ),
-      subtitle: const Text(
-        "01049049193",
-        style: TextStyle(
-          fontSize: Sizes.size14,
-        ),
-      ),
+      // subtitle: const Text(
+      //   "01049049193",
+      //   style: TextStyle(
+      //     fontSize: Sizes.size14,
+      //   ),
+      // ),
       trailing: const Icon(
         Icons.chevron_right_rounded,
         size: Sizes.size40,

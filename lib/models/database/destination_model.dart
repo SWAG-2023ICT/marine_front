@@ -22,7 +22,7 @@ class DestinationModel {
       destinationName: json['destinationName'] as String,
       destinationAddress: json['destinationAddress'] as String,
       defaultStatus: json['defaultStatus'] as bool,
-      userId: json['userId'] as String,
+      userId: json['userId'] ?? "",
     );
   }
 

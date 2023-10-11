@@ -74,7 +74,7 @@ class _SignUpFirstState extends State<SignUpFirst> {
       final response =
           await http.post(url, headers: headers, body: jsonEncode(data));
 
-      if (response.statusCode >= 200 && response.statusCode < 300) {
+      if (response.statusCode == 200) {
         print("회원가입 - 유저 : 성공!");
         context.pop();
       } else {
@@ -89,21 +89,23 @@ class _SignUpFirstState extends State<SignUpFirst> {
       final url = Uri.parse("${HttpIp.httpIp}/marine/stores");
       final headers = {'Content-Type': 'application/json'};
       final data = {
-        'userId': _userIdController.text.trim(),
-        'password': _userPasswordConfirmationController.text.trim(),
-        'name': _userNameController.text.trim(),
-        'phoneNumber': _userPhoneNumberController.text.trim(),
+        'userId': _storeIdController.text.trim(),
+        'password': _storePasswordConfirmationController.text.trim(),
+        'name': _storeNameController.text.trim(),
+        'phoneNumber': _storePhoneNumberController.text.trim(),
         'storeId': _storeBusinessNumberController.text.trim(),
         "storeName": _storeNameController.text.trim(),
         "storePhoneNumber": _storePhoneNumberController.text.trim(),
-        "storeAddress":
-            "${_storeAddressController.text.trim()},${_storeAddressDetailController.text.trim()}",
-        "storeImage": [File(_storeImage!.path)],
+        "storeAddress": _storeAddressDetailController.text.trim().isNotEmpty
+            ? "${_storeAddressController.text.trim()},${_storeAddressDetailController.text.trim()}"
+            : _storeAddressController.text.trim(),
+        // "storeImage": base64Encode(File(_storeImage!.path).readAsBytesSync()),
       };
+
       final response =
           await http.post(url, headers: headers, body: jsonEncode(data));
 
-      if (response.statusCode >= 200 && response.statusCode < 300) {
+      if (response.statusCode == 200) {
         print("회원가입 - 가게 : 성공!");
         context.pop();
       } else {
@@ -128,6 +130,7 @@ class _SignUpFirstState extends State<SignUpFirst> {
       setState(() {
         _userIdAuth = true;
       });
+      _onCheckSubmitted();
     } else {
       if (!mounted) return;
       HttpIp.errorPrint(
@@ -149,6 +152,7 @@ class _SignUpFirstState extends State<SignUpFirst> {
       setState(() {
         _storeIdAuth = true;
       });
+      _onCheckSubmitted();
     } else {
       if (!mounted) return;
       HttpIp.errorPrint(
@@ -197,6 +201,8 @@ class _SignUpFirstState extends State<SignUpFirst> {
               _userNameController.text.trim().isNotEmpty) &&
           (_userAddressErrorText == null &&
               _userAddressController.text.trim().isNotEmpty) &&
+          (_userAddressDetailErrorText == null &&
+              _userAddressDetailController.text.trim().isNotEmpty) &&
           (_userPhoneNumberErrorText == null &&
               _userPhoneNumberController.text.trim().isNotEmpty);
     });
@@ -224,8 +230,8 @@ class _SignUpFirstState extends State<SignUpFirst> {
           (_storeAddressErrorText == null &&
               _storeAddressController.text.trim().isNotEmpty) &&
           (_storeBusinessPhoneNumberErrorText == null &&
-              _storeBusinessPhoneNumberController.text.trim().isNotEmpty) &&
-          (_storeImage != null);
+              _storeBusinessPhoneNumberController.text.trim().isNotEmpty);
+      // && (_storeImage != null);
     });
   }
 
@@ -263,6 +269,7 @@ class _SignUpFirstState extends State<SignUpFirst> {
   String? _userPhoneNumberErrorText;
   String? _userNameErrorText;
   String? _userPhoneNumberAuthErrorText;
+  String? _userAddressDetailErrorText;
   bool _userIdAuth = false;
   bool _userPhoneNumberAuth = false;
 
@@ -381,30 +388,43 @@ class _SignUpFirstState extends State<SignUpFirst> {
     _onCheckSubmitted();
   }
 
+  void _validateUserAddressDetail(String value) {
+    if (value.isEmpty) {
+      setState(() {
+        _userAddressDetailErrorText = '상세 주소를 입력하세요.';
+      });
+    } else {
+      setState(() {
+        _userAddressDetailErrorText = null;
+      });
+      _onCheckSubmitted();
+    }
+  }
+
   // ------------------ 가게 정보 변수 및 메소드 ------------------
   final TextEditingController _storeIdController =
-      TextEditingController(); // id
+      TextEditingController(text: "testStore1"); // id
   final TextEditingController _storePasswordController =
-      TextEditingController(); // pw
+      TextEditingController(text: "Test@1234"); // pw
   final TextEditingController _storePasswordConfirmationController =
-      TextEditingController(); // pw 확인
+      TextEditingController(text: "Test@1234"); // pw 확인
   final TextEditingController _storeNameController =
-      TextEditingController(); // 이름
+      TextEditingController(text: "테스트가게1"); // 이름
   final TextEditingController _storePhoneNumberController =
-      TextEditingController(); // 개인 전화번호
+      TextEditingController(text: "01012345678"); // 개인 전화번호
   final TextEditingController _storePhoneNumberAuthController =
       TextEditingController(); // 개인 전화번호 인증 코드
   final TextEditingController _storeBusinessNumberController =
-      TextEditingController(); // 사업자 번호
+      TextEditingController(text: "3850100868"); // 사업자 번호
   final TextEditingController _storeBusinessNameController =
-      TextEditingController(); // 가게 이름
+      TextEditingController(text: "수산의 왕"); // 가게 이름
   final TextEditingController _storeAddressController =
-      TextEditingController(); // 가게 주소
+      TextEditingController(text: "연암공대"); // 가게 주소
   final TextEditingController _storeAddressDetailController =
       TextEditingController(); // 가게 상세 주소
   String? _storeAddressZipCode; // 가게 우편번호
   final TextEditingController _storeBusinessPhoneNumberController =
-      TextEditingController(); // 가게 전화번호
+      TextEditingController(text: "01012345678"); // 가게 전화번호
   final TextEditingController _storeBusinessPhoneNumberAuthController =
       TextEditingController(); // 가게 전화번호 인증 코드
 
@@ -549,6 +569,7 @@ class _SignUpFirstState extends State<SignUpFirst> {
             _storeBusinessNumberAuth = true;
           });
         }
+        _onCheckSubmitted();
       } else {
         if (!mounted) return;
         HttpIp.errorPrint(
@@ -620,6 +641,7 @@ class _SignUpFirstState extends State<SignUpFirst> {
         _storeAddressZipCode = result.postCode;
       });
       print(_storeAddressZipCode);
+
       _onCheckSubmitted();
     }
   }
@@ -1033,12 +1055,14 @@ class _SignUpFirstState extends State<SignUpFirst> {
           keyboardType: TextInputType.text,
           decoration: InputDecoration(
             labelText: '주소 상세 정보',
+            errorText: _userAddressDetailErrorText,
             prefixIcon: Icon(
               Icons.add_home_work_outlined,
               color: Colors.grey.shade600,
             ),
           ),
           onTap: onChangeBarrier,
+          onChanged: _validateUserAddressDetail,
           onFieldSubmitted: _onFieldSubmitted,
         ),
       ],

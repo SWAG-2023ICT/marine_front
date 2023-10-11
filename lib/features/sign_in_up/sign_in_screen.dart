@@ -2,11 +2,14 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import 'package:swag_marine_products/constants/gaps.dart';
 import 'package:swag_marine_products/constants/http_ip.dart';
 import 'package:swag_marine_products/features/sign_in_up/sign_up_screen.dart';
 import 'package:swag_marine_products/features/store/navigation/store_navigation_screen.dart';
 import 'package:swag_marine_products/features/user/navigation/user_navigation_screen.dart';
+import 'package:swag_marine_products/providers/store_provider.dart';
+import 'package:swag_marine_products/providers/user_provider.dart';
 import 'package:swag_marine_products/storages/login_storage.dart';
 
 import 'package:http/http.dart' as http;
@@ -32,7 +35,7 @@ class _SignInScreenState extends State<SignInScreen> {
   bool _isSubmitted = true;
   final List<bool> _isSelected = [false, true];
 
-  final RegExp _idRegExp = RegExp(r'^[a-z0-9]+$'); // 아이디 정규식
+  final RegExp _idRegExp = RegExp(r'^[a-zA-Z0-9]+$'); // 아이디 정규식
   final int _minPasswordLength = 6; // 최소 비밀번호 길이
 
   String? _idErrorText; // 아이디 오류 메시지
@@ -45,7 +48,7 @@ class _SignInScreenState extends State<SignInScreen> {
       });
     } else if (!_idRegExp.hasMatch(value)) {
       setState(() {
-        _idErrorText = '영문 소문자와 숫자만 입력하세요.';
+        _idErrorText = '영문과 숫자만 입력하세요.';
       });
     } else {
       setState(() {
@@ -83,7 +86,20 @@ class _SignInScreenState extends State<SignInScreen> {
   }
 
   void _handleLogin() async {
-    if (!_isStored) {
+    final url = Uri.parse("${HttpIp.httpIp}/marine/users/auth");
+    final headers = {'Content-Type': 'application/json'};
+    final data = {
+      'userId': _idController.text.trim(),
+      'password': _passwordController.text.trim(),
+    };
+    final response =
+        await http.post(url, headers: headers, body: jsonEncode(data));
+
+    if (response.statusCode >= 200) {
+      print("로그인 : 성공!");
+      print(response.body);
+      final result = bool.parse(response.body);
+
       if (_rememberMe) {
         await LoginStorage.saveLoginData(
           id: _idController.text,
@@ -91,23 +107,20 @@ class _SignInScreenState extends State<SignInScreen> {
           isStored: _isStored,
         );
       }
-      if (!mounted) return;
-      context.replaceNamed(UserNavigationScreen.routeName);
-    } else {
-      context.replaceNamed(StoreNavigationScreen.routeName);
-    }
-  }
 
-  Future<void> _onTapSignUp() async {
-    await context.pushNamed(SignUpScreen.routeName);
+      if (!result) {
+        if (!mounted) return;
+        await context.read<UserProvider>().login(_idController.text.trim());
 
-    final url = Uri.parse("${HttpIp.httpIp}/");
-    final headers = {'Content-Type': 'application/json'};
-    final data = {};
-    final response =
-        await http.post(url, headers: headers, body: jsonEncode(data));
+        if (!mounted) return;
+        context.replaceNamed(UserNavigationScreen.routeName);
+      } else {
+        if (!mounted) return;
+        await context.read<StoreProvider>().login(_idController.text.trim());
 
-    if (response.statusCode >= 200 && response.statusCode < 300) {
+        if (!mounted) return;
+        context.replaceNamed(StoreNavigationScreen.routeName);
+      }
     } else {
       if (!mounted) return;
       HttpIp.errorPrint(
@@ -116,6 +129,11 @@ class _SignInScreenState extends State<SignInScreen> {
         message: response.body,
       );
     }
+    // context.replaceNamed(UserNavigationScreen.routeName);
+  }
+
+  Future<void> _onTapSignUp() async {
+    await context.pushNamed(SignUpScreen.routeName);
   }
 
   @override

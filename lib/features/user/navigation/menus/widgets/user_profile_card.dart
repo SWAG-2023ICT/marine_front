@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import 'package:swag_marine_products/constants/sizes.dart';
 import 'package:swag_marine_products/features/store/profile/store_user_inform_inquiry_screen.dart';
 import 'package:swag_marine_products/features/user/profile/user_inform_inquiry_screen.dart';
+import 'package:swag_marine_products/providers/user_provider.dart';
 
 class UserProfileCard extends StatefulWidget {
   const UserProfileCard({
@@ -62,7 +64,7 @@ class _UserProfileCardState extends State<UserProfileCard> {
   Widget build(BuildContext context) {
     return ListTile(
       onTap: () {
-        context.pushNamed(StoreUserInformInquiryScreen.routeName);
+        context.pushNamed(UserInformInquiryScreen.routeName);
       },
       leading: CircleAvatar(
         radius: 40,
@@ -76,31 +78,31 @@ class _UserProfileCardState extends State<UserProfileCard> {
         //   "https://avatars.githubusercontent.com/u/77985708?v=4",
         // ),
       ),
-      title: const Text(
-        "이재현@dlwogus1027",
-        style: TextStyle(
+      title: Text(
+        context.watch<UserProvider>().userId!,
+        style: const TextStyle(
           fontWeight: FontWeight.w600,
           fontSize: Sizes.size18,
         ),
       ),
-      subtitle:
-          // GestureDetector(
-          //   onTap: () {
-          //     // _showEditDialog(context);
-          //   },
-          //   child: Text(
-          //     widget.userData!.userDef ?? '',
-          //     style: TextStyle(
-          //       fontSize: Sizes.size14,
-          //     ),
-          //   ),
-          // ),
-          const Text(
-        "01049049193",
-        style: TextStyle(
-          fontSize: Sizes.size14,
-        ),
-      ),
+      // subtitle:
+      //     // GestureDetector(
+      //     //   onTap: () {
+      //     //     // _showEditDialog(context);
+      //     //   },
+      //     //   child: Text(
+      //     //     widget.userData!.userDef ?? '',
+      //     //     style: TextStyle(
+      //     //       fontSize: Sizes.size14,
+      //     //     ),
+      //     //   ),
+      //     // ),
+      //     const Text(
+      //   "01049049193",
+      //   style: TextStyle(
+      //     fontSize: Sizes.size14,
+      //   ),
+      // ),
       trailing: const Icon(
         Icons.chevron_right_rounded,
         size: Sizes.size40,
