@@ -48,14 +48,14 @@ class _StoreUserInformInquiryScreenState
     final headers = {'Content-Type': 'application/json'};
     final response = await http.get(url, headers: headers);
 
-    if (response.statusCode >= 200) {
+    if (response.statusCode == 200) {
       print("가게 유저 정보 호출 : 성공!");
       print(response.body);
 
-      final jsonResponse = jsonDecode(response.body) as Map<String, dynamic>;
+      final jsonResponse = UserModel.fromJson(jsonDecode(response.body));
 
       setState(() {
-        _userData = UserModel.fromJson(jsonResponse);
+        _userData = jsonResponse;
       });
     } else {
       if (!mounted) return;
