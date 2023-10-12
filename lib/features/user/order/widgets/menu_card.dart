@@ -1,19 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:swag_marine_products/constants/gaps.dart';
 import 'package:swag_marine_products/features/user/order/user_order_sheet.dart';
+import 'package:swag_marine_products/models/database/product_model.dart';
 
 class MenuCard extends StatelessWidget {
   const MenuCard({
     super.key,
     required this.image,
+    required this.productData,
   });
 
   final String image;
+  final ProductModel productData;
 
   void _onProductTap(BuildContext context) async {
     showModalBottomSheet(
       context: context,
-      builder: (context) => const UserOrderSheet(),
+      builder: (context) => UserOrderSheet(
+        productId: productData.productId,
+      ),
       useSafeArea: true,
       isScrollControlled: true,
     );

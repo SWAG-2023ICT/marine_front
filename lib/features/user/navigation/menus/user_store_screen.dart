@@ -10,6 +10,7 @@ import 'package:swag_marine_products/features/user/navigation/menus/widgets/stor
 import 'package:swag_marine_products/features/user/order/user_order_screen.dart';
 
 import 'package:http/http.dart' as http;
+import 'package:swag_marine_products/models/database/store_model.dart';
 
 class UserStoreScreen extends StatefulWidget {
   const UserStoreScreen({super.key});
@@ -20,6 +21,7 @@ class UserStoreScreen extends StatefulWidget {
 
 class _UserStoreScreenState extends State<UserStoreScreen> {
   final TextEditingController _searchController = TextEditingController();
+  List<StoreModel>? _storeList;
 
   bool _isBarriered = false;
   bool _isFirstLoading = false;
@@ -36,22 +38,25 @@ class _UserStoreScreenState extends State<UserStoreScreen> {
       _isFirstLoading = true;
     });
 
-    if (false) {
-      final url = Uri.parse("${HttpIp.httpIp}/");
-      final headers = {'Content-Type': 'application/json'};
-      final data = {};
-      final response =
-          await http.post(url, headers: headers, body: jsonEncode(data));
+    final url = Uri.parse("${HttpIp.httpIp}/marine/stores");
+    final headers = {'Content-Type': 'application/json'};
+    final response = await http.get(url, headers: headers);
 
-      if (response.statusCode >= 200 && response.statusCode < 300) {
-      } else {
-        if (!mounted) return;
-        HttpIp.errorPrint(
-          context: context,
-          title: "통신 오류",
-          message: response.body,
-        );
-      }
+    if (response.statusCode >= 200 && response.statusCode < 300) {
+      print("가게 리스트 호출 : 성공");
+      final jsonResponse = jsonDecode(response.body) as List<dynamic>;
+
+      setState(() {
+        _storeList =
+            jsonResponse.map((data) => StoreModel.fromJson(data)).toList();
+      });
+    } else {
+      if (!mounted) return;
+      HttpIp.errorPrint(
+        context: context,
+        title: "통신 오류",
+        message: response.body,
+      );
     }
 
     setState(() {
@@ -165,13 +170,24 @@ class _UserStoreScreenState extends State<UserStoreScreen> {
                 ? const Center(
                     child: CircularProgressIndicator(),
                   )
-                : RefreshIndicator.adaptive(
-                    onRefresh: _onRefresh,
-                    child: ListView.builder(
-                      itemCount: 20,
-                      itemBuilder: (context, index) => const StoreCard(),
-                    ),
-                  ),
+                : _storeList == null || _storeList!.isEmpty
+                    ? Center(
+                        child: IconButton(
+                          iconSize: MediaQuery.of(context).size.width / 3,
+                          color: Colors.grey.shade400,
+                          icon: const Icon(Icons.refresh_outlined),
+                          onPressed: _onRefresh,
+                        ),
+                      )
+                    : RefreshIndicator.adaptive(
+                        onRefresh: _onRefresh,
+                        child: ListView.builder(
+                          itemCount: _storeList!.length,
+                          itemBuilder: (context, index) => StoreCard(
+                            storeData: _storeList![index],
+                          ),
+                        ),
+                      ),
           ),
           if (_isBarriered)
             ModalBarrier(

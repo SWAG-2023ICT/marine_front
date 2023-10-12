@@ -74,7 +74,7 @@ class _SignUpFirstState extends State<SignUpFirst> {
       final response =
           await http.post(url, headers: headers, body: jsonEncode(data));
 
-      if (response.statusCode == 200) {
+      if (response.statusCode >= 200 && response.statusCode < 300) {
         print("회원가입 - 유저 : 성공!");
         context.pop();
       } else {
@@ -105,7 +105,7 @@ class _SignUpFirstState extends State<SignUpFirst> {
       final response =
           await http.post(url, headers: headers, body: jsonEncode(data));
 
-      if (response.statusCode == 200) {
+      if (response.statusCode >= 200 && response.statusCode < 300) {
         print("회원가입 - 가게 : 성공!");
         context.pop();
       } else {
@@ -115,13 +115,14 @@ class _SignUpFirstState extends State<SignUpFirst> {
           title: "통신 오류",
           message: response.body,
         );
+        print(response.body);
       }
     }
   }
 
   Future<void> _onCheckUserId() async {
     final url = Uri.parse(
-        "${HttpIp.httpIp}/marine/users/${_userIdController.text.trim()}");
+        "${HttpIp.httpIp}/marine/users/duplicate/${_userIdController.text.trim()}");
     final headers = {'Content-Type': 'application/json'};
     final response = await http.get(url, headers: headers);
 
@@ -138,12 +139,16 @@ class _SignUpFirstState extends State<SignUpFirst> {
         title: "통신 오류",
         message: response.body,
       );
+      print(response.body);
+      setState(() {
+        _userIdAuth = false;
+      });
     }
   }
 
   Future<void> _onCheckStoreId() async {
     final url = Uri.parse(
-        "${HttpIp.httpIp}/marine/users/${_storeIdController.text.trim()}");
+        "${HttpIp.httpIp}/marine/users/duplicate/${_storeIdController.text.trim()}");
     final headers = {'Content-Type': 'application/json'};
     final response = await http.get(url, headers: headers);
 
@@ -160,6 +165,10 @@ class _SignUpFirstState extends State<SignUpFirst> {
         title: "통신 오류",
         message: response.body,
       );
+      print(response.body);
+      setState(() {
+        _storeIdAuth = false;
+      });
     }
   }
 
@@ -438,7 +447,7 @@ class _SignUpFirstState extends State<SignUpFirst> {
   String? _storeBusinessNameErrorText;
   String? _storeAddressErrorText;
   String? _storeBusinessPhoneNumberErrorText;
-  bool _storeBusinessNumberAuth = false;
+  bool _storeBusinessNumberAuth = true;
   bool _storeIdAuth = false;
 
   XFile? _storeImage;
@@ -554,7 +563,7 @@ class _SignUpFirstState extends State<SignUpFirst> {
     final response =
         await http.post(url, headers: headers, body: jsonEncode(data));
 
-    if (response.statusCode == 200) {
+    if (response.statusCode >= 200 && response.statusCode < 300) {
       print("통신 성공");
       final jsonResponse = json.decode(response.body);
       print(jsonResponse);

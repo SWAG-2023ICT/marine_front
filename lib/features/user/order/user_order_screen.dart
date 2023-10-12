@@ -2,27 +2,43 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import 'package:swag_marine_products/constants/gaps.dart';
 import 'package:swag_marine_products/constants/http_ip.dart';
 import 'package:swag_marine_products/features/user/order/user_order_sheet.dart';
 import 'package:swag_marine_products/features/user/order/widgets/menu_card.dart';
 import 'package:swag_marine_products/models/database/product_model.dart';
+import 'package:swag_marine_products/models/database/store_model.dart';
+import 'package:swag_marine_products/providers/user_provider.dart';
 import 'package:swag_marine_products/widget_tools/swag_platform_dialog.dart';
 
 import 'package:http/http.dart' as http;
 
+class UserOrderScreenArgs {
+  UserOrderScreenArgs({
+    required this.storeId,
+  });
+
+  final String storeId;
+}
+
 class UserOrderScreen extends StatefulWidget {
   static const routeName = "user_order";
   static const routeURL = "user_order";
-  const UserOrderScreen({super.key});
+  const UserOrderScreen({
+    super.key,
+    required this.storeId,
+  });
+
+  final String storeId;
 
   @override
   State<UserOrderScreen> createState() => _UserOrderScreenState();
 }
 
 class _UserOrderScreenState extends State<UserOrderScreen> {
-  List<ProductModel>? _productList;
-
+  StoreModel? _storeData;
+  int? _wishId;
   bool _isFavorited = false;
   bool _isFirstLoading = false;
 
@@ -30,7 +46,7 @@ class _UserOrderScreenState extends State<UserOrderScreen> {
   void initState() {
     super.initState();
 
-    // _initBannerData();
+    _initBannerData();
   }
 
   void _initBannerData() async {
@@ -38,22 +54,52 @@ class _UserOrderScreenState extends State<UserOrderScreen> {
       _isFirstLoading = true;
     });
 
-    if (false) {
-      final url = Uri.parse("${HttpIp.httpIp}/");
-      final headers = {'Content-Type': 'application/json'};
-      final data = {};
-      final response =
-          await http.post(url, headers: headers, body: jsonEncode(data));
+    // --------------- 가게 정보 호출 ---------------
+    final url1 = Uri.parse("${HttpIp.httpIp}/marine/stores/${widget.storeId}");
+    final headers = {'Content-Type': 'application/json'};
+    final response1 = await http.get(url1, headers: headers);
 
-      if (response.statusCode >= 200 && response.statusCode < 300) {
-      } else {
-        if (!mounted) return;
-        HttpIp.errorPrint(
-          context: context,
-          title: "통신 오류",
-          message: response.body,
-        );
+    if (response1.statusCode >= 200 && response1.statusCode < 300) {
+      print("가게 정보 조회 : 성공");
+      print(response1.body);
+      final jsonResponse = jsonDecode(response1.body) as Map<String, dynamic>;
+
+      setState(() {
+        _storeData = StoreModel.fromJson(jsonResponse);
+      });
+    } else {
+      if (!mounted) return;
+      HttpIp.errorPrint(
+        context: context,
+        title: "통신 오류",
+        message: response1.body,
+      );
+    }
+
+    // --------------- 즐겨찾기 여부 호출 ---------------
+    final url2 = Uri.parse(
+        "${HttpIp.httpIp}/marine/users/wish/check?storeId=${widget.storeId}&userId=${context.read<UserProvider>().userId}");
+    final response2 = await http.get(url2, headers: headers);
+
+    if (response2.statusCode >= 200 && response2.statusCode < 300) {
+      print("좋아요 여부 조회 : 성공");
+      print(response2.body);
+
+      final jsonResponse = jsonDecode(response2.body) as int;
+      if (jsonResponse != 0) {
+        _wishId = jsonResponse;
       }
+
+      setState(() {
+        _isFavorited = _wishId != null ? true : false;
+      });
+    } else {
+      if (!mounted) return;
+      HttpIp.errorPrint(
+        context: context,
+        title: "통신 오류",
+        message: response2.body,
+      );
     }
 
     setState(() {
@@ -65,10 +111,55 @@ class _UserOrderScreenState extends State<UserOrderScreen> {
     _initBannerData();
   }
 
-  void _onClickFavorite() {
-    setState(() {
-      _isFavorited = !_isFavorited;
-    });
+  void _onClickFavorite() async {
+    if (_isFavorited) {
+      final url = Uri.parse("${HttpIp.httpIp}/marine/users/wish");
+      final headers = {'Content-Type': 'application/json'};
+      final data = [_wishId];
+      final response =
+          await http.delete(url, headers: headers, body: jsonEncode(data));
+
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        print("좋아요 취소 : 성공");
+
+        setState(() {
+          _wishId == null;
+          _isFavorited = false;
+        });
+      } else {
+        if (!mounted) return;
+        HttpIp.errorPrint(
+          context: context,
+          title: "통신 오류",
+          message: response.body,
+        );
+      }
+    } else {
+      final url = Uri.parse("${HttpIp.httpIp}/marine/users/wish");
+      final headers = {'Content-Type': 'application/json'};
+      final data = {
+        'storeId': widget.storeId,
+        'userId': context.read<UserProvider>().userId,
+      };
+      final response =
+          await http.post(url, headers: headers, body: jsonEncode(data));
+
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        print("좋아요 적용 : 성공");
+
+        setState(() {
+          _wishId == null;
+          _isFavorited = true;
+        });
+      } else {
+        if (!mounted) return;
+        HttpIp.errorPrint(
+          context: context,
+          title: "통신 오류",
+          message: response.body,
+        );
+      }
+    }
   }
 
   @override
@@ -87,120 +178,145 @@ class _UserOrderScreenState extends State<UserOrderScreen> {
                 height: MediaQuery.of(context).size.height,
               ),
             ),
-            NestedScrollView(
-              headerSliverBuilder: (context, innerBoxIsScrolled) => [
-                const SliverAppBar(
-                  pinned: true,
-                  backgroundColor: Colors.transparent,
-                  surfaceTintColor: Colors.transparent,
-                ),
-                SliverToBoxAdapter(
-                  child: Image.asset(
-                    "assets/images/fishShop.png",
-                    width: size.width,
-                    height: 250,
-                    fit: BoxFit.fitHeight,
-                  ),
-                ),
-                SliverToBoxAdapter(
-                  child: Container(
-                    margin: const EdgeInsets.symmetric(
-                      vertical: 10,
-                      horizontal: 50,
-                    ),
-                    padding: const EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: const BorderRadius.all(
-                        Radius.circular(10),
+            _isFirstLoading
+                ? const Center(
+                    child: CircularProgressIndicator(),
+                  )
+                : NestedScrollView(
+                    headerSliverBuilder: (context, innerBoxIsScrolled) => [
+                      const SliverAppBar(
+                        pinned: true,
+                        backgroundColor: Colors.transparent,
+                        surfaceTintColor: Colors.transparent,
                       ),
-                      boxShadow: [
-                        BoxShadow(
-                          offset: const Offset(1.5, 1.5),
-                          blurRadius: 1,
-                          color: Colors.grey.shade400,
+                      SliverToBoxAdapter(
+                        child: Image.asset(
+                          "assets/images/fishShop.png",
+                          width: size.width,
+                          height: 250,
+                          fit: BoxFit.fitHeight,
                         ),
-                      ],
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        ListTile(
-                          contentPadding: const EdgeInsets.only(left: 10),
-                          title: const Text(
-                            "가게 이름",
-                            style: TextStyle(
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
-                            ),
+                      ),
+                      SliverToBoxAdapter(
+                        child: Container(
+                          margin: const EdgeInsets.symmetric(
+                            vertical: 10,
+                            horizontal: 50,
                           ),
-                          trailing: IconButton(
-                            onPressed: _onClickFavorite,
-                            icon: _isFavorited
-                                ? const Icon(
-                                    Icons.favorite,
-                                    size: 30,
-                                    color: Colors.red,
+                          padding: const EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: const BorderRadius.all(
+                              Radius.circular(10),
+                            ),
+                            boxShadow: [
+                              BoxShadow(
+                                offset: const Offset(1.5, 1.5),
+                                blurRadius: 1,
+                                color: Colors.grey.shade400,
+                              ),
+                            ],
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              ListTile(
+                                contentPadding: const EdgeInsets.only(left: 10),
+                                title: Text(
+                                  _storeData!.storeName,
+                                  style: const TextStyle(
+                                    fontSize: 24,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                trailing: IconButton(
+                                  onPressed: _onClickFavorite,
+                                  icon: _isFavorited
+                                      ? const Icon(
+                                          Icons.favorite,
+                                          size: 30,
+                                          color: Colors.red,
+                                        )
+                                      : const Icon(
+                                          Icons.favorite_outline,
+                                          size: 30,
+                                        ),
+                                ),
+                              ),
+                              Text(
+                                "전화번호 : ${_storeData!.storePhoneNumber}",
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                ),
+                              ),
+                              Text(
+                                "주소 : ${_storeData!.storeAddress}",
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                    body: _isFirstLoading
+                        ? const Center(
+                            child: CircularProgressIndicator(),
+                          )
+                        : Container(
+                            decoration: const BoxDecoration(
+                              border: Border(
+                                top: BorderSide(
+                                  color: Colors.black54,
+                                ),
+                              ),
+                            ),
+                            child: _storeData!.products!.isEmpty
+                                ? Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      IconButton(
+                                        iconSize:
+                                            MediaQuery.of(context).size.width /
+                                                3,
+                                        color: Colors.grey.shade400,
+                                        icon:
+                                            const Icon(Icons.refresh_outlined),
+                                        onPressed: _onRefresh,
+                                      ),
+                                      const Text("상품이 비어있습니다!"),
+                                    ],
                                   )
-                                : const Icon(
-                                    Icons.favorite_outline,
-                                    size: 30,
+                                : RefreshIndicator.adaptive(
+                                    onRefresh: _onRefresh,
+                                    child: ListView.separated(
+                                      // padding: const EdgeInsets.symmetric(horizontal: 10),
+                                      itemCount: _storeData!.products!.length,
+                                      separatorBuilder: (context, index) =>
+                                          const Divider(
+                                        height: 0,
+                                        color: Colors.black54,
+                                      ),
+                                      itemBuilder: (context, index) {
+                                        String image;
+                                        if (index % 3 == 0) {
+                                          image = "assets/images/fish3.png";
+                                        } else if (index % 2 == 0) {
+                                          image = "assets/images/fish2.png";
+                                        } else {
+                                          image = "assets/images/fish.png";
+                                        }
+                                        return MenuCard(
+                                          image: image,
+                                          productData:
+                                              _storeData!.products![index],
+                                        );
+                                      },
+                                    ),
                                   ),
                           ),
-                        ),
-                        const Text(
-                          "전화번호 : 010-0000-0000",
-                          style: TextStyle(
-                            fontSize: 16,
-                          ),
-                        ),
-                        const Text(
-                          "주소 : 진주시 가좌동",
-                          style: TextStyle(
-                            fontSize: 16,
-                          ),
-                        ),
-                      ],
-                    ),
                   ),
-                ),
-              ],
-              body: _isFirstLoading
-                  ? const Center(
-                      child: CircularProgressIndicator(),
-                    )
-                  : Container(
-                      decoration: const BoxDecoration(
-                        border: Border(
-                          top: BorderSide(
-                            color: Colors.black54,
-                          ),
-                        ),
-                      ),
-                      child: RefreshIndicator.adaptive(
-                        onRefresh: _onRefresh,
-                        child: ListView.separated(
-                          // padding: const EdgeInsets.symmetric(horizontal: 10),
-                          itemCount: 20,
-                          separatorBuilder: (context, index) => const Divider(
-                            height: 0,
-                            color: Colors.black54,
-                          ),
-                          itemBuilder: (context, index) {
-                            String image;
-                            if (index % 3 == 0) {
-                              image = "assets/images/fish3.png";
-                            } else if (index % 2 == 0) {
-                              image = "assets/images/fish2.png";
-                            } else {
-                              image = "assets/images/fish.png";
-                            }
-                            return MenuCard(image: image);
-                          },
-                        ),
-                      ),
-                    ),
-            ),
           ],
         ),
       ),

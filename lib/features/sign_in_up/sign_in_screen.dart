@@ -95,8 +95,7 @@ class _SignInScreenState extends State<SignInScreen> {
     final response =
         await http.post(url, headers: headers, body: jsonEncode(data));
 
-    if (response.statusCode >= 200) {
-      print("로그인 : 성공!");
+    if (response.statusCode >= 200 && response.statusCode < 300) {
       print(response.body);
       final result = bool.parse(response.body);
 
@@ -109,12 +108,15 @@ class _SignInScreenState extends State<SignInScreen> {
       }
 
       if (!result) {
+        print("로그인 - 유저 : 성공!");
+
         if (!mounted) return;
         await context.read<UserProvider>().login(_idController.text.trim());
 
         if (!mounted) return;
         context.replaceNamed(UserNavigationScreen.routeName);
       } else {
+        print("로그인 - 가게 : 성공!");
         if (!mounted) return;
         await context.read<StoreProvider>().login(_idController.text.trim());
 

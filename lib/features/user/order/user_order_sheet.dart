@@ -7,22 +7,72 @@ import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:swag_marine_products/constants/http_ip.dart';
 import 'package:swag_marine_products/constants/sizes.dart';
+import 'package:swag_marine_products/models/database/price_model.dart';
 import 'package:swag_marine_products/widget_tools/swag_platform_dialog.dart';
 
 import 'package:http/http.dart' as http;
 
 class UserOrderSheet extends StatefulWidget {
-  const UserOrderSheet({super.key});
+  const UserOrderSheet({
+    super.key,
+    required this.productId,
+  });
+
+  final int productId;
 
   @override
   State<UserOrderSheet> createState() => _UserOrderSheetState();
 }
 
 class _UserOrderSheetState extends State<UserOrderSheet> {
-  String _radioValue = "";
-
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _phoneNumberController = TextEditingController();
+
+  int? _radioValue;
+  List<PriceModel>? _priceList;
+
+  bool _isFirstLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _initPriceList();
+  }
+
+  Future<void> _initPriceList() async {
+    setState(() {
+      _isFirstLoading = true;
+    });
+
+    final url =
+        Uri.parse("${HttpIp.httpIp}/marine/product/selectAllPriceByProductId");
+    final headers = {'Content-Type': 'application/json'};
+    final data = {'productId': widget.productId};
+    final response =
+        await http.post(url, headers: headers, body: jsonEncode(data));
+
+    if (response.statusCode >= 200 && response.statusCode < 300) {
+      print("가게 리스트 호출 : 성공");
+      final jsonResponse = jsonDecode(response.body) as List<dynamic>;
+
+      setState(() {
+        _priceList =
+            jsonResponse.map((data) => PriceModel.fromJson(data)).toList();
+      });
+    } else {
+      if (!mounted) return;
+      HttpIp.errorPrint(
+        context: context,
+        title: "통신 오류",
+        message: response.body,
+      );
+    }
+
+    setState(() {
+      _isFirstLoading = false;
+    });
+  }
 
   Future<void> _onSubmit() async {
     if (false) {
@@ -68,7 +118,7 @@ class _UserOrderSheetState extends State<UserOrderSheet> {
     context.pop();
   }
 
-  void _onChangePrice(String? changeValue) {
+  void _onChangePrice(int? changeValue) {
     if (changeValue == null) return;
     setState(() {
       _radioValue = changeValue;
@@ -221,33 +271,41 @@ class _UserOrderSheetState extends State<UserOrderSheet> {
         bottomNavigationBar: Container(
           margin: const EdgeInsets.symmetric(vertical: 10),
           child: ElevatedButton(
-            onPressed: _radioValue.trim().isNotEmpty ? _onOrderTap : null,
+            onPressed: _isFirstLoading
+                ? _radioValue != null
+                    ? _onOrderTap
+                    : null
+                : null,
             child: const Text("주문하기"),
           ),
         ),
-        body: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: CustomScrollView(
-            slivers: [
-              SliverToBoxAdapter(
-                child: Image.asset(
-                  "assets/images/fish.png",
-                  width: size.width,
-                  height: 250,
+        body: _isFirstLoading
+            ? const Center(
+                child: CircularProgressIndicator(),
+              )
+            : Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: CustomScrollView(
+                  slivers: [
+                    SliverToBoxAdapter(
+                      child: Image.asset(
+                        "assets/images/fish.png",
+                        width: size.width,
+                        height: 250,
+                      ),
+                    ),
+                    SliverList.builder(
+                      itemCount: _priceList!.length,
+                      itemBuilder: (context, index) => RadioListTile.adaptive(
+                        value: _priceList![index].priceId,
+                        groupValue: _radioValue,
+                        onChanged: _onChangePrice,
+                        title: Text("가격 ${index + 1}"),
+                      ),
+                    ),
+                  ],
                 ),
               ),
-              SliverList.builder(
-                itemCount: 5,
-                itemBuilder: (context, index) => RadioListTile.adaptive(
-                  value: "가격 ${index + 1}",
-                  groupValue: _radioValue,
-                  onChanged: _onChangePrice,
-                  title: Text("가격 ${index + 1}"),
-                ),
-              ),
-            ],
-          ),
-        ),
       ),
     );
   }

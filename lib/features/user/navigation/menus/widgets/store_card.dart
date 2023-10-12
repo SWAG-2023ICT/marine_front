@@ -2,12 +2,23 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:swag_marine_products/constants/gaps.dart';
 import 'package:swag_marine_products/features/user/order/user_order_screen.dart';
+import 'package:swag_marine_products/models/database/store_model.dart';
 
 class StoreCard extends StatelessWidget {
-  const StoreCard({super.key});
+  const StoreCard({
+    super.key,
+    required this.storeData,
+  });
+
+  final StoreModel storeData;
 
   void _onTapStore(BuildContext context) {
-    context.pushNamed(UserOrderScreen.routeName);
+    context.pushNamed(
+      UserOrderScreen.routeName,
+      extra: UserOrderScreenArgs(
+        storeId: storeData.storeId,
+      ),
+    );
   }
 
   @override
@@ -71,7 +82,31 @@ class StoreCard extends StatelessWidget {
               height: 100,
             ),
             Gaps.h6,
-            const Expanded(
+            // const Expanded(
+            //   child: Column(
+            //     crossAxisAlignment: CrossAxisAlignment.start,
+            //     children: [
+            //       Row(
+            //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //         children: [
+            //           Expanded(
+            //             child: Text(
+            //               "[가게 이름]",
+            //               maxLines: 1,
+            //               style: TextStyle(
+            //                 fontSize: 16,
+            //               ),
+            //             ),
+            //           ),
+            //         ],
+            //       ),
+            //       Divider(),
+            //       Text("가게 주소 : ${"진주시 가좌동"}"),
+            //       Text("가게 번호 : ${"010-0000-0000"}"),
+            //     ],
+            //   ),
+            // ),
+            Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -80,30 +115,18 @@ class StoreCard extends StatelessWidget {
                     children: [
                       Expanded(
                         child: Text(
-                          "[가게 이름]",
+                          "[${storeData.storeName}]",
                           maxLines: 1,
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontSize: 16,
                           ),
                         ),
                       ),
-                      // Padding(
-                      //   padding: const EdgeInsets.only(right: 10),
-                      //   child: InkWell(
-                      //     onTap: () {},
-                      //     child: const Icon(Icons.favorite_outline),
-                      //   ),
-                      // ),
-
-                      // IconButton(
-                      //   onPressed: () {},
-                      //   icon: const Icon(Icons.favorite_outline),
-                      // ),
                     ],
                   ),
-                  Divider(),
-                  Text("가게 주소 : ${"진주시 가좌동"}"),
-                  Text("가게 번호 : ${"010-0000-0000"}"),
+                  const Divider(),
+                  Text("가게 주소 : ${storeData.storeAddress}"),
+                  Text("가게 번호 : ${storeData.storePhoneNumber}"),
                 ],
               ),
             ),

@@ -120,13 +120,15 @@ class _UserInformInquiryScreenState extends State<UserInformInquiryScreen> {
                         // ),
                         Expanded(
                           child: ElevatedButton(
-                            onPressed: () {
-                              context.pushNamed(
+                            onPressed: () async {
+                              await context.pushNamed(
                                 UserInformUpdateScreen.routeName,
                                 extra: const UserInformUpdateScreenArgs(
                                   updateType: UpdateType.pw,
                                 ),
                               );
+
+                              _initUserData();
                             },
                             style: ElevatedButton.styleFrom(
                               padding: const EdgeInsets.all(24),
@@ -160,13 +162,15 @@ class _UserInformInquiryScreenState extends State<UserInformInquiryScreen> {
                           ),
                         ),
                         ElevatedButton(
-                          onPressed: () {
-                            context.pushNamed(
+                          onPressed: () async {
+                            await context.pushNamed(
                               UserInformUpdateScreen.routeName,
                               extra: const UserInformUpdateScreenArgs(
                                 updateType: UpdateType.name,
                               ),
                             );
+
+                            _initUserData();
                           },
                           style: ElevatedButton.styleFrom(
                             padding: const EdgeInsets.all(24),
@@ -199,13 +203,15 @@ class _UserInformInquiryScreenState extends State<UserInformInquiryScreen> {
                           ),
                         ),
                         ElevatedButton(
-                          onPressed: () {
-                            context.pushNamed(
+                          onPressed: () async {
+                            await context.pushNamed(
                               UserInformUpdateScreen.routeName,
                               extra: const UserInformUpdateScreenArgs(
                                 updateType: UpdateType.phoneNumber,
                               ),
                             );
+
+                            _initUserData();
                           },
                           style: ElevatedButton.styleFrom(
                             padding: const EdgeInsets.all(24),

@@ -57,7 +57,12 @@ final router = GoRouter(
         GoRoute(
           path: UserOrderScreen.routeURL,
           name: UserOrderScreen.routeName,
-          builder: (context, state) => const UserOrderScreen(),
+          builder: (context, state) {
+            final args = state.extra as UserOrderScreenArgs;
+            return UserOrderScreen(
+              storeId: args.storeId,
+            );
+          },
         ),
         GoRoute(
           name: UserInformScreen.routeName,

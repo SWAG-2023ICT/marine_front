@@ -2,12 +2,15 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import 'package:swag_marine_products/constants/gaps.dart';
 import 'package:swag_marine_products/constants/http_ip.dart';
 import 'package:swag_marine_products/features/user/navigation/menus/widgets/store_card.dart';
 import 'package:swag_marine_products/models/database/product_model.dart';
 
 import 'package:http/http.dart' as http;
+import 'package:swag_marine_products/models/database/store_model.dart';
+import 'package:swag_marine_products/providers/user_provider.dart';
 import 'package:swag_marine_products/widget_tools/swag_platform_dialog.dart';
 
 class UserBookMarkScreen extends StatefulWidget {
@@ -20,7 +23,7 @@ class UserBookMarkScreen extends StatefulWidget {
 }
 
 class _UserBookMarkScreenState extends State<UserBookMarkScreen> {
-  ProductModel? _bookmarkList;
+  List<StoreModel>? _storeList;
 
   bool _isFirtstLoading = false;
 
@@ -28,7 +31,7 @@ class _UserBookMarkScreenState extends State<UserBookMarkScreen> {
   void initState() {
     super.initState();
 
-    // _initBookmarkList();
+    _initBookmarkList();
   }
 
   Future<void> _initBookmarkList() async {
@@ -36,22 +39,26 @@ class _UserBookMarkScreenState extends State<UserBookMarkScreen> {
       _isFirtstLoading = true;
     });
 
-    if (false) {
-      final url = Uri.parse("${HttpIp.httpIp}/");
-      final headers = {'Content-Type': 'application/json'};
-      final data = {};
-      final response =
-          await http.post(url, headers: headers, body: jsonEncode(data));
+    final url = Uri.parse(
+        "${HttpIp.httpIp}/marine/users/wish/${context.read<UserProvider>().userId}");
+    final headers = {'Content-Type': 'application/json'};
+    final response = await http.get(url, headers: headers);
 
-      if (response.statusCode >= 200 && response.statusCode < 300) {
-      } else {
-        if (!mounted) return;
-        HttpIp.errorPrint(
-          context: context,
-          title: "통신 오류",
-          message: response.body,
-        );
-      }
+    if (response.statusCode >= 200 && response.statusCode < 300) {
+      print("북마크 리스트 호출 : 성공");
+      final jsonResponse = jsonDecode(response.body) as List<dynamic>;
+
+      setState(() {
+        _storeList =
+            jsonResponse.map((data) => StoreModel.fromJson(data)).toList();
+      });
+    } else {
+      if (!mounted) return;
+      HttpIp.errorPrint(
+        context: context,
+        title: "통신 오류",
+        message: response.body,
+      );
     }
 
     setState(() {
@@ -87,15 +94,26 @@ class _UserBookMarkScreenState extends State<UserBookMarkScreen> {
               ? const Center(
                   child: CircularProgressIndicator.adaptive(),
                 )
-              : RefreshIndicator.adaptive(
-                  onRefresh: _onRefresh,
-                  child: ListView.builder(
-                    itemCount: 5,
-                    itemBuilder: (context, index) {
-                      return const StoreCard();
-                    },
-                  ),
-                ),
+              : _storeList == null || _storeList!.isEmpty
+                  ? Center(
+                      child: IconButton(
+                        iconSize: MediaQuery.of(context).size.width / 3,
+                        color: Colors.grey.shade400,
+                        icon: const Icon(Icons.refresh_outlined),
+                        onPressed: _onRefresh,
+                      ),
+                    )
+                  : RefreshIndicator.adaptive(
+                      onRefresh: _onRefresh,
+                      child: ListView.builder(
+                        itemCount: _storeList!.length,
+                        itemBuilder: (context, index) {
+                          return StoreCard(
+                            storeData: _storeList![index],
+                          );
+                        },
+                      ),
+                    ),
         ],
       ),
     );

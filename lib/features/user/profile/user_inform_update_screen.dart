@@ -3,9 +3,11 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:kpostal/kpostal.dart';
+import 'package:provider/provider.dart';
 import 'package:swag_marine_products/constants/gaps.dart';
 import 'package:swag_marine_products/constants/http_ip.dart';
 import 'package:swag_marine_products/features/sign_in_up/widgets/bottom_button.dart';
+import 'package:swag_marine_products/providers/user_provider.dart';
 import 'package:swag_marine_products/widget_tools/swag_platform_dialog.dart';
 
 import 'package:http/http.dart' as http;
@@ -89,65 +91,77 @@ class _UserInformUpdateScreenState extends State<UserInformUpdateScreen> {
 
   void _onSubmitted() async {
     if (widget.updateType == UpdateType.pw) {
-      print("이전 비밀번호 : ${_userPasswordBeforeController.text}");
-      print("변경 비밀번호 : ${_userPasswordController.text}");
+      // print("이전 비밀번호 : ${_userPasswordBeforeController.text}");
+      // print("변경 비밀번호 : ${_userPasswordController.text}");
 
-      if (false) {
-        final url = Uri.parse("${HttpIp.httpIp}/");
-        final headers = {'Content-Type': 'application/json'};
-        final data = {};
-        final response =
-            await http.post(url, headers: headers, body: jsonEncode(data));
+      final url = Uri.parse("${HttpIp.httpIp}/marine/users/password");
+      final headers = {'Content-Type': 'application/json'};
+      final data = {
+        'userId': context.read<UserProvider>().userId,
+        'password': _userPasswordBeforeController.text.trim(),
+        'newPassword': _userPasswordConfirmationController.text.trim(),
+      };
+      final response =
+          await http.put(url, headers: headers, body: jsonEncode(data));
 
-        if (response.statusCode >= 200 && response.statusCode < 300) {
-        } else {
-          if (!mounted) return;
-          HttpIp.errorPrint(
-            context: context,
-            title: "통신 오류",
-            message: response.body,
-          );
-        }
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        print("유저 비밀번호 변경 : 성공");
+        context.pop();
+      } else {
+        if (!mounted) return;
+        HttpIp.errorPrint(
+          context: context,
+          title: "통신 오류",
+          message: response.body,
+        );
       }
     } else if (widget.updateType == UpdateType.name) {
-      print("변경 이름 : ${_userNameController.text}");
+      // print("변경 이름 : ${_userNameController.text}");
 
-      if (false) {
-        final url = Uri.parse("${HttpIp.httpIp}/");
-        final headers = {'Content-Type': 'application/json'};
-        final data = {};
-        final response =
-            await http.post(url, headers: headers, body: jsonEncode(data));
+      final url = Uri.parse("${HttpIp.httpIp}/marine/users/update");
+      final headers = {'Content-Type': 'application/json'};
+      final data = {
+        'userId': context.read<UserProvider>().userId,
+        'name': _userNameController.text.trim(),
+        'password': _userPasswordController.text.trim(),
+      };
+      final response =
+          await http.put(url, headers: headers, body: jsonEncode(data));
 
-        if (response.statusCode >= 200 && response.statusCode < 300) {
-        } else {
-          if (!mounted) return;
-          HttpIp.errorPrint(
-            context: context,
-            title: "통신 오류",
-            message: response.body,
-          );
-        }
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        print("유저 이름 변경 : 성공");
+        context.pop();
+      } else {
+        if (!mounted) return;
+        HttpIp.errorPrint(
+          context: context,
+          title: "통신 오류",
+          message: response.body,
+        );
       }
     } else if (widget.updateType == UpdateType.phoneNumber) {
       print("변경 전화번호 : ${_userPhoneNumberController.text}");
 
-      if (false) {
-        final url = Uri.parse("${HttpIp.httpIp}/");
-        final headers = {'Content-Type': 'application/json'};
-        final data = {};
-        final response =
-            await http.post(url, headers: headers, body: jsonEncode(data));
+      final url = Uri.parse("${HttpIp.httpIp}/marine/users/update");
+      final headers = {'Content-Type': 'application/json'};
+      final data = {
+        'userId': context.read<UserProvider>().userId,
+        'phoneNumber': _userPhoneNumberController.text.trim(),
+        'password': _userPasswordController.text.trim(),
+      };
+      final response =
+          await http.put(url, headers: headers, body: jsonEncode(data));
 
-        if (response.statusCode >= 200 && response.statusCode < 300) {
-        } else {
-          if (!mounted) return;
-          HttpIp.errorPrint(
-            context: context,
-            title: "통신 오류",
-            message: response.body,
-          );
-        }
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        print("유저 이름 변경 : 성공");
+        context.pop();
+      } else {
+        if (!mounted) return;
+        HttpIp.errorPrint(
+          context: context,
+          title: "통신 오류",
+          message: response.body,
+        );
       }
     } else {
       swagPlatformDialog(
@@ -444,7 +458,7 @@ class _UserInformUpdateScreenState extends State<UserInformUpdateScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               BottomButton(
-                onPressed: _isSubmitted ? () {} : null,
+                onPressed: _isSubmitted ? _onSubmitted : null,
                 text: "수정",
                 isClicked: _isSubmitted,
               ),
@@ -521,7 +535,7 @@ class _UserInformUpdateScreenState extends State<UserInformUpdateScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               BottomButton(
-                onPressed: _isSubmitted ? () {} : null,
+                onPressed: _isSubmitted ? _onSubmitted : null,
                 text: "수정",
                 isClicked: _isSubmitted,
               ),

@@ -22,11 +22,11 @@ enum EditType {
   update,
 }
 
-class PriceModel {
+class PriceListModel {
   final String gram;
   final String price;
 
-  PriceModel({
+  PriceListModel({
     required this.gram,
     required this.price,
   });
@@ -59,7 +59,7 @@ class _StoreMenuEditScreenState extends State<StoreMenuEditScreen> {
   bool _isBarrier = false;
   bool _isSubmitted = false;
   bool _isPriceSubmitted = false;
-  final List<PriceModel> _priceList = [];
+  final List<PriceListModel> _priceList = [];
   XFile? _productImage;
 
   void _onSubmit() async {
@@ -581,7 +581,7 @@ class _StoreMenuEditScreenState extends State<StoreMenuEditScreen> {
                         ? () {
                             setState(() {
                               _priceList.add(
-                                PriceModel(
+                                PriceListModel(
                                   gram: _productWeightUnitController.text +
                                       (_weightUnit == WeightUnit.g
                                           ? "g"

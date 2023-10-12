@@ -3,9 +3,12 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:kpostal/kpostal.dart';
+import 'package:provider/provider.dart';
 import 'package:swag_marine_products/constants/gaps.dart';
 import 'package:swag_marine_products/constants/http_ip.dart';
 import 'package:swag_marine_products/constants/sizes.dart';
+import 'package:swag_marine_products/models/database/destination_model.dart';
+import 'package:swag_marine_products/providers/user_provider.dart';
 import 'package:swag_marine_products/storages/address_storage.dart';
 import 'package:swag_marine_products/widget_tools/swag_platform_dialog.dart';
 
@@ -20,12 +23,14 @@ class UserAddressEdit extends StatefulWidget {
   const UserAddressEdit({
     super.key,
     required this.editType,
+    this.addressId,
     this.addressKey,
     this.addressValue,
     this.addressDetail,
   });
 
   final AddressEditType editType;
+  final int? addressId;
   final String? addressKey;
   final String? addressValue;
   final String? addressDetail;
@@ -40,6 +45,7 @@ class _UserAddressEditState extends State<UserAddressEdit> {
   late TextEditingController _userAddressDetailController;
 
   String? _userAdressNameErrorText;
+  String? _zipCode;
 
   bool _isStubmitted = false;
 
@@ -63,40 +69,69 @@ class _UserAddressEditState extends State<UserAddressEdit> {
 
   void _onClickSubmitted() async {
     if (widget.editType == AddressEditType.add) {
-      if (false) {
-        final url = Uri.parse("${HttpIp.httpIp}/");
-        final headers = {'Content-Type': 'application/json'};
-        final data = {};
-        final response =
-            await http.post(url, headers: headers, body: jsonEncode(data));
+      final url =
+          Uri.parse("${HttpIp.httpIp}/marine/destination/addDestination");
+      final headers = {'Content-Type': 'application/json'};
+      final data = {
+        "userId": context.read<UserProvider>().userId,
+        "destinationName": _userAdressNameController.text.trim().isEmpty
+            ? _userAddressDetailController.text.trim().isNotEmpty
+                ? "${_userAddressController.text.trim()},${_userAddressDetailController.text.trim()}"
+                : _userAddressController.text.trim()
+            : _userAdressNameController.text.trim(),
+        "destinationAddress": _userAddressDetailController.text
+                .trim()
+                .isNotEmpty
+            ? "${_userAddressController.text.trim()},${_userAddressDetailController.text.trim()}"
+            : _userAddressController.text.trim(),
+        "zipCode": _zipCode,
+      };
+      final response =
+          await http.post(url, headers: headers, body: jsonEncode(data));
 
-        if (response.statusCode >= 200 && response.statusCode < 300) {
-        } else {
-          if (!mounted) return;
-          HttpIp.errorPrint(
-            context: context,
-            title: "통신 오류",
-            message: response.body,
-          );
-        }
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        print("유저 주소 추가 : 성공");
+        context.pop();
+      } else {
+        if (!mounted) return;
+        HttpIp.errorPrint(
+          context: context,
+          title: "통신 오류",
+          message: response.body,
+        );
       }
     } else if (widget.editType == AddressEditType.update) {
-      if (false) {
-        final url = Uri.parse("${HttpIp.httpIp}/");
-        final headers = {'Content-Type': 'application/json'};
-        final data = {};
-        final response =
-            await http.post(url, headers: headers, body: jsonEncode(data));
+      final url =
+          Uri.parse("${HttpIp.httpIp}/marine/destination/updateDestination");
+      final headers = {'Content-Type': 'application/json'};
+      final data = {
+        "userId": context.read<UserProvider>().userId,
+        "destinationId": widget.addressId,
+        "destinationName": _userAdressNameController.text.trim().isEmpty
+            ? _userAddressDetailController.text.trim().isNotEmpty
+                ? "${_userAddressController.text.trim()},${_userAddressDetailController.text.trim()}"
+                : _userAddressController.text.trim()
+            : _userAdressNameController.text.trim(),
+        "destinationAddress": _userAddressDetailController.text
+                .trim()
+                .isNotEmpty
+            ? "${_userAddressController.text.trim()},${_userAddressDetailController.text.trim()}"
+            : _userAddressController.text.trim(),
+        "zipCode": _zipCode,
+      };
+      final response =
+          await http.post(url, headers: headers, body: jsonEncode(data));
 
-        if (response.statusCode >= 200 && response.statusCode < 300) {
-        } else {
-          if (!mounted) return;
-          HttpIp.errorPrint(
-            context: context,
-            title: "통신 오류",
-            message: response.body,
-          );
-        }
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        print("유저 주소 수정 : 성공");
+        context.pop();
+      } else {
+        if (!mounted) return;
+        HttpIp.errorPrint(
+          context: context,
+          title: "통신 오류",
+          message: response.body,
+        );
       }
     } else {
       swagPlatformDialog(
@@ -122,6 +157,7 @@ class _UserAddressEditState extends State<UserAddressEdit> {
     if (result != null) {
       setState(() {
         _userAddressController.text = result.address;
+        _zipCode = result.postCode;
       });
       _onCheckSubmitted();
     }
@@ -138,6 +174,10 @@ class _UserAddressEditState extends State<UserAddressEdit> {
       });
       _onCheckSubmitted();
     }
+  }
+
+  void _validateUserAddressDetail(String value) {
+    _onCheckSubmitted();
   }
 
   @override
@@ -227,6 +267,7 @@ class _UserAddressEditState extends State<UserAddressEdit> {
                     color: Colors.grey.shade600,
                   ),
                 ),
+                onChanged: _validateUserAddressDetail,
               ),
               ElevatedButton(
                 onPressed: _isStubmitted ? _onClickSubmitted : null,
