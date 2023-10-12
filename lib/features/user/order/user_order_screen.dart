@@ -145,7 +145,6 @@ class _UserOrderScreenState extends State<UserOrderScreen> {
 
       if (response.statusCode >= 200 && response.statusCode < 300) {
         print("좋아요 적용 : 성공");
-        print(response.body);
 
         final jsonResponse = jsonDecode(response.body) as int;
         if (jsonResponse != 0) {

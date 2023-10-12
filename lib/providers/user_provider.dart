@@ -17,7 +17,7 @@ class UserProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void logout() {
+  Future<void> logout() async {
     _isLogined = false;
     _userData = null;
     notifyListeners();

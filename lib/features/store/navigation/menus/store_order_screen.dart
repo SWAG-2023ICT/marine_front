@@ -2,25 +2,17 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import 'package:swag_marine_products/constants/gaps.dart';
 import 'package:swag_marine_products/constants/http_ip.dart';
 import 'package:swag_marine_products/features/sign_in_up/widgets/centered_divider.dart';
+import 'package:swag_marine_products/features/store/navigation/menus/widgets/store_order_card.dart';
 import 'package:swag_marine_products/features/user/order/user_order_screen.dart';
+import 'package:swag_marine_products/models/database/order_model.dart';
+import 'package:swag_marine_products/providers/store_provider.dart';
 import 'package:swag_marine_products/widget_tools/swag_platform_dialog.dart';
 
 import 'package:http/http.dart' as http;
-
-enum DeliveryStatus {
-  prepared,
-  shipping,
-  completed,
-}
-
-enum OrderStatus {
-  available,
-  postponed,
-  unable,
-}
 
 class StoreOrderScreen extends StatefulWidget {
   const StoreOrderScreen({super.key});
@@ -30,11 +22,8 @@ class StoreOrderScreen extends StatefulWidget {
 }
 
 class _StoreOrderScreenState extends State<StoreOrderScreen> {
-  final DeliveryStatus _deliveryStatus = DeliveryStatus.prepared;
-  OrderStatus _orderStatus = OrderStatus.available;
-
   bool _isFirstLoading = false;
-  List<dynamic>? _orderList;
+  List<OrderModel>? _orderList;
 
   @override
   void initState() {
@@ -48,22 +37,33 @@ class _StoreOrderScreenState extends State<StoreOrderScreen> {
       _isFirstLoading = true;
     });
 
-    if (false) {
-      final url = Uri.parse("${HttpIp.httpIp}/");
-      final headers = {'Content-Type': 'application/json'};
-      final data = {};
-      final response =
-          await http.post(url, headers: headers, body: jsonEncode(data));
+    final url = Uri.parse(
+        "${HttpIp.httpIp}/marine/orders/stores/${context.read<StoreProvider>().storeId}");
+    final headers = {'Content-Type': 'application/json'};
+    final response = await http.get(url, headers: headers);
 
-      if (response.statusCode >= 200 && response.statusCode < 300) {
-      } else {
-        if (!mounted) return;
-        HttpIp.errorPrint(
-          context: context,
-          title: "통신 오류",
-          message: response.body,
-        );
-      }
+    if (response.statusCode >= 200 && response.statusCode < 300) {
+      print("신청 목록 호출 : 성공");
+      print(response.body);
+      final jsonResponse = jsonDecode(response.body) as List<dynamic>;
+
+      final ordersList =
+          jsonResponse.map((data) => OrderModel.fromJson(data)).toList();
+
+      setState(() {
+        _orderList = ordersList
+            .where((element) =>
+                (element.deliveryStatus != 1 && element.deliveryStatus != 4) &&
+                element.orderStatus != 3)
+            .toList();
+      });
+    } else {
+      if (!mounted) return;
+      HttpIp.errorPrint(
+        context: context,
+        title: "통신 오류",
+        message: response.body,
+      );
     }
 
     setState(() {
@@ -72,135 +72,11 @@ class _StoreOrderScreenState extends State<StoreOrderScreen> {
   }
 
   Future<void> _refreshDispatch() async {
-    setState(() {
-      _isFirstLoading = true;
-    });
-
-    if (false) {
-      final url = Uri.parse("${HttpIp.httpIp}/");
-      final headers = {'Content-Type': 'application/json'};
-      final data = {};
-      final response =
-          await http.post(url, headers: headers, body: jsonEncode(data));
-
-      if (response.statusCode >= 200 && response.statusCode < 300) {
-      } else {
-        if (!mounted) return;
-        HttpIp.errorPrint(
-          context: context,
-          title: "통신 오류",
-          message: response.body,
-        );
-      }
-    }
-
-    setState(() {
-      _isFirstLoading = false;
-    });
-  }
-
-  void _onImpossibleSubmit() async {
-    setState(() {
-      _isFirstLoading = true;
-    });
-
-    if (false) {
-      final url = Uri.parse("${HttpIp.httpIp}/");
-      final headers = {'Content-Type': 'application/json'};
-      final data = {};
-      final response =
-          await http.post(url, headers: headers, body: jsonEncode(data));
-
-      if (response.statusCode >= 200 && response.statusCode < 300) {
-      } else {
-        if (!mounted) return;
-        HttpIp.errorPrint(
-          context: context,
-          title: "통신 오류",
-          message: response.body,
-        );
-      }
-    }
-
-    setState(() {
-      _isFirstLoading = false;
-    });
-  }
-
-  void _onInvoiceNumberSubmit() async {
-    setState(() {
-      _isFirstLoading = true;
-    });
-
-    if (false) {
-      final url = Uri.parse("${HttpIp.httpIp}/");
-      final headers = {'Content-Type': 'application/json'};
-      final data = {};
-      final response =
-          await http.post(url, headers: headers, body: jsonEncode(data));
-
-      if (response.statusCode >= 200 && response.statusCode < 300) {
-      } else {
-        if (!mounted) return;
-        HttpIp.errorPrint(
-          context: context,
-          title: "통신 오류",
-          message: response.body,
-        );
-      }
-    }
-
-    setState(() {
-      _isFirstLoading = false;
-    });
-  }
-
-  // ---------------- 송장 번호 ----------------
-  final TextEditingController _invoiceNumberController =
-      TextEditingController();
-  String? _invoiceNumberErrorText;
-
-  // 송장번호 정규식
-  RegExp invoiceNumberRegex = RegExp(r"^[A-Za-z0-9]+$");
-
-  void _validateInvoiceNumber(String value) {
-    if (value.isEmpty) {
-      setState(() {
-        _invoiceNumberErrorText = '송장번호를 입력하세요.';
-      });
-    } else if (!invoiceNumberRegex.hasMatch(value)) {
-      setState(() {
-        _invoiceNumberErrorText = '잘못된 형식의 송장 번호입니다.';
-      });
-    } else {
-      setState(() {
-        _invoiceNumberErrorText = null;
-      });
-    }
-  }
-
-  // ---------------- 송장 번호 ----------------
-  final TextEditingController _impossibleReasonController =
-      TextEditingController();
-  String? _impossibleReasonErrorText;
-
-  void _validateImpossibleReason(String value) {
-    if (value.isEmpty) {
-      setState(() {
-        _impossibleReasonErrorText = '배송 불가능 사유를 입력하세요.';
-      });
-    } else {
-      setState(() {
-        _impossibleReasonErrorText = null;
-      });
-    }
+    _initDispatch();
   }
 
   @override
   void dispose() {
-    _invoiceNumberController.dispose();
-    _impossibleReasonController.dispose();
-
     super.dispose();
   }
 
@@ -230,180 +106,27 @@ class _StoreOrderScreenState extends State<StoreOrderScreen> {
                 ? const Center(
                     child: CircularProgressIndicator.adaptive(),
                   )
-                : RefreshIndicator.adaptive(
-                    onRefresh: _refreshDispatch,
-                    child: ListView.builder(
-                      itemCount: 5,
-                      itemBuilder: (context, index) {
-                        return Container(
-                          margin: const EdgeInsets.symmetric(
-                            horizontal: 10,
-                            vertical: 8,
-                          ),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            border: Border.all(
-                              width: 0.5,
-                            ),
-                            boxShadow: [
-                              BoxShadow(
-                                offset: const Offset(2, 2),
-                                blurRadius: 1,
-                                color: Colors.grey.shade400,
-                              ),
-                            ],
-                          ),
-                          child: ExpansionTile(
-                            expandedCrossAxisAlignment:
-                                CrossAxisAlignment.start,
-                            childrenPadding: const EdgeInsets.all(10),
-                            title: const Text(
-                              "[주소] 진주시 가좌동 어쩌구저쩌구 000동 000호",
-                              style: TextStyle(fontSize: 18),
-                            ),
-                            children: [
-                              const Text(
-                                "[주문] OOO물고기",
-                                style: TextStyle(fontSize: 16),
-                              ),
-                              Gaps.v4,
-                              const Text(
-                                "[개수] 100g 2개",
-                                style: TextStyle(fontSize: 16),
-                              ),
-                              Gaps.v4,
-                              const Text(
-                                "[이름] OOO",
-                                style: TextStyle(fontSize: 16),
-                              ),
-                              Gaps.v4,
-                              const Text(
-                                "[연락처] 01012345678",
-                                style: TextStyle(fontSize: 16),
-                              ),
-                              Gaps.v4,
-                              Align(
-                                alignment: Alignment.bottomCenter,
-                                child: SegmentedButton(
-                                  showSelectedIcon: false,
-                                  segments: const [
-                                    ButtonSegment(
-                                      value: OrderStatus.available,
-                                      label: Text('배송가능'),
-                                    ),
-                                    ButtonSegment(
-                                      value: OrderStatus.postponed,
-                                      label: Text('배송연기'),
-                                    ),
-                                    ButtonSegment(
-                                      value: OrderStatus.unable,
-                                      label: Text('배송불가능'),
-                                    ),
-                                  ],
-                                  selected: <OrderStatus>{_orderStatus},
-                                  onSelectionChanged:
-                                      (Set<OrderStatus> newSelection) {
-                                    setState(() {
-                                      _orderStatus = newSelection.first;
-                                    });
-                                  },
-                                ),
-                              ),
-                              Gaps.v4,
-                              if (!(_orderStatus == OrderStatus.unable))
-                                Column(
-                                  children: [
-                                    TextFormField(
-                                      controller: _invoiceNumberController,
-                                      keyboardType: TextInputType.number,
-                                      decoration: InputDecoration(
-                                        labelText: '택배 송장번호',
-                                        errorText: _invoiceNumberErrorText,
-                                        prefixIcon: Icon(
-                                          Icons.confirmation_num_outlined,
-                                          color: Colors.grey.shade600,
-                                        ),
-                                      ),
-                                      onChanged: _validateInvoiceNumber,
-                                    ),
-                                    Gaps.v4,
-                                    ElevatedButton(
-                                      style: ElevatedButton.styleFrom(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 50),
-                                        textStyle:
-                                            const TextStyle(fontSize: 16),
-                                      ),
-                                      onPressed: _onInvoiceNumberSubmit,
-                                      child: const Text("전송"),
-                                    ),
-                                  ],
-                                ),
-                              if (!(_orderStatus != OrderStatus.unable))
-                                Column(
-                                  children: [
-                                    TextFormField(
-                                      controller: _impossibleReasonController,
-                                      keyboardType: TextInputType.number,
-                                      decoration: InputDecoration(
-                                        labelText: '배송 불가능 사유',
-                                        errorText: _impossibleReasonErrorText,
-                                        prefixIcon: Icon(
-                                          Icons.draw_outlined,
-                                          color: Colors.grey.shade600,
-                                        ),
-                                      ),
-                                      onChanged: _validateImpossibleReason,
-                                    ),
-                                    Gaps.v4,
-                                    ElevatedButton(
-                                      style: ElevatedButton.styleFrom(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 50),
-                                        textStyle:
-                                            const TextStyle(fontSize: 16),
-                                      ),
-                                      onPressed: _onImpossibleSubmit,
-                                      child: const Text("전송"),
-                                    ),
-                                  ],
-                                ),
-                              Gaps.v4,
-                              const CenteredDivider(text: "진행 상황"),
-                              Align(
-                                alignment: Alignment.bottomCenter,
-                                child: SegmentedButton(
-                                  showSelectedIcon: false,
-                                  segments: [
-                                    ButtonSegment(
-                                      enabled: _deliveryStatus ==
-                                          DeliveryStatus.prepared,
-                                      value: DeliveryStatus.prepared,
-                                      label: const Text('준비중'),
-                                    ),
-                                    ButtonSegment(
-                                      enabled: _deliveryStatus ==
-                                          DeliveryStatus.shipping,
-                                      value: DeliveryStatus.shipping,
-                                      label: const Text('배달중'),
-                                    ),
-                                    ButtonSegment(
-                                      enabled: _deliveryStatus ==
-                                          DeliveryStatus.completed,
-                                      value: DeliveryStatus.completed,
-                                      label: const Text('완료됨'),
-                                    ),
-                                  ],
-                                  selected: <DeliveryStatus>{_deliveryStatus},
-                                  onSelectionChanged: (p0) {},
-                                ),
-                              ),
-                            ],
-                          ),
-                        );
-                      },
-                    ),
-                  ),
+                : _orderList == null
+                    ? Center(
+                        child: IconButton(
+                          iconSize: MediaQuery.of(context).size.width / 3,
+                          color: Colors.grey.shade400,
+                          icon: const Icon(Icons.refresh_outlined),
+                          onPressed: _refreshDispatch,
+                        ),
+                      )
+                    : RefreshIndicator.adaptive(
+                        onRefresh: _refreshDispatch,
+                        child: ListView.builder(
+                          itemCount: _orderList!.length,
+                          itemBuilder: (context, index) {
+                            return StoreOrderCard(
+                              orderData: _orderList![index],
+                              initDispatch: _initDispatch,
+                            );
+                          },
+                        ),
+                      ),
           ],
         ),
       ),

@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:swag_marine_products/constants/gaps.dart';
 import 'package:swag_marine_products/constants/http_ip.dart';
 import 'package:swag_marine_products/models/database/order_model.dart';
+import 'package:swag_marine_products/models/store_order_model.dart';
 import 'package:swag_marine_products/providers/store_provider.dart';
 import 'package:swag_marine_products/widget_tools/swag_platform_dialog.dart';
 
@@ -20,7 +21,7 @@ class StoreApplicationScreen extends StatefulWidget {
 
 class _StoreApplicationScreenState extends State<StoreApplicationScreen> {
   bool _isFirstLoading = false;
-  List<dynamic>? _applicationList;
+  List<OrderModel>? _applicationList;
 
   @override
   void initState() {
@@ -44,9 +45,14 @@ class _StoreApplicationScreenState extends State<StoreApplicationScreen> {
       print(response.body);
       final jsonResponse = jsonDecode(response.body) as List<dynamic>;
 
+      final ordersList =
+          jsonResponse.map((data) => OrderModel.fromJson(data)).toList();
+
       setState(() {
-        _applicationList =
-            jsonResponse.map((data) => OrderModel.fromJson(data)).toList();
+        _applicationList = ordersList
+            .where((element) =>
+                element.deliveryStatus == 1 && element.orderStatus != 3)
+            .toList();
       });
     } else {
       if (!mounted) return;
@@ -66,9 +72,53 @@ class _StoreApplicationScreenState extends State<StoreApplicationScreen> {
     _initDispatch();
   }
 
-  Future<void> _onRequestAccept() async {}
+  Future<void> _onRequestAccept(int orderId) async {
+    final url = Uri.parse("${HttpIp.httpIp}/marine/orders/cancel");
+    final headers = {'Content-Type': 'application/json'};
+    final data = {
+      'ordersId': orderId,
+      'orderStatus': 1,
+    };
+    final response =
+        await http.post(url, headers: headers, body: jsonEncode(data));
 
-  Future<void> _onRequestRefusal() async {}
+    if (response.statusCode >= 200 && response.statusCode < 300) {
+      print("주문 신청 수락 : 성공");
+
+      _initDispatch();
+    } else {
+      if (!mounted) return;
+      HttpIp.errorPrint(
+        context: context,
+        title: "통신 오류",
+        message: response.body,
+      );
+    }
+  }
+
+  Future<void> _onRequestRefusal(int orderId) async {
+    final url = Uri.parse("${HttpIp.httpIp}/marine/orders/cancel");
+    final headers = {'Content-Type': 'application/json'};
+    final data = {
+      'ordersId': orderId,
+      'orderStatus': 3,
+    };
+    final response =
+        await http.post(url, headers: headers, body: jsonEncode(data));
+
+    if (response.statusCode >= 200 && response.statusCode < 300) {
+      print("주문 신청 거부 : 성공");
+
+      _initDispatch();
+    } else {
+      if (!mounted) return;
+      HttpIp.errorPrint(
+        context: context,
+        title: "통신 오류",
+        message: response.body,
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -93,77 +143,90 @@ class _StoreApplicationScreenState extends State<StoreApplicationScreen> {
               ? const Center(
                   child: CircularProgressIndicator.adaptive(),
                 )
-              : RefreshIndicator.adaptive(
-                  onRefresh: _refreshDispatch,
-                  child: ListView.builder(
-                    itemCount: 5,
-                    itemBuilder: (context, index) {
-                      return Container(
-                        margin: const EdgeInsets.symmetric(
-                          horizontal: 10,
-                          vertical: 8,
-                        ),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          border: Border.all(
-                            width: 0.5,
-                          ),
-                          boxShadow: [
-                            BoxShadow(
-                              offset: const Offset(2, 2),
-                              blurRadius: 1,
-                              color: Colors.grey.shade400,
+              : _applicationList == null
+                  ? Center(
+                      child: IconButton(
+                        iconSize: MediaQuery.of(context).size.width / 3,
+                        color: Colors.grey.shade400,
+                        icon: const Icon(Icons.refresh_outlined),
+                        onPressed: _refreshDispatch,
+                      ),
+                    )
+                  : RefreshIndicator.adaptive(
+                      onRefresh: _refreshDispatch,
+                      child: ListView.builder(
+                        itemCount: _applicationList!.length,
+                        itemBuilder: (context, index) {
+                          final item = _applicationList![index];
+                          return Container(
+                            margin: const EdgeInsets.symmetric(
+                              horizontal: 10,
+                              vertical: 8,
                             ),
-                          ],
-                        ),
-                        child: ExpansionTile(
-                          expandedCrossAxisAlignment: CrossAxisAlignment.start,
-                          childrenPadding: const EdgeInsets.all(10),
-                          title: const Text(
-                            "[주소] 진주시 가좌동 어쩌구저쩌구 000동 000호",
-                            style: TextStyle(fontSize: 18),
-                          ),
-                          children: [
-                            const Text(
-                              "[주문] OOO물고기",
-                              style: TextStyle(fontSize: 16),
-                            ),
-                            Gaps.v4,
-                            const Text(
-                              "[개수] 100g 2개",
-                              style: TextStyle(fontSize: 16),
-                            ),
-                            Gaps.v4,
-                            const Text(
-                              "[이름] OOO",
-                              style: TextStyle(fontSize: 16),
-                            ),
-                            Gaps.v4,
-                            const Text(
-                              "[연락처] 01012345678",
-                              style: TextStyle(fontSize: 16),
-                            ),
-                            Gaps.v4,
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                ElevatedButton(
-                                  onPressed: _onRequestRefusal,
-                                  child: const Text("거부"),
-                                ),
-                                Gaps.h10,
-                                ElevatedButton(
-                                  onPressed: _onRequestAccept,
-                                  child: const Text("수락"),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              border: Border.all(
+                                width: 0.5,
+                              ),
+                              boxShadow: [
+                                BoxShadow(
+                                  offset: const Offset(2, 2),
+                                  blurRadius: 1,
+                                  color: Colors.grey.shade400,
                                 ),
                               ],
-                            )
-                          ],
-                        ),
-                      );
-                    },
-                  ),
-                ),
+                            ),
+                            child: ExpansionTile(
+                              expandedCrossAxisAlignment:
+                                  CrossAxisAlignment.start,
+                              childrenPadding: const EdgeInsets.all(10),
+                              title: Text(
+                                "[주문] ${item.products[0].productName} ${item.products[0].prices[0].unit}",
+                                style: const TextStyle(fontSize: 18),
+                              ),
+                              children: [
+                                Text(
+                                  "[주소] ${item.destination.destinationAddress}",
+                                  style: const TextStyle(fontSize: 16),
+                                ),
+                                Gaps.v4,
+                                Text(
+                                  "[가격] ${item.products[0].prices[0].priceByUnit}원",
+                                  style: const TextStyle(fontSize: 16),
+                                ),
+                                Gaps.v4,
+                                Text(
+                                  "[이름] ${item.deliveryTargetName}",
+                                  style: const TextStyle(fontSize: 16),
+                                ),
+                                Gaps.v4,
+                                Text(
+                                  "[연락처] ${item.deliveryPhoneNumber}",
+                                  style: const TextStyle(fontSize: 16),
+                                ),
+                                Gaps.v4,
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    ElevatedButton(
+                                      onPressed: () =>
+                                          _onRequestRefusal(item.ordersId),
+                                      child: const Text("거부"),
+                                    ),
+                                    Gaps.h10,
+                                    ElevatedButton(
+                                      onPressed: () =>
+                                          _onRequestAccept(item.ordersId),
+                                      child: const Text("수락"),
+                                    ),
+                                  ],
+                                )
+                              ],
+                            ),
+                          );
+                        },
+                      ),
+                    ),
         ],
       ),
     );

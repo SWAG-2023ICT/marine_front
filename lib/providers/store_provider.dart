@@ -17,7 +17,7 @@ class StoreProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void logout() {
+  Future<void> logout() async {
     _isLogined = false;
     _userId = null;
     _storeId = null;

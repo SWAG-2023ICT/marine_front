@@ -1,7 +1,7 @@
 import 'package:swag_marine_products/models/database/destination_model.dart';
 import 'package:swag_marine_products/models/database/product_model.dart';
 
-class OrderModel {
+class StoreOrderModel {
   int ordersId;
   String orderDtm;
   int totalPrice;
@@ -16,7 +16,7 @@ class OrderModel {
   DestinationModel destination;
   List<ProductModel> products;
 
-  OrderModel({
+  StoreOrderModel({
     required this.ordersId,
     required this.orderDtm,
     required this.totalPrice,
@@ -32,21 +32,22 @@ class OrderModel {
     required this.products,
   });
 
-  factory OrderModel.fromJson(Map<String, dynamic> json) {
-    return OrderModel(
-      ordersId: json['ordersId'] as int,
-      orderDtm: json['orderDtm'].toString(),
-      totalPrice: json['totalPrice'] as int,
-      deliveryPhoneNumber: json['deliveryPhoneNumber'] as String,
-      deliveryTargetName: json['deliveryTargetName'] as String,
-      deliveryStatus: json['deliveryStatus'] as int,
-      orderStatus: json['orderStatus'] as int,
-      deliveryInvoice: json['deliveryInvoice'] as String?,
-      orderUserId: json['orderUserId'] as String,
-      storeId: json['storeId'] as String?,
-      destinationId: json['destinationId'] as int,
-      destination: DestinationModel.fromJson(json['destination']),
-      products: (json['products'] as List)
+  factory StoreOrderModel.fromJson(
+      Map<String, dynamic> orderJson, Map<String, dynamic> destinationJson) {
+    return StoreOrderModel(
+      ordersId: orderJson['ordersId'] as int,
+      orderDtm: orderJson['orderDtm'].toString(),
+      totalPrice: orderJson['totalPrice'] as int,
+      deliveryPhoneNumber: orderJson['deliveryPhoneNumber'] as String,
+      deliveryTargetName: orderJson['deliveryTargetName'] as String,
+      deliveryStatus: orderJson['deliveryStatus'] as int,
+      orderStatus: orderJson['orderStatus'] as int,
+      deliveryInvoice: orderJson['deliveryInvoice'] as String?,
+      orderUserId: orderJson['orderUserId'] as String,
+      storeId: orderJson['storeId'] as String?,
+      destinationId: orderJson['destinationId'] as int,
+      destination: DestinationModel.fromJson(destinationJson['destination']),
+      products: (orderJson['products'] as List)
           .map((productJson) => ProductModel.fromJson(productJson))
           .toList(),
     );

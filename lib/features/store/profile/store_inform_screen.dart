@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import 'package:swag_marine_products/constants/sizes.dart';
 import 'package:swag_marine_products/features/store/profile/store_user_inform_inquiry_screen.dart';
 import 'package:swag_marine_products/features/user/home/user_home_screen.dart';
 import 'package:swag_marine_products/features/sign_in_up/sign_in_screen.dart';
 import 'package:swag_marine_products/features/user/profile/user_inform_inquiry_screen.dart';
+import 'package:swag_marine_products/providers/store_provider.dart';
 import 'package:swag_marine_products/storages/login_storage.dart';
 
 class StoreInformScreen extends StatelessWidget {
@@ -13,39 +15,17 @@ class StoreInformScreen extends StatelessWidget {
   const StoreInformScreen({super.key});
 
   // 로그아웃
-  void onLogoutTap(BuildContext context) {
+  void onLogoutTap(BuildContext context) async {
     LoginStorage.resetLoginData();
-    context.pop(UserHomeScreen.routeName);
+    await context.read<StoreProvider>().logout();
     context.replaceNamed(SignInScreen.routeName);
   }
 
   // 계정 삭제
   void _onDeleteTap(BuildContext context) async {
     LoginStorage.resetLoginData();
-    context.pop(UserHomeScreen.routeName);
+    await context.read<StoreProvider>().logout();
     context.replaceNamed(SignInScreen.routeName);
-
-    // final url = Uri.parse("${HttpIp.userUrl}/together/delete");
-    // final data = {
-    //   "userId": "${context.read<UserProvider>().userData?.userId}",
-    // };
-
-    // final response = await http.post(url, body: data);
-
-    // if (response.statusCode >= 200 && response.statusCode < 300) {
-    //   if (!mounted) return;
-    //   context.read<UserProvider>().logout();
-    //   LoginStorage.resetLoginData();
-    //   context.read<MainNavigationProvider>().changeIndex(0);
-    //   context.pop();
-    // } else {
-    //   if (!mounted) return;
-    //   HttpIp.errorPrint(
-    //     context: context,
-    //     title: "계정 삭제 실패!",
-    //     message: "${response.statusCode.toString()} : ${response.body}",
-    //   );
-    // }
   }
 
   @override
@@ -142,55 +122,6 @@ class StoreInformScreen extends StatelessWidget {
                 ),
               ),
             ),
-            // _title(title: "고객 센터"),
-            // Card(
-            //   elevation: 0,
-            //   child: ListTile(
-            //     onTap: () {
-            //       // context.pushNamed(
-            //       //   CustomerServiceScreen.routeName,
-            //       //   extra: CustomerServiceScreenArgs(
-            //       //     initSelectedIndex: 0,
-            //       //   ),
-            //       // );
-            //     },
-            //     title: const Text(
-            //       "자주 묻는 질문 (FnQ)",
-            //       style: TextStyle(
-            //         fontWeight: FontWeight.normal,
-            //         fontSize: 15.0,
-            //       ),
-            //     ),
-            //     trailing: const Icon(
-            //       Icons.chevron_right_rounded,
-            //       size: Sizes.size24,
-            //     ),
-            //   ),
-            // ),
-            // Card(
-            //   elevation: 0,
-            //   child: ListTile(
-            //     onTap: () {
-            //       // context.pushNamed(
-            //       //   CustomerServiceScreen.routeName,
-            //       //   extra: CustomerServiceScreenArgs(
-            //       //     initSelectedIndex: 1,
-            //       //   ),
-            //       // );
-            //     },
-            //     title: const Text(
-            //       "건의하기",
-            //       style: TextStyle(
-            //         fontWeight: FontWeight.normal,
-            //         fontSize: 15.0,
-            //       ),
-            //     ),
-            //     trailing: const Icon(
-            //       Icons.chevron_right_rounded,
-            //       size: Sizes.size24,
-            //     ),
-            //   ),
-            // ),
             _title(title: "계정 관리"),
             Card(
               elevation: 0,
