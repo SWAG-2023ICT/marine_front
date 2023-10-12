@@ -14,17 +14,19 @@ class UserInformScreen extends StatelessWidget {
   const UserInformScreen({super.key});
 
   // 로그아웃
-  void onLogoutTap(BuildContext context) async {
+  Future<void> onLogoutTap(BuildContext context) async {
     LoginStorage.resetLoginData();
-    await context.read<UserProvider>().logout();
+    context.pop();
     context.replaceNamed(SignInScreen.routeName);
+    await context.read<UserProvider>().logout();
   }
 
   // 계정 삭제
-  void _onDeleteTap(BuildContext context) async {
+  Future<void> _onDeleteTap(BuildContext context) async {
     LoginStorage.resetLoginData();
-    await context.read<UserProvider>().logout();
+    context.pop();
     context.replaceNamed(SignInScreen.routeName);
+    await context.read<UserProvider>().logout();
 
     // final url = Uri.parse("${HttpIp.userUrl}/together/delete");
     // final data = {

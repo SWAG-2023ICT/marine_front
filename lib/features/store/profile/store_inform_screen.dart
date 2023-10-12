@@ -17,15 +17,17 @@ class StoreInformScreen extends StatelessWidget {
   // 로그아웃
   void onLogoutTap(BuildContext context) async {
     LoginStorage.resetLoginData();
-    await context.read<StoreProvider>().logout();
+    context.pop();
     context.replaceNamed(SignInScreen.routeName);
+    await context.read<StoreProvider>().logout();
   }
 
   // 계정 삭제
   void _onDeleteTap(BuildContext context) async {
     LoginStorage.resetLoginData();
-    await context.read<StoreProvider>().logout();
+    context.pop();
     context.replaceNamed(SignInScreen.routeName);
+    await context.read<StoreProvider>().logout();
   }
 
   @override
