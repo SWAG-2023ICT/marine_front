@@ -40,12 +40,13 @@ class _UserBookMarkScreenState extends State<UserBookMarkScreen> {
     });
 
     final url = Uri.parse(
-        "${HttpIp.httpIp}/marine/users/wish/${context.read<UserProvider>().userId}");
+        "${HttpIp.httpIp}/marine/users/wish/${context.read<UserProvider>().userData!.userId}");
     final headers = {'Content-Type': 'application/json'};
     final response = await http.get(url, headers: headers);
 
     if (response.statusCode >= 200 && response.statusCode < 300) {
       print("북마크 리스트 호출 : 성공");
+      print(response.body);
       final jsonResponse = jsonDecode(response.body) as List<dynamic>;
 
       setState(() {

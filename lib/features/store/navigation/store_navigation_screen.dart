@@ -10,11 +10,16 @@ import 'package:swag_marine_products/features/user/navigation/menus/user_price_s
 import 'package:swag_marine_products/features/user/navigation/menus/user_profile_screen.dart';
 import 'package:swag_marine_products/features/user/navigation/widgets/nav_tab.dart';
 import 'package:swag_marine_products/features/user/navigation/menus/user_store_screen.dart';
+import 'package:swag_marine_products/models/database/store_model.dart';
 
 class StoreNavigationScreenArgs {
-  StoreNavigationScreenArgs({required this.selectedIndex});
+  StoreNavigationScreenArgs({
+    required this.selectedIndex,
+    required this.storedata,
+  });
 
   final int selectedIndex;
+  final StoreModel storedata;
 }
 
 class StoreNavigationScreen extends StatefulWidget {
@@ -23,9 +28,11 @@ class StoreNavigationScreen extends StatefulWidget {
   const StoreNavigationScreen({
     super.key,
     required this.selectedIndex,
+    required this.storedata,
   });
 
   final int selectedIndex;
+  final StoreModel storedata;
 
   @override
   State<StoreNavigationScreen> createState() => _StoreNavigationScreenState();
@@ -65,7 +72,9 @@ class _StoreNavigationScreenState extends State<StoreNavigationScreen> {
             // 실제로 그 화면을 보고 있지 않더라도 랜더링 시켜주는 위젯
             Offstage(
               offstage: selectedIndex != 0,
-              child: const StoreMenuScreen(),
+              child: StoreMenuScreen(
+                storeData: widget.storedata,
+              ),
             ),
             Offstage(
               offstage: selectedIndex != 1,
@@ -78,7 +87,9 @@ class _StoreNavigationScreenState extends State<StoreNavigationScreen> {
             Offstage(
               offstage: selectedIndex != 3,
               //child: const SearchVolScreen(),
-              child: const StoreProfileScreen(),
+              child: StoreProfileScreen(
+                storeData: widget.storedata,
+              ),
             ),
           ],
         ),

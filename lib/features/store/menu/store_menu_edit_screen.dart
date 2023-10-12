@@ -4,12 +4,21 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
 import 'package:swag_marine_products/constants/gaps.dart';
 import 'package:swag_marine_products/constants/http_ip.dart';
 import 'package:swag_marine_products/features/sign_in_up/widgets/centered_divider.dart';
+import 'package:swag_marine_products/models/database/price_model.dart';
+import 'package:swag_marine_products/models/database/product_model.dart';
+import 'package:swag_marine_products/providers/store_provider.dart';
 import 'package:swag_marine_products/widget_tools/swag_platform_dialog.dart';
 
 import 'package:http/http.dart' as http;
+
+enum OriginStatus {
+  natural,
+  aquaculture,
+}
 
 enum WeightUnit {
   g,
@@ -35,9 +44,11 @@ class PriceListModel {
 class StoreMenuEditScreenArgs {
   const StoreMenuEditScreenArgs({
     required this.editType,
+    this.productData,
   });
 
   final EditType editType;
+  final ProductModel? productData;
 }
 
 class StoreMenuEditScreen extends StatefulWidget {
@@ -46,9 +57,12 @@ class StoreMenuEditScreen extends StatefulWidget {
   const StoreMenuEditScreen({
     super.key,
     required this.editType,
+    this.productData,
   });
 
   final EditType editType;
+  final ProductModel? productData;
+  // final List<PriceListModel>? priceList;
 
   @override
   State<StoreMenuEditScreen> createState() => _StoreMenuEditScreenState();
@@ -56,27 +70,55 @@ class StoreMenuEditScreen extends StatefulWidget {
 
 class _StoreMenuEditScreenState extends State<StoreMenuEditScreen> {
   WeightUnit _weightUnit = WeightUnit.g;
+  late OriginStatus _cultivationType;
   bool _isBarrier = false;
   bool _isSubmitted = false;
   bool _isPriceSubmitted = false;
-  final List<PriceListModel> _priceList = [];
+  List<PriceModel>? _priceList;
   XFile? _productImage;
 
-  void _onSubmit() async {
-    print("제품 원산지 : $_productOriginController.text");
-    print("제품 이름 : ${_productNameController.text}");
-    print("제품 설명 : ${_productDescriptionController.text}");
-    print("제품 가격 : ${_priceList.toString()}");
-    print("제품 사진 : $_productImage");
+  @override
+  void initState() {
+    super.initState();
 
-    if (false) {
-      final url = Uri.parse("${HttpIp.httpIp}/");
+    _cultivationType = widget.productData != null
+        ? widget.productData!.cultivationType == 1
+            ? OriginStatus.natural
+            : OriginStatus.aquaculture
+        : OriginStatus.natural;
+
+    _priceList = widget.productData != null ? widget.productData!.prices : [];
+
+    _productNameController =
+        TextEditingController(text: widget.productData?.productName);
+    _productPriceController = TextEditingController();
+    _productOriginController =
+        TextEditingController(text: widget.productData?.origin);
+    _productWeightUnitController = TextEditingController();
+    _productDescriptionController =
+        TextEditingController(text: widget.productData?.description);
+  }
+
+  void _onSubmit() async {
+    if (widget.editType == EditType.add) {
+      final url = Uri.parse("${HttpIp.httpIp}/marine/product/addProduct");
       final headers = {'Content-Type': 'application/json'};
-      final data = {};
+      final data = {
+        "storeId": context.read<StoreProvider>().storeId,
+        "origin": _productOriginController.text.trim(),
+        "cultivationType": _cultivationType == OriginStatus.natural ? 1 : 0,
+        "productName": _productNameController.text.trim(),
+        "productImage": null,
+        "description": _productDescriptionController.text.trim(),
+        "amount": 1,
+        "prices": _priceList,
+      };
       final response =
           await http.post(url, headers: headers, body: jsonEncode(data));
 
       if (response.statusCode >= 200 && response.statusCode < 300) {
+        print("메뉴 등록 : 성공");
+        context.pop();
       } else {
         if (!mounted) return;
         HttpIp.errorPrint(
@@ -85,6 +127,48 @@ class _StoreMenuEditScreenState extends State<StoreMenuEditScreen> {
           message: response.body,
         );
       }
+    } else if (widget.editType == EditType.update) {
+      final url = Uri.parse("${HttpIp.httpIp}/marine/product/updateProduct");
+      final headers = {'Content-Type': 'application/json'};
+      final data = {
+        "productId": widget.productData!.productId,
+        "origin": _productOriginController.text.trim(),
+        "cultivationType": _cultivationType == OriginStatus.natural ? 1 : 0,
+        "productName": _productNameController.text.trim(),
+        "productImage": null,
+        "description": _productDescriptionController.text.trim(),
+        "amount": 1,
+        "prices": _priceList,
+      };
+      final response =
+          await http.post(url, headers: headers, body: jsonEncode(data));
+
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        print("메뉴 수정 : 성공");
+        context.pop();
+      } else {
+        if (!mounted) return;
+        HttpIp.errorPrint(
+          context: context,
+          title: "통신 오류",
+          message: response.body,
+        );
+      }
+    } else {
+      swagPlatformDialog(
+        context: context,
+        title: "수정 오류!",
+        message: "비정상적인 접근입니다!",
+        actions: [
+          TextButton(
+            onPressed: () {
+              context.pop();
+              context.pop();
+            },
+            child: const Text("알겠습니다"),
+          ),
+        ],
+      );
     }
   }
 
@@ -95,8 +179,8 @@ class _StoreMenuEditScreenState extends State<StoreMenuEditScreen> {
           (_productNameController.text.trim().isNotEmpty &&
               _productNameErrorText == null) &&
           (_productDescriptionController.text.trim().isNotEmpty &&
-              _productDescriptionErrorText == null) &&
-          (_productImage != null);
+              _productDescriptionErrorText == null);
+      // (_productImage != null);
     });
   }
 
@@ -134,17 +218,9 @@ class _StoreMenuEditScreenState extends State<StoreMenuEditScreen> {
     }
   }
 
-  void _onChangeOrigin(WeightUnit? value) {
-    if (value == null) return;
-    setState(() {
-      _weightUnit = value;
-    });
-  }
-
   // ---------------- 원산지 ----------------
 
-  final TextEditingController _productOriginController =
-      TextEditingController();
+  late TextEditingController _productOriginController;
   String? _productOriginErrorText;
 
   void _validateProductOrigin(String value) {
@@ -162,7 +238,7 @@ class _StoreMenuEditScreenState extends State<StoreMenuEditScreen> {
 
   // ---------------- 상품 이름 ----------------
 
-  final TextEditingController _productNameController = TextEditingController();
+  late TextEditingController _productNameController;
   String? _productNameErrorText;
 
   void _validateProductName(String value) {
@@ -180,8 +256,7 @@ class _StoreMenuEditScreenState extends State<StoreMenuEditScreen> {
 
   // ---------------- 상품 설명 ----------------
 
-  final TextEditingController _productDescriptionController =
-      TextEditingController();
+  late TextEditingController _productDescriptionController;
   String? _productDescriptionErrorText;
 
   void _validateProductDescription(String value) {
@@ -199,8 +274,7 @@ class _StoreMenuEditScreenState extends State<StoreMenuEditScreen> {
 
   // ---------------- 그램(g) ----------------
 
-  final TextEditingController _productWeightUnitController =
-      TextEditingController();
+  late TextEditingController _productWeightUnitController;
   String? _productWeightUnitErrorText;
 
   void _validateProductWeightUnit(String value) {
@@ -218,7 +292,7 @@ class _StoreMenuEditScreenState extends State<StoreMenuEditScreen> {
 
   // ---------------- 가격 ----------------
 
-  final TextEditingController _productPriceController = TextEditingController();
+  late TextEditingController _productPriceController;
   String? _productPriceErrorText;
 
   void _validatePriceDescription(String value) {
@@ -332,6 +406,29 @@ class _StoreMenuEditScreenState extends State<StoreMenuEditScreen> {
                 Gaps.v6,
                 const CenteredDivider(text: "입력"),
                 Gaps.v6,
+                Align(
+                  alignment: Alignment.center,
+                  child: SegmentedButton(
+                    showSelectedIcon: false,
+                    segments: const [
+                      ButtonSegment(
+                        value: OriginStatus.natural,
+                        label: Text('자연산'),
+                      ),
+                      ButtonSegment(
+                        value: OriginStatus.aquaculture,
+                        label: Text('양식'),
+                      ),
+                    ],
+                    selected: <OriginStatus>{_cultivationType},
+                    onSelectionChanged: (Set<OriginStatus> newSelection) {
+                      setState(() {
+                        _cultivationType = newSelection.first;
+                      });
+                    },
+                  ),
+                ),
+                Gaps.v6,
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 10),
                   child: Column(
@@ -413,7 +510,7 @@ class _StoreMenuEditScreenState extends State<StoreMenuEditScreen> {
                 ListView.builder(
                   shrinkWrap: true,
                   padding: const EdgeInsets.symmetric(horizontal: 10),
-                  itemCount: _priceList.length,
+                  itemCount: _priceList!.length,
                   itemBuilder: (context, index) {
                     return Container(
                       decoration: BoxDecoration(
@@ -422,13 +519,13 @@ class _StoreMenuEditScreenState extends State<StoreMenuEditScreen> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          Text(_priceList[index].gram),
+                          Text(_priceList![index].unit),
                           const Text("-"),
-                          Text("${_priceList[index].price}원"),
+                          Text("${_priceList![index].priceByUnit}원"),
                           IconButton(
                             onPressed: () {
                               setState(() {
-                                _priceList.removeAt(index);
+                                _priceList!.removeAt(index);
                               });
                             },
                             icon: const Icon(Icons.delete),
@@ -580,15 +677,16 @@ class _StoreMenuEditScreenState extends State<StoreMenuEditScreen> {
                     onPressed: _isPriceSubmitted
                         ? () {
                             setState(() {
-                              _priceList.add(
-                                PriceListModel(
-                                  gram: _productWeightUnitController.text +
+                              _priceList!.add(
+                                PriceModel(
+                                  unit: _productWeightUnitController.text +
                                       (_weightUnit == WeightUnit.g
                                           ? "g"
                                           : _weightUnit == WeightUnit.kg
                                               ? "kg"
                                               : "마리"),
-                                  price: _productPriceController.text,
+                                  priceByUnit:
+                                      int.parse(_productPriceController.text),
                                 ),
                               );
                               _productWeightUnitController.text = "";

@@ -7,17 +7,20 @@ class MenuCard extends StatelessWidget {
   const MenuCard({
     super.key,
     required this.image,
+    required this.storeId,
     required this.productData,
   });
 
   final String image;
+  final String storeId;
   final ProductModel productData;
 
   void _onProductTap(BuildContext context) async {
     showModalBottomSheet(
       context: context,
       builder: (context) => UserOrderSheet(
-        productId: productData.productId,
+        storeId: storeId,
+        productData: productData,
       ),
       useSafeArea: true,
       isScrollControlled: true,
@@ -42,28 +45,29 @@ class MenuCard extends StatelessWidget {
         ),
         child: Row(
           children: [
-            const Expanded(
+            Expanded(
               child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 10),
+                padding: const EdgeInsets.symmetric(horizontal: 10),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "OOO물고기",
-                      style: TextStyle(
+                      productData.productName,
+                      style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     Gaps.v6,
                     Text(
-                      "최저 가격 : ",
-                      style: TextStyle(fontSize: 16),
+                      "원산지 : ${productData.origin}/${productData.cultivationType == 1 ? "자연산" : "양식"}",
+                      style: const TextStyle(fontSize: 16),
                     ),
+                    Gaps.v6,
                     Text(
-                      "원산지 : ",
-                      style: TextStyle(fontSize: 16),
-                    )
+                      "상세내용 : ${productData.description}",
+                      style: const TextStyle(fontSize: 16),
+                    ),
                   ],
                 ),
               ),

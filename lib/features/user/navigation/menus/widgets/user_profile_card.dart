@@ -79,7 +79,7 @@ class _UserProfileCardState extends State<UserProfileCard> {
         // ),
       ),
       title: Text(
-        context.watch<UserProvider>().userId!,
+        context.watch<UserProvider>().userData!.userId,
         style: const TextStyle(
           fontWeight: FontWeight.w600,
           fontSize: Sizes.size18,

@@ -1,14 +1,14 @@
 class PriceModel {
-  int priceId;
+  int? priceId;
   String unit;
-  double priceByUnit;
-  int productId;
+  int priceByUnit;
+  int? productId;
 
   PriceModel({
-    required this.priceId,
+    this.priceId,
     required this.unit,
     required this.priceByUnit,
-    required this.productId,
+    this.productId,
   });
 
   factory PriceModel.fromJson(Map<String, dynamic> json) {
@@ -17,10 +17,10 @@ class PriceModel {
     // 예: priceId는 List<int> 형태로 변환
 
     return PriceModel(
-      priceId: json['priceId'] as int,
+      priceId: json['priceId'] as int?,
       unit: json['unit'] as String,
-      priceByUnit: (json['priceByUnit'] as num).toDouble(),
-      productId: json['productId'] as int,
+      priceByUnit: json['priceByUnit'] as int,
+      productId: json['productId'] as int?,
     );
   }
 

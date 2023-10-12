@@ -46,10 +46,10 @@ class _UserOrderScreenState extends State<UserOrderScreen> {
   void initState() {
     super.initState();
 
-    _initBannerData();
+    _initStoreData();
   }
 
-  void _initBannerData() async {
+  void _initStoreData() async {
     setState(() {
       _isFirstLoading = true;
     });
@@ -78,12 +78,11 @@ class _UserOrderScreenState extends State<UserOrderScreen> {
 
     // --------------- 즐겨찾기 여부 호출 ---------------
     final url2 = Uri.parse(
-        "${HttpIp.httpIp}/marine/users/wish/check?storeId=${widget.storeId}&userId=${context.read<UserProvider>().userId}");
+        "${HttpIp.httpIp}/marine/users/wish/check?storeId=${widget.storeId}&userId=${context.read<UserProvider>().userData!.userId}");
     final response2 = await http.get(url2, headers: headers);
 
     if (response2.statusCode >= 200 && response2.statusCode < 300) {
       print("좋아요 여부 조회 : 성공");
-      print(response2.body);
 
       final jsonResponse = jsonDecode(response2.body) as int;
       if (jsonResponse != 0) {
@@ -108,7 +107,7 @@ class _UserOrderScreenState extends State<UserOrderScreen> {
   }
 
   Future<void> _onRefresh() async {
-    _initBannerData();
+    _initStoreData();
   }
 
   void _onClickFavorite() async {
@@ -139,16 +138,21 @@ class _UserOrderScreenState extends State<UserOrderScreen> {
       final headers = {'Content-Type': 'application/json'};
       final data = {
         'storeId': widget.storeId,
-        'userId': context.read<UserProvider>().userId,
+        'userId': context.read<UserProvider>().userData!.userId,
       };
       final response =
           await http.post(url, headers: headers, body: jsonEncode(data));
 
       if (response.statusCode >= 200 && response.statusCode < 300) {
         print("좋아요 적용 : 성공");
+        print(response.body);
+
+        final jsonResponse = jsonDecode(response.body) as int;
+        if (jsonResponse != 0) {
+          _wishId = jsonResponse;
+        }
 
         setState(() {
-          _wishId == null;
           _isFavorited = true;
         });
       } else {
@@ -309,6 +313,7 @@ class _UserOrderScreenState extends State<UserOrderScreen> {
                                         }
                                         return MenuCard(
                                           image: image,
+                                          storeId: widget.storeId,
                                           productData:
                                               _storeData!.products![index],
                                         );

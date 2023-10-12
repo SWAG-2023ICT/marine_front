@@ -3,20 +3,33 @@ import 'package:swag_marine_products/models/database/user_model.dart';
 
 class UserProvider extends ChangeNotifier {
   bool _isLogined = false;
-  String? _userId;
+  UserModel? _userData;
+  int? _destinationId;
 
   bool get isLogined => _isLogined;
-  String? get userId => _userId;
+  UserModel? get userData => _userData;
+  int? get destinationId => _destinationId;
 
-  Future<void> login(String userId) async {
+  Future<void> login(UserModel userData, int destinationId) async {
     _isLogined = true;
-    _userId = userId;
+    _userData = userData;
+    _destinationId = destinationId;
     notifyListeners();
   }
 
   void logout() {
     _isLogined = false;
-    _userId = null;
+    _userData = null;
+    notifyListeners();
+  }
+
+  Future<void> onChangeUserData(UserModel userData) async {
+    _userData = userData;
+    notifyListeners();
+  }
+
+  Future<void> onChangeAddressId(int destinationId) async {
+    _destinationId = destinationId;
     notifyListeners();
   }
 }

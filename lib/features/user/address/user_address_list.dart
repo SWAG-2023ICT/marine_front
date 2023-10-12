@@ -41,7 +41,7 @@ class _UserAddressListState extends State<UserAddressList> {
     });
 
     final url = Uri.parse(
-        "${HttpIp.httpIp}/marine/users/${context.read<UserProvider>().userId}");
+        "${HttpIp.httpIp}/marine/users/${context.read<UserProvider>().userData!.userId}");
     final headers = {'Content-Type': 'application/json'};
     final response = await http.get(url, headers: headers);
 
@@ -212,26 +212,20 @@ class _UserAddressListState extends State<UserAddressList> {
         ],
       );
     } else {
-      setState(() {
-        _isFirstLoading = true;
-      });
-
       final url =
           Uri.parse("${HttpIp.httpIp}/marine/destination/updateDefaultStatus");
       final headers = {'Content-Type': 'application/json'};
-      final data = {
-        'destinations': [
-          {'destinationId': _addressDefault},
-          {'destinationId': _addressRadio},
-        ],
-      };
+      final data = [
+        {'destinationId': _addressDefault},
+        {'destinationId': _addressRadio},
+      ];
       final response =
           await http.post(url, headers: headers, body: jsonEncode(data));
 
       if (response.statusCode >= 200 && response.statusCode < 300) {
         print("주소 기본 배송지 변경 : 성공");
 
-        _initAddressList();
+        context.read<UserProvider>().onChangeAddressId(_addressRadio!);
       } else {
         if (!mounted) return;
         HttpIp.errorPrint(
@@ -240,10 +234,7 @@ class _UserAddressListState extends State<UserAddressList> {
           message: response.body,
         );
       }
-
-      setState(() {
-        _isFirstLoading = false;
-      });
+      _initAddressList();
     }
   }
 

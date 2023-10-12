@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import 'package:swag_marine_products/constants/gaps.dart';
 import 'package:swag_marine_products/constants/http_ip.dart';
 import 'package:swag_marine_products/features/store/menu/store_menu_edit_screen.dart';
@@ -9,44 +12,51 @@ import 'package:swag_marine_products/features/user/order/widgets/menu_card.dart'
 import 'package:swag_marine_products/models/database/product_model.dart';
 
 import 'package:http/http.dart' as http;
+import 'package:swag_marine_products/models/database/store_model.dart';
+import 'package:swag_marine_products/providers/store_provider.dart';
 import 'package:swag_marine_products/widget_tools/swag_platform_dialog.dart';
 
 class StoreMenuScreen extends StatefulWidget {
-  const StoreMenuScreen({super.key});
+  const StoreMenuScreen({
+    super.key,
+    required this.storeData,
+  });
+
+  final StoreModel storeData;
 
   @override
   State<StoreMenuScreen> createState() => _StoreMenuScreenState();
 }
 
 class _StoreMenuScreenState extends State<StoreMenuScreen> {
-  List<ProductModel>? _productList;
-
+  StoreModel? _storeData;
   bool _isFirstLoading = false;
 
   @override
   void initState() {
     super.initState();
 
-    // _initBannerData();
+    _storeData = widget.storeData;
   }
 
-  void _initBannerData() async {
+  void _initStoreData() async {
     setState(() {
       _isFirstLoading = true;
     });
-    final url = Uri.parse("${HttpIp.httpIp}/");
-    final headers = {
-      'Content-Type': 'application/json',
-    };
-    final data = {
-      '': '',
-    };
 
-    final response = await http.post(url, body: data);
+    // --------------- 가게 정보 호출 ---------------
+    final url = Uri.parse(
+        "${HttpIp.httpIp}/marine/stores/${context.read<StoreProvider>().storeId}");
+    final headers = {'Content-Type': 'application/json'};
+    final response = await http.get(url, headers: headers);
 
     if (response.statusCode >= 200 && response.statusCode < 300) {
+      print("가게 정보 조회 : 성공");
+      print(response.body);
+      final jsonResponse = jsonDecode(response.body) as Map<String, dynamic>;
+
       setState(() {
-        // _productList = jsonResponse;
+        _storeData = StoreModel.fromJson(jsonResponse);
       });
     } else {
       if (!mounted) return;
@@ -63,7 +73,7 @@ class _StoreMenuScreenState extends State<StoreMenuScreen> {
   }
 
   Future<void> _onRefresh() async {
-    _initBannerData();
+    _initStoreData();
   }
 
   @override
@@ -91,13 +101,15 @@ class _StoreMenuScreenState extends State<StoreMenuScreen> {
                 title: const Text("메뉴"),
                 actions: [
                   IconButton(
-                    onPressed: () {
-                      context.pushNamed(
+                    onPressed: () async {
+                      await context.pushNamed(
                         StoreMenuEditScreen.routeName,
                         extra: const StoreMenuEditScreenArgs(
                           editType: EditType.add,
                         ),
                       );
+
+                      _initStoreData();
                     },
                     icon: const Icon(
                       Icons.add_rounded,
@@ -134,28 +146,28 @@ class _StoreMenuScreenState extends State<StoreMenuScreen> {
                       ),
                     ],
                   ),
-                  child: const Column(
+                  child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       ListTile(
-                        contentPadding: EdgeInsets.only(left: 10),
+                        contentPadding: const EdgeInsets.only(left: 10),
                         title: Text(
-                          "가게 이름",
-                          style: TextStyle(
+                          _storeData!.storeName,
+                          style: const TextStyle(
                             fontSize: 24,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                       ),
                       Text(
-                        "전화번호 : 010-0000-0000",
-                        style: TextStyle(
+                        "전화번호 : ${_storeData!.storePhoneNumber}",
+                        style: const TextStyle(
                           fontSize: 16,
                         ),
                       ),
                       Text(
-                        "주소 : 진주시 가좌동",
-                        style: TextStyle(
+                        "주소 : ${_storeData!.storeAddress}",
+                        style: const TextStyle(
                           fontSize: 16,
                         ),
                       ),
@@ -172,7 +184,7 @@ class _StoreMenuScreenState extends State<StoreMenuScreen> {
                     onRefresh: _onRefresh,
                     child: ListView.separated(
                       // padding: const EdgeInsets.symmetric(horizontal: 10),
-                      itemCount: 10,
+                      itemCount: _storeData!.products!.length,
                       separatorBuilder: (context, index) => Gaps.v6,
                       itemBuilder: (context, index) {
                         String image;
@@ -183,7 +195,11 @@ class _StoreMenuScreenState extends State<StoreMenuScreen> {
                         } else {
                           image = "assets/images/fish.png";
                         }
-                        return StoreMenuCard(image: image);
+                        return StoreMenuCard(
+                          image: image,
+                          productData: _storeData!.products![index],
+                          initStoreData: _initStoreData,
+                        );
                       },
                     ),
                   ),

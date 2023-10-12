@@ -73,22 +73,26 @@ class _UserStoreScreenState extends State<UserStoreScreen> {
       _isFirstLoading = true;
     });
 
-    if (false) {
-      final url = Uri.parse("${HttpIp.httpIp}/");
-      final headers = {'Content-Type': 'application/json'};
-      final data = {};
-      final response =
-          await http.post(url, headers: headers, body: jsonEncode(data));
+    final url = Uri.parse(
+        "${HttpIp.httpIp}/marine/stores/search?keyword=${_searchController.text.trim()}");
+    final headers = {'Content-Type': 'application/json'};
+    final response = await http.get(url, headers: headers);
 
-      if (response.statusCode >= 200 && response.statusCode < 300) {
-      } else {
-        if (!mounted) return;
-        HttpIp.errorPrint(
-          context: context,
-          title: "통신 오류",
-          message: response.body,
-        );
-      }
+    if (response.statusCode >= 200 && response.statusCode < 300) {
+      print("가게 리스트 검색 : 성공");
+      final jsonResponse = jsonDecode(response.body) as List<dynamic>;
+
+      setState(() {
+        _storeList =
+            jsonResponse.map((data) => StoreModel.fromJson(data)).toList();
+      });
+    } else {
+      if (!mounted) return;
+      HttpIp.errorPrint(
+        context: context,
+        title: "통신 오류",
+        message: response.body,
+      );
     }
 
     setState(() {

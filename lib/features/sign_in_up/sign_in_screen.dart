@@ -8,6 +8,8 @@ import 'package:swag_marine_products/constants/http_ip.dart';
 import 'package:swag_marine_products/features/sign_in_up/sign_up_screen.dart';
 import 'package:swag_marine_products/features/store/navigation/store_navigation_screen.dart';
 import 'package:swag_marine_products/features/user/navigation/user_navigation_screen.dart';
+import 'package:swag_marine_products/models/database/store_model.dart';
+import 'package:swag_marine_products/models/database/user_model.dart';
 import 'package:swag_marine_products/providers/store_provider.dart';
 import 'package:swag_marine_products/providers/user_provider.dart';
 import 'package:swag_marine_products/storages/login_storage.dart';
@@ -31,7 +33,7 @@ class _SignInScreenState extends State<SignInScreen> {
   final FocusNode _pwFocusNode = FocusNode();
 
   bool _rememberMe = false;
-  bool _isStored = false;
+  final bool _isStored = false;
   bool _isSubmitted = true;
   final List<bool> _isSelected = [false, true];
 
@@ -97,7 +99,7 @@ class _SignInScreenState extends State<SignInScreen> {
 
     if (response.statusCode >= 200 && response.statusCode < 300) {
       print(response.body);
-      final result = bool.parse(response.body);
+      final jsonResponse = jsonDecode(response.body) as Map<String, dynamic>;
 
       if (_rememberMe) {
         await LoginStorage.saveLoginData(
@@ -107,21 +109,39 @@ class _SignInScreenState extends State<SignInScreen> {
         );
       }
 
-      if (!result) {
+      if (jsonResponse["userType"] == "user") {
         print("로그인 - 유저 : 성공!");
+        final userData = UserModel.fromJson(jsonResponse["data"]);
+
+        final destinationId = userData.destinations
+            .firstWhere(
+              (destination) => destination.defaultStatus,
+            )
+            .destinationId;
 
         if (!mounted) return;
-        await context.read<UserProvider>().login(_idController.text.trim());
+        await context.read<UserProvider>().login(userData, destinationId);
 
         if (!mounted) return;
         context.replaceNamed(UserNavigationScreen.routeName);
       } else {
         print("로그인 - 가게 : 성공!");
-        if (!mounted) return;
-        await context.read<StoreProvider>().login(_idController.text.trim());
+
+        final storeData = StoreModel.fromJson(jsonResponse["data"]);
 
         if (!mounted) return;
-        context.replaceNamed(StoreNavigationScreen.routeName);
+        await context
+            .read<StoreProvider>()
+            .login(_idController.text.trim(), storeData.storeId);
+
+        if (!mounted) return;
+        context.replaceNamed(
+          StoreNavigationScreen.routeName,
+          extra: StoreNavigationScreenArgs(
+            selectedIndex: 0,
+            storedata: storeData,
+          ),
+        );
       }
     } else {
       if (!mounted) return;
@@ -213,64 +233,64 @@ class _SignInScreenState extends State<SignInScreen> {
                     ),
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.only(
-                    bottom: 30,
-                    right: 20,
-                    left: 20,
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Expanded(
-                        child: OutlinedButton(
-                          style: OutlinedButton.styleFrom(
-                            // padding: const EdgeInsets.symmetric(horizontal: 50),
-                            textStyle: const TextStyle(
-                              color: Colors.black,
-                            ),
-                            backgroundColor: _isStored
-                                ? Colors.white.withOpacity(0.6)
-                                : Colors.lightBlue.shade100,
-                            shape: const RoundedRectangleBorder(
-                              borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(10),
-                                bottomLeft: Radius.circular(10),
-                              ),
-                            ),
-                          ),
-                          onPressed: () => setState(() {
-                            _isStored = false;
-                          }),
-                          child: const Text("유저"),
-                        ),
-                      ),
-                      Expanded(
-                        child: OutlinedButton(
-                          style: OutlinedButton.styleFrom(
-                            // padding: const EdgeInsets.symmetric(horizontal: 50),
-                            textStyle: const TextStyle(
-                              color: Colors.black,
-                            ),
-                            backgroundColor: _isStored
-                                ? Colors.lightBlue.shade100
-                                : Colors.white.withOpacity(0.6),
-                            shape: const RoundedRectangleBorder(
-                              borderRadius: BorderRadius.only(
-                                topRight: Radius.circular(10),
-                                bottomRight: Radius.circular(10),
-                              ),
-                            ),
-                          ),
-                          onPressed: () => setState(() {
-                            _isStored = true;
-                          }),
-                          child: const Text("가게"),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+                // Padding(
+                //   padding: const EdgeInsets.only(
+                //     bottom: 30,
+                //     right: 20,
+                //     left: 20,
+                //   ),
+                //   child: Row(
+                //     mainAxisAlignment: MainAxisAlignment.center,
+                //     children: [
+                //       Expanded(
+                //         child: OutlinedButton(
+                //           style: OutlinedButton.styleFrom(
+                //             // padding: const EdgeInsets.symmetric(horizontal: 50),
+                //             textStyle: const TextStyle(
+                //               color: Colors.black,
+                //             ),
+                //             backgroundColor: _isStored
+                //                 ? Colors.white.withOpacity(0.6)
+                //                 : Colors.lightBlue.shade100,
+                //             shape: const RoundedRectangleBorder(
+                //               borderRadius: BorderRadius.only(
+                //                 topLeft: Radius.circular(10),
+                //                 bottomLeft: Radius.circular(10),
+                //               ),
+                //             ),
+                //           ),
+                //           onPressed: () => setState(() {
+                //             _isStored = false;
+                //           }),
+                //           child: const Text("유저"),
+                //         ),
+                //       ),
+                //       Expanded(
+                //         child: OutlinedButton(
+                //           style: OutlinedButton.styleFrom(
+                //             // padding: const EdgeInsets.symmetric(horizontal: 50),
+                //             textStyle: const TextStyle(
+                //               color: Colors.black,
+                //             ),
+                //             backgroundColor: _isStored
+                //                 ? Colors.lightBlue.shade100
+                //                 : Colors.white.withOpacity(0.6),
+                //             shape: const RoundedRectangleBorder(
+                //               borderRadius: BorderRadius.only(
+                //                 topRight: Radius.circular(10),
+                //                 bottomRight: Radius.circular(10),
+                //               ),
+                //             ),
+                //           ),
+                //           onPressed: () => setState(() {
+                //             _isStored = true;
+                //           }),
+                //           child: const Text("가게"),
+                //         ),
+                //       ),
+                //     ],
+                //   ),
+                // ),
                 Expanded(
                   flex: 3,
                   child: Column(

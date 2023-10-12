@@ -43,7 +43,7 @@ class _UserInformInquiryScreenState extends State<UserInformInquiryScreen> {
     });
 
     final url = Uri.parse(
-        "${HttpIp.httpIp}/marine/users/${context.read<UserProvider>().userId}");
+        "${HttpIp.httpIp}/marine/users/${context.read<UserProvider>().userData!.userId}");
     final headers = {'Content-Type': 'application/json'};
     final response = await http.get(url, headers: headers);
 

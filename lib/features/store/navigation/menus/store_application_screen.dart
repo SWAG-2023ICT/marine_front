@@ -2,8 +2,11 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import 'package:swag_marine_products/constants/gaps.dart';
 import 'package:swag_marine_products/constants/http_ip.dart';
+import 'package:swag_marine_products/models/database/order_model.dart';
+import 'package:swag_marine_products/providers/store_provider.dart';
 import 'package:swag_marine_products/widget_tools/swag_platform_dialog.dart';
 
 import 'package:http/http.dart' as http;
@@ -23,7 +26,7 @@ class _StoreApplicationScreenState extends State<StoreApplicationScreen> {
   void initState() {
     super.initState();
 
-    // _initDispatch();
+    _initDispatch();
   }
 
   Future<void> _initDispatch() async {
@@ -31,22 +34,27 @@ class _StoreApplicationScreenState extends State<StoreApplicationScreen> {
       _isFirstLoading = true;
     });
 
-    if (false) {
-      final url = Uri.parse("${HttpIp.httpIp}/");
-      final headers = {'Content-Type': 'application/json'};
-      final data = {};
-      final response =
-          await http.post(url, headers: headers, body: jsonEncode(data));
+    final url = Uri.parse(
+        "${HttpIp.httpIp}/marine/orders/stores/${context.read<StoreProvider>().storeId}");
+    final headers = {'Content-Type': 'application/json'};
+    final response = await http.get(url, headers: headers);
 
-      if (response.statusCode >= 200 && response.statusCode < 300) {
-      } else {
-        if (!mounted) return;
-        HttpIp.errorPrint(
-          context: context,
-          title: "통신 오류",
-          message: response.body,
-        );
-      }
+    if (response.statusCode >= 200 && response.statusCode < 300) {
+      print("신청 목록 호출 : 성공");
+      print(response.body);
+      final jsonResponse = jsonDecode(response.body) as List<dynamic>;
+
+      setState(() {
+        _applicationList =
+            jsonResponse.map((data) => OrderModel.fromJson(data)).toList();
+      });
+    } else {
+      if (!mounted) return;
+      HttpIp.errorPrint(
+        context: context,
+        title: "통신 오류",
+        message: response.body,
+      );
     }
 
     setState(() {
@@ -55,92 +63,12 @@ class _StoreApplicationScreenState extends State<StoreApplicationScreen> {
   }
 
   Future<void> _refreshDispatch() async {
-    setState(() {
-      _isFirstLoading = true;
-    });
-
-    if (false) {
-      final url = Uri.parse("${HttpIp.httpIp}/");
-      final headers = {'Content-Type': 'application/json'};
-      final data = {};
-      final response =
-          await http.post(url, headers: headers, body: jsonEncode(data));
-
-      if (response.statusCode >= 200 && response.statusCode < 300) {
-      } else {
-        if (!mounted) return;
-        HttpIp.errorPrint(
-          context: context,
-          title: "통신 오류",
-          message: response.body,
-        );
-      }
-    }
-
-    setState(() {
-      _isFirstLoading = false;
-    });
+    _initDispatch();
   }
 
-  Future<void> _onRequestAccept() async {
-    Future<void> _refreshDispatch() async {
-      setState(() {
-        _isFirstLoading = true;
-      });
+  Future<void> _onRequestAccept() async {}
 
-      if (false) {
-        final url = Uri.parse("${HttpIp.httpIp}/");
-        final headers = {'Content-Type': 'application/json'};
-        final data = {};
-        final response =
-            await http.post(url, headers: headers, body: jsonEncode(data));
-
-        if (response.statusCode >= 200 && response.statusCode < 300) {
-        } else {
-          if (!mounted) return;
-          HttpIp.errorPrint(
-            context: context,
-            title: "통신 오류",
-            message: response.body,
-          );
-        }
-      }
-
-      setState(() {
-        _isFirstLoading = false;
-      });
-    }
-  }
-
-  Future<void> _onRequestRefusal() async {
-    Future<void> _refreshDispatch() async {
-      setState(() {
-        _isFirstLoading = true;
-      });
-
-      if (false) {
-        final url = Uri.parse("${HttpIp.httpIp}/");
-        final headers = {'Content-Type': 'application/json'};
-        final data = {};
-        final response =
-            await http.post(url, headers: headers, body: jsonEncode(data));
-
-        if (response.statusCode >= 200 && response.statusCode < 300) {
-        } else {
-          if (!mounted) return;
-          HttpIp.errorPrint(
-            context: context,
-            title: "통신 오류",
-            message: response.body,
-          );
-        }
-      }
-
-      setState(() {
-        _isFirstLoading = false;
-      });
-    }
-  }
+  Future<void> _onRequestRefusal() async {}
 
   @override
   Widget build(BuildContext context) {

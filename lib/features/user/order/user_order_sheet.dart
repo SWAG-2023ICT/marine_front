@@ -5,9 +5,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import 'package:swag_marine_products/constants/http_ip.dart';
 import 'package:swag_marine_products/constants/sizes.dart';
 import 'package:swag_marine_products/models/database/price_model.dart';
+import 'package:swag_marine_products/models/database/product_model.dart';
+import 'package:swag_marine_products/providers/user_provider.dart';
 import 'package:swag_marine_products/widget_tools/swag_platform_dialog.dart';
 
 import 'package:http/http.dart' as http;
@@ -15,10 +18,12 @@ import 'package:http/http.dart' as http;
 class UserOrderSheet extends StatefulWidget {
   const UserOrderSheet({
     super.key,
-    required this.productId,
+    required this.storeId,
+    required this.productData,
   });
 
-  final int productId;
+  final String storeId;
+  final ProductModel productData;
 
   @override
   State<UserOrderSheet> createState() => _UserOrderSheetState();
@@ -29,37 +34,42 @@ class _UserOrderSheetState extends State<UserOrderSheet> {
   final TextEditingController _phoneNumberController = TextEditingController();
 
   int? _radioValue;
-  List<PriceModel>? _priceList;
-
-  bool _isFirstLoading = false;
 
   @override
   void initState() {
     super.initState();
-
-    _initPriceList();
   }
 
-  Future<void> _initPriceList() async {
-    setState(() {
-      _isFirstLoading = true;
-    });
+  Future<void> _onSubmit() async {
+    final userData = context.read<UserProvider>().userData!;
 
-    final url =
-        Uri.parse("${HttpIp.httpIp}/marine/product/selectAllPriceByProductId");
+    final url = Uri.parse("${HttpIp.httpIp}/marine/orders");
     final headers = {'Content-Type': 'application/json'};
-    final data = {'productId': widget.productId};
+    final data = {
+      'deliveryPhoneNumber': userData.phoneNumber,
+      'deliveryTargetName': userData.name,
+      'orderUserId': userData.userId,
+      'storeId': widget.storeId,
+      'destinationId': context.read<UserProvider>().destinationId,
+      'products': [
+        {
+          'productId': widget.productData.productId,
+          'amount': 1,
+          'prices': [
+            {
+              'priceId': _radioValue,
+            },
+          ],
+        },
+      ],
+    };
     final response =
         await http.post(url, headers: headers, body: jsonEncode(data));
 
     if (response.statusCode >= 200 && response.statusCode < 300) {
-      print("가게 리스트 호출 : 성공");
-      final jsonResponse = jsonDecode(response.body) as List<dynamic>;
-
-      setState(() {
-        _priceList =
-            jsonResponse.map((data) => PriceModel.fromJson(data)).toList();
-      });
+      print("제품 주문 신청 : 성공");
+      context.pop();
+      context.pop();
     } else {
       if (!mounted) return;
       HttpIp.errorPrint(
@@ -68,54 +78,44 @@ class _UserOrderSheetState extends State<UserOrderSheet> {
         message: response.body,
       );
     }
-
-    setState(() {
-      _isFirstLoading = false;
-    });
-  }
-
-  Future<void> _onSubmit() async {
-    if (false) {
-      final url = Uri.parse("${HttpIp.httpIp}/");
-      final headers = {'Content-Type': 'application/json'};
-      final data = {};
-      final response =
-          await http.post(url, headers: headers, body: jsonEncode(data));
-
-      if (response.statusCode >= 200 && response.statusCode < 300) {
-      } else {
-        if (!mounted) return;
-        HttpIp.errorPrint(
-          context: context,
-          title: "통신 오류",
-          message: response.body,
-        );
-      }
-    }
-    context.pop();
-    context.pop();
   }
 
   Future<void> _onOtherSubmit() async {
-    if (false) {
-      final url = Uri.parse("${HttpIp.httpIp}/");
-      final headers = {'Content-Type': 'application/json'};
-      final data = {};
-      final response =
-          await http.post(url, headers: headers, body: jsonEncode(data));
+    final url = Uri.parse("${HttpIp.httpIp}/marine/orders");
+    final headers = {'Content-Type': 'application/json'};
+    final data = {
+      'deliveryPhoneNumber': _phoneNumberController.text.trim(),
+      'deliveryTargetName': _nameController.text.trim(),
+      'orderUserId': context.read<UserProvider>().userData!.userId,
+      'storeId': widget.storeId,
+      'destinationId': context.read<UserProvider>().destinationId,
+      'products': [
+        {
+          'productId': widget.productData.productId,
+          'amount': 1,
+          'prices': [
+            {
+              'priceId': _radioValue,
+            },
+          ],
+        },
+      ],
+    };
+    final response =
+        await http.post(url, headers: headers, body: jsonEncode(data));
 
-      if (response.statusCode >= 200 && response.statusCode < 300) {
-      } else {
-        if (!mounted) return;
-        HttpIp.errorPrint(
-          context: context,
-          title: "통신 오류",
-          message: response.body,
-        );
-      }
+    if (response.statusCode >= 200 && response.statusCode < 300) {
+      print("제품 주문 신청(수신자 변경) : 성공");
+      context.pop();
+      context.pop();
+    } else {
+      if (!mounted) return;
+      HttpIp.errorPrint(
+        context: context,
+        title: "통신 오류",
+        message: response.body,
+      );
     }
-    context.pop();
-    context.pop();
   }
 
   void _onChangePrice(int? changeValue) {
@@ -242,7 +242,7 @@ class _UserOrderSheetState extends State<UserOrderSheet> {
                     ),
                     actions: [
                       ElevatedButton(
-                        onPressed: () {},
+                        onPressed: _onOtherSubmit,
                         child: const Text("주문"),
                       ),
                     ],
@@ -271,41 +271,43 @@ class _UserOrderSheetState extends State<UserOrderSheet> {
         bottomNavigationBar: Container(
           margin: const EdgeInsets.symmetric(vertical: 10),
           child: ElevatedButton(
-            onPressed: _isFirstLoading
-                ? _radioValue != null
-                    ? _onOrderTap
-                    : null
-                : null,
+            onPressed: _radioValue != null ? _onOrderTap : null,
             child: const Text("주문하기"),
           ),
         ),
-        body: _isFirstLoading
-            ? const Center(
-                child: CircularProgressIndicator(),
-              )
-            : Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: CustomScrollView(
-                  slivers: [
-                    SliverToBoxAdapter(
-                      child: Image.asset(
-                        "assets/images/fish.png",
-                        width: size.width,
-                        height: 250,
-                      ),
-                    ),
-                    SliverList.builder(
-                      itemCount: _priceList!.length,
-                      itemBuilder: (context, index) => RadioListTile.adaptive(
-                        value: _priceList![index].priceId,
-                        groupValue: _radioValue,
-                        onChanged: _onChangePrice,
-                        title: Text("가격 ${index + 1}"),
-                      ),
-                    ),
-                  ],
+        body: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: CustomScrollView(
+            slivers: [
+              SliverToBoxAdapter(
+                child: Image.asset(
+                  "assets/images/fish.png",
+                  width: size.width,
+                  height: 250,
                 ),
               ),
+              SliverList.builder(
+                itemCount: widget.productData.prices.length,
+                itemBuilder: (context, index) {
+                  final item = widget.productData.prices[index];
+                  return RadioListTile.adaptive(
+                    value: widget.productData.prices[index].priceId!,
+                    groupValue: _radioValue,
+                    onChanged: _onChangePrice,
+                    title: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Text(item.unit),
+                        const Text("-"),
+                        Text("${item.priceByUnit}원"),
+                      ],
+                    ),
+                  );
+                },
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

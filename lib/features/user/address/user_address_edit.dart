@@ -73,7 +73,7 @@ class _UserAddressEditState extends State<UserAddressEdit> {
           Uri.parse("${HttpIp.httpIp}/marine/destination/addDestination");
       final headers = {'Content-Type': 'application/json'};
       final data = {
-        "userId": context.read<UserProvider>().userId,
+        "userId": context.read<UserProvider>().userData!.userId,
         "destinationName": _userAdressNameController.text.trim().isEmpty
             ? _userAddressDetailController.text.trim().isNotEmpty
                 ? "${_userAddressController.text.trim()},${_userAddressDetailController.text.trim()}"
@@ -105,7 +105,7 @@ class _UserAddressEditState extends State<UserAddressEdit> {
           Uri.parse("${HttpIp.httpIp}/marine/destination/updateDestination");
       final headers = {'Content-Type': 'application/json'};
       final data = {
-        "userId": context.read<UserProvider>().userId,
+        "userId": context.read<UserProvider>().userData!.userId,
         "destinationId": widget.addressId,
         "destinationName": _userAdressNameController.text.trim().isEmpty
             ? _userAddressDetailController.text.trim().isNotEmpty

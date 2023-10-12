@@ -6,12 +6,19 @@ import 'package:image_picker/image_picker.dart';
 import 'package:swag_marine_products/constants/gaps.dart';
 import 'package:swag_marine_products/features/sign_in_up/widgets/centered_divider.dart';
 import 'package:swag_marine_products/features/store/navigation/menus/widgets/store_user_profile_card.dart';
+import 'package:swag_marine_products/features/store/profile/store_inform_screen.dart';
 import 'package:swag_marine_products/features/store/profile/store_inform_update_screen.dart';
 import 'package:swag_marine_products/features/user/navigation/menus/widgets/profile_button.dart';
 import 'package:swag_marine_products/features/user/profile/user_inform_screen.dart';
+import 'package:swag_marine_products/models/database/store_model.dart';
 
 class StoreProfileScreen extends StatefulWidget {
-  const StoreProfileScreen({super.key});
+  const StoreProfileScreen({
+    super.key,
+    required this.storeData,
+  });
+
+  final StoreModel storeData;
 
   @override
   State<StoreProfileScreen> createState() => _StoreProfileScreenState();
@@ -42,7 +49,7 @@ class _StoreProfileScreenState extends State<StoreProfileScreen> {
         actions: [
           IconButton(
             onPressed: () {
-              context.pushNamed(UserInformScreen.routeName);
+              context.pushNamed(StoreInformScreen.routeName);
             },
             icon: const Icon(
               Icons.settings,
@@ -87,7 +94,7 @@ class _StoreProfileScreenState extends State<StoreProfileScreen> {
                     children: [
                       Expanded(
                         child: TextFormField(
-                          initialValue: "수산의 왕",
+                          initialValue: widget.storeData.storeName,
                           readOnly: true,
                           decoration: InputDecoration(
                             labelText: "가게 이름",
@@ -98,26 +105,26 @@ class _StoreProfileScreenState extends State<StoreProfileScreen> {
                           ),
                         ),
                       ),
-                      ElevatedButton(
-                        onPressed: () {
-                          context.pushNamed(
-                            StoreInformUpdateScreen.routeName,
-                            extra: const StoreInformUpdateScreenArgs(
-                              updateType: UpdateType.storeName,
-                            ),
-                          );
-                        },
-                        style: ElevatedButton.styleFrom(
-                          padding: const EdgeInsets.all(24),
-                          textStyle: const TextStyle(fontSize: 14),
-                          shape: const RoundedRectangleBorder(
-                            borderRadius: BorderRadius.all(
-                              Radius.circular(10),
-                            ),
-                          ),
-                        ),
-                        child: const Text("수정"),
-                      ),
+                      // ElevatedButton(
+                      //   onPressed: () {
+                      //     context.pushNamed(
+                      //       StoreInformUpdateScreen.routeName,
+                      //       extra: const StoreInformUpdateScreenArgs(
+                      //         updateType: UpdateType.storeName,
+                      //       ),
+                      //     );
+                      //   },
+                      //   style: ElevatedButton.styleFrom(
+                      //     padding: const EdgeInsets.all(24),
+                      //     textStyle: const TextStyle(fontSize: 14),
+                      //     shape: const RoundedRectangleBorder(
+                      //       borderRadius: BorderRadius.all(
+                      //         Radius.circular(10),
+                      //       ),
+                      //     ),
+                      //   ),
+                      //   child: const Text("수정"),
+                      // ),
                     ],
                   ),
                   Gaps.v10,
@@ -126,7 +133,7 @@ class _StoreProfileScreenState extends State<StoreProfileScreen> {
                     children: [
                       Expanded(
                         child: TextFormField(
-                          initialValue: "진주시 가좌동",
+                          initialValue: widget.storeData.storeAddress,
                           readOnly: true,
                           decoration: InputDecoration(
                             labelText: "가게 주소",
@@ -137,26 +144,26 @@ class _StoreProfileScreenState extends State<StoreProfileScreen> {
                           ),
                         ),
                       ),
-                      ElevatedButton(
-                        onPressed: () {
-                          context.pushNamed(
-                            StoreInformUpdateScreen.routeName,
-                            extra: const StoreInformUpdateScreenArgs(
-                              updateType: UpdateType.storeAddress,
-                            ),
-                          );
-                        },
-                        style: ElevatedButton.styleFrom(
-                          padding: const EdgeInsets.all(24),
-                          textStyle: const TextStyle(fontSize: 14),
-                          shape: const RoundedRectangleBorder(
-                            borderRadius: BorderRadius.all(
-                              Radius.circular(10),
-                            ),
-                          ),
-                        ),
-                        child: const Text("수정"),
-                      ),
+                      // ElevatedButton(
+                      //   onPressed: () {
+                      //     context.pushNamed(
+                      //       StoreInformUpdateScreen.routeName,
+                      //       extra: const StoreInformUpdateScreenArgs(
+                      //         updateType: UpdateType.storeAddress,
+                      //       ),
+                      //     );
+                      //   },
+                      //   style: ElevatedButton.styleFrom(
+                      //     padding: const EdgeInsets.all(24),
+                      //     textStyle: const TextStyle(fontSize: 14),
+                      //     shape: const RoundedRectangleBorder(
+                      //       borderRadius: BorderRadius.all(
+                      //         Radius.circular(10),
+                      //       ),
+                      //     ),
+                      //   ),
+                      //   child: const Text("수정"),
+                      // ),
                     ],
                   ),
                   Gaps.v10,
@@ -165,7 +172,7 @@ class _StoreProfileScreenState extends State<StoreProfileScreen> {
                     children: [
                       Expanded(
                         child: TextFormField(
-                          initialValue: "01012345678",
+                          initialValue: widget.storeData.storePhoneNumber,
                           readOnly: true,
                           decoration: InputDecoration(
                             labelText: "가게 전화번호",
@@ -176,71 +183,71 @@ class _StoreProfileScreenState extends State<StoreProfileScreen> {
                           ),
                         ),
                       ),
-                      ElevatedButton(
-                        onPressed: () {
-                          context.pushNamed(
-                            StoreInformUpdateScreen.routeName,
-                            extra: const StoreInformUpdateScreenArgs(
-                              updateType: UpdateType.storePhoneNumber,
-                            ),
-                          );
-                        },
-                        style: ElevatedButton.styleFrom(
-                          padding: const EdgeInsets.all(24),
-                          textStyle: const TextStyle(fontSize: 14),
-                          shape: const RoundedRectangleBorder(
-                            borderRadius: BorderRadius.all(
-                              Radius.circular(10),
-                            ),
-                          ),
-                        ),
-                        child: const Text("수정"),
-                      ),
+                      // ElevatedButton(
+                      //   onPressed: () {
+                      //     context.pushNamed(
+                      //       StoreInformUpdateScreen.routeName,
+                      //       extra: const StoreInformUpdateScreenArgs(
+                      //         updateType: UpdateType.storePhoneNumber,
+                      //       ),
+                      //     );
+                      //   },
+                      //   style: ElevatedButton.styleFrom(
+                      //     padding: const EdgeInsets.all(24),
+                      //     textStyle: const TextStyle(fontSize: 14),
+                      //     shape: const RoundedRectangleBorder(
+                      //       borderRadius: BorderRadius.all(
+                      //         Radius.circular(10),
+                      //       ),
+                      //     ),
+                      //   ),
+                      //   child: const Text("수정"),
+                      // ),
                     ],
                   ),
-                  Padding(
-                    padding: const EdgeInsets.all(10),
+                  const Padding(
+                    padding: EdgeInsets.all(10),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text(
+                        Text(
                           "이미지",
                           style: TextStyle(
                               fontSize: 18, fontWeight: FontWeight.bold),
                         ),
-                        Row(
-                          children: [
-                            ElevatedButton(
-                              onPressed: () =>
-                                  _onChangeMenuImage(ImageSource.camera),
-                              style: ElevatedButton.styleFrom(
-                                padding: const EdgeInsets.all(10),
-                                textStyle: const TextStyle(fontSize: 14),
-                                shape: const RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.all(
-                                    Radius.circular(10),
-                                  ),
-                                ),
-                              ),
-                              child: const Text("카메라"),
-                            ),
-                            Gaps.h10,
-                            ElevatedButton(
-                              onPressed: () =>
-                                  _onChangeMenuImage(ImageSource.gallery),
-                              style: ElevatedButton.styleFrom(
-                                padding: const EdgeInsets.all(10),
-                                textStyle: const TextStyle(fontSize: 14),
-                                shape: const RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.all(
-                                    Radius.circular(10),
-                                  ),
-                                ),
-                              ),
-                              child: const Text("갤러리"),
-                            ),
-                          ],
-                        ),
+                        // Row(
+                        //   children: [
+                        //     ElevatedButton(
+                        //       onPressed: () =>
+                        //           _onChangeMenuImage(ImageSource.camera),
+                        //       style: ElevatedButton.styleFrom(
+                        //         padding: const EdgeInsets.all(10),
+                        //         textStyle: const TextStyle(fontSize: 14),
+                        //         shape: const RoundedRectangleBorder(
+                        //           borderRadius: BorderRadius.all(
+                        //             Radius.circular(10),
+                        //           ),
+                        //         ),
+                        //       ),
+                        //       child: const Text("카메라"),
+                        //     ),
+                        //     Gaps.h10,
+                        //     ElevatedButton(
+                        //       onPressed: () =>
+                        //           _onChangeMenuImage(ImageSource.gallery),
+                        //       style: ElevatedButton.styleFrom(
+                        //         padding: const EdgeInsets.all(10),
+                        //         textStyle: const TextStyle(fontSize: 14),
+                        //         shape: const RoundedRectangleBorder(
+                        //           borderRadius: BorderRadius.all(
+                        //             Radius.circular(10),
+                        //           ),
+                        //         ),
+                        //       ),
+                        //       child: const Text("갤러리"),
+                        //     ),
+                        //   ],
+                        // ),
                       ],
                     ),
                   ),

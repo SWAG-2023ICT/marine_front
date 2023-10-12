@@ -151,14 +151,10 @@ final router = GoRouter(
       path: StoreNavigationScreen.routeURL,
       name: StoreNavigationScreen.routeName,
       builder: (context, state) {
-        if (state.extra != null) {
-          final args = state.extra as StoreNavigationScreenArgs;
-          return StoreNavigationScreen(
-            selectedIndex: args.selectedIndex,
-          );
-        }
-        return const StoreNavigationScreen(
-          selectedIndex: 0,
+        final args = state.extra as StoreNavigationScreenArgs;
+        return StoreNavigationScreen(
+          selectedIndex: args.selectedIndex,
+          storedata: args.storedata,
         );
       },
       routes: [
@@ -166,11 +162,14 @@ final router = GoRouter(
             path: StoreMenuEditScreen.routeURL,
             name: StoreMenuEditScreen.routeName,
             builder: (context, state) {
-              if (state.extra != null) {
-                final args = state.extra as StoreMenuEditScreenArgs;
-                return StoreMenuEditScreen(editType: args.editType);
+              final args = state.extra as StoreMenuEditScreenArgs;
+              if (args.productData != null) {
+                return StoreMenuEditScreen(
+                  editType: args.editType,
+                  productData: args.productData,
+                );
               }
-              return const StoreMenuEditScreen(editType: EditType.add);
+              return StoreMenuEditScreen(editType: args.editType);
             }),
         GoRoute(
           name: StoreInformScreen.routeName,

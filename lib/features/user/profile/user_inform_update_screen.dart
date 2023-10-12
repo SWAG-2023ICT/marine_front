@@ -91,13 +91,10 @@ class _UserInformUpdateScreenState extends State<UserInformUpdateScreen> {
 
   void _onSubmitted() async {
     if (widget.updateType == UpdateType.pw) {
-      // print("이전 비밀번호 : ${_userPasswordBeforeController.text}");
-      // print("변경 비밀번호 : ${_userPasswordController.text}");
-
       final url = Uri.parse("${HttpIp.httpIp}/marine/users/password");
       final headers = {'Content-Type': 'application/json'};
       final data = {
-        'userId': context.read<UserProvider>().userId,
+        'userId': context.read<UserProvider>().userData!.userId,
         'password': _userPasswordBeforeController.text.trim(),
         'newPassword': _userPasswordConfirmationController.text.trim(),
       };
@@ -116,12 +113,10 @@ class _UserInformUpdateScreenState extends State<UserInformUpdateScreen> {
         );
       }
     } else if (widget.updateType == UpdateType.name) {
-      // print("변경 이름 : ${_userNameController.text}");
-
       final url = Uri.parse("${HttpIp.httpIp}/marine/users/update");
       final headers = {'Content-Type': 'application/json'};
       final data = {
-        'userId': context.read<UserProvider>().userId,
+        'userId': context.read<UserProvider>().userData!.userId,
         'name': _userNameController.text.trim(),
         'password': _userPasswordController.text.trim(),
       };
@@ -140,12 +135,10 @@ class _UserInformUpdateScreenState extends State<UserInformUpdateScreen> {
         );
       }
     } else if (widget.updateType == UpdateType.phoneNumber) {
-      print("변경 전화번호 : ${_userPhoneNumberController.text}");
-
       final url = Uri.parse("${HttpIp.httpIp}/marine/users/update");
       final headers = {'Content-Type': 'application/json'};
       final data = {
-        'userId': context.read<UserProvider>().userId,
+        'userId': context.read<UserProvider>().userData!.userId,
         'phoneNumber': _userPhoneNumberController.text.trim(),
         'password': _userPasswordController.text.trim(),
       };
@@ -170,7 +163,10 @@ class _UserInformUpdateScreenState extends State<UserInformUpdateScreen> {
         message: "비정상적인 접근입니다!",
         actions: [
           TextButton(
-            onPressed: () => context.pop(),
+            onPressed: () {
+              context.pop();
+              context.pop();
+            },
             child: const Text("알겠습니다"),
           ),
         ],
