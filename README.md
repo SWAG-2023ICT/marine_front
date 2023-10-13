@@ -17,7 +17,7 @@
 - cupertino_icons: ^1.0.2 (iOS 스타일 아이콘 라이브러리)
 - flutter_secure_storage: ^8.0.0 (로컬 스토리지를 만드는 라이브러리)
 - provider: ^6.0.5 (상태 관리 라이브러리)
-- go_router: ^6.5.5 (라우터 페이지 관리 라이브러리)
+- go_router: ^11.1.4 (라우터 페이지 관리 라이브러리)
 - image_picker: ^1.0.0 (갤러리, 카메라 라이브러리)
 - google_maps_flutter: ^2.3.1 (구글 맵 라이브러리)
 - kpostal: ^0.5.1 (카카오 주소 검색 라이브러리)

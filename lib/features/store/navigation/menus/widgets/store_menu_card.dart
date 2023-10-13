@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 import 'package:swag_marine_products/constants/gaps.dart';
 import 'package:swag_marine_products/constants/http_ip.dart';
 import 'package:swag_marine_products/features/store/menu/store_menu_edit_screen.dart';
@@ -158,7 +159,7 @@ class _StoreMenuCardState extends State<StoreMenuCard> {
                     ),
                   ),
                   Text(
-                    "${item.priceByUnit}원",
+                    "${NumberFormat.currency(locale: 'ko_KR', symbol: '').format(item.priceByUnit)}원",
                     style: const TextStyle(
                       fontSize: 16,
                     ),

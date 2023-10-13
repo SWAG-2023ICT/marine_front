@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 import 'package:swag_marine_products/constants/gaps.dart';
 import 'package:swag_marine_products/features/sign_in_up/widgets/centered_divider.dart';
 import 'package:swag_marine_products/models/database/order_model.dart';
 import 'package:swag_marine_products/widget_tools/swag_platform_dialog.dart';
 
 enum DeliveryStatus {
+  cancelled,
   prepared,
   shipping,
   completed,
@@ -34,23 +36,38 @@ class UserOrderCard extends StatefulWidget {
 
 class _UserOrderCardState extends State<UserOrderCard> {
   DeliveryStatus _deliveryStatus = DeliveryStatus.prepared;
-  OrderStatus _orderStatus = OrderStatus.available;
+  final OrderStatus _orderStatus = OrderStatus.available;
+  String? _reasonText;
 
   @override
   void initState() {
     super.initState();
 
-    _deliveryStatus = widget.orderData.deliveryStatus == 2
-        ? DeliveryStatus.prepared
-        : widget.orderData.deliveryStatus == 3
-            ? DeliveryStatus.shipping
-            : DeliveryStatus.completed;
+    if (widget.orderData.orderStatus == 3) {
+      _deliveryStatus = DeliveryStatus.cancelled;
+      _reasonText = widget.orderData.reason;
+    } else if (widget.orderData.orderStatus != 3 &&
+        widget.orderData.deliveryStatus == 2) {
+      _deliveryStatus = DeliveryStatus.prepared;
+    } else if (widget.orderData.orderStatus != 3 &&
+        widget.orderData.deliveryStatus == 3) {
+      _deliveryStatus = DeliveryStatus.shipping;
+    } else if (widget.orderData.orderStatus != 3 &&
+        widget.orderData.deliveryStatus == 4) {
+      _deliveryStatus = DeliveryStatus.completed;
+    }
 
-    _orderStatus = widget.orderData.orderStatus == 1
-        ? OrderStatus.available
-        : widget.orderData.orderStatus == 2
-            ? OrderStatus.postponed
-            : OrderStatus.unable;
+    // _deliveryStatus = widget.orderData.deliveryStatus == 2
+    //     ? DeliveryStatus.prepared
+    //     : widget.orderData.deliveryStatus == 3
+    //         ? DeliveryStatus.shipping
+    //         : DeliveryStatus.completed;
+
+    // _orderStatus = widget.orderData.orderStatus == 1
+    //     ? OrderStatus.available
+    //     : widget.orderData.orderStatus == 2
+    //         ? OrderStatus.postponed
+    //         : OrderStatus.unable;
   }
 
   @override
@@ -87,7 +104,7 @@ class _UserOrderCardState extends State<UserOrderCard> {
           ),
           Gaps.v4,
           Text(
-            "[가격] ${widget.orderData.products[0].prices[0].priceByUnit}원",
+            "[가격] ${NumberFormat.currency(locale: 'ko_KR', symbol: '').format(widget.orderData.products[0].prices[0].priceByUnit)}원",
             style: const TextStyle(fontSize: 16),
           ),
           Gaps.v4,
@@ -100,49 +117,6 @@ class _UserOrderCardState extends State<UserOrderCard> {
             "[연락처] ${widget.orderData.deliveryPhoneNumber}",
             style: const TextStyle(fontSize: 16),
           ),
-          Gaps.v4,
-          if (_deliveryStatus == DeliveryStatus.prepared)
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: SegmentedButton(
-                showSelectedIcon: false,
-                segments: const [
-                  ButtonSegment(
-                    value: OrderStatus.available,
-                    label: Text('배송가능'),
-                  ),
-                  ButtonSegment(
-                    value: OrderStatus.postponed,
-                    label: Text('배송연기'),
-                  ),
-                  ButtonSegment(
-                    value: OrderStatus.unable,
-                    label: Text('배송불가능'),
-                  ),
-                ],
-                selected: <OrderStatus>{_orderStatus},
-                onSelectionChanged: (Set<OrderStatus> newSelection) {
-                  if (widget.orderData.deliveryStatus >= 3 &&
-                      newSelection.first == OrderStatus.unable) {
-                    swagPlatformDialog(
-                      context: context,
-                      title: "배송 오류",
-                      message: "배송이 진행중일때는 취소를 할 수 없습니다.",
-                      actions: [
-                        TextButton(
-                          onPressed: () => context.pop(),
-                          child: const Text("알겠습니다"),
-                        ),
-                      ],
-                    );
-                  } else {
-                    setState(() {
-                      _orderStatus = newSelection.first;
-                    });
-                  }
-                },
-              ),
-            ),
           Gaps.v4,
           const CenteredDivider(text: "진행 상황"),
           Align(
@@ -165,11 +139,25 @@ class _UserOrderCardState extends State<UserOrderCard> {
                   value: DeliveryStatus.completed,
                   label: const Text('완료됨'),
                 ),
+                ButtonSegment(
+                  enabled: _deliveryStatus == DeliveryStatus.cancelled,
+                  value: DeliveryStatus.cancelled,
+                  label: const Text('취소됨'),
+                ),
               ],
               selected: <DeliveryStatus>{_deliveryStatus},
               onSelectionChanged: (p0) {},
             ),
           ),
+          Gaps.v4,
+          if (_deliveryStatus == DeliveryStatus.cancelled)
+            Text(
+              "취소 사유 : $_reasonText",
+              style: const TextStyle(
+                color: Colors.red,
+                fontSize: 15,
+              ),
+            ),
         ],
       ),
     );

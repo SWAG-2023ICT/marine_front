@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:swag_marine_products/constants/gaps.dart';
 import 'package:swag_marine_products/constants/http_ip.dart';
@@ -191,7 +192,7 @@ class _StoreApplicationScreenState extends State<StoreApplicationScreen> {
                                 ),
                                 Gaps.v4,
                                 Text(
-                                  "[가격] ${item.products[0].prices[0].priceByUnit}원",
+                                  "[가격] ${NumberFormat.currency(locale: 'ko_KR', symbol: '').format(item.products[0].prices[0].priceByUnit)}원",
                                   style: const TextStyle(fontSize: 16),
                                 ),
                                 Gaps.v4,

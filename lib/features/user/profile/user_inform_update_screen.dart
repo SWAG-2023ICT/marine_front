@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:swag_marine_products/constants/gaps.dart';
 import 'package:swag_marine_products/constants/http_ip.dart';
 import 'package:swag_marine_products/features/sign_in_up/widgets/bottom_button.dart';
+import 'package:swag_marine_products/providers/store_provider.dart';
 import 'package:swag_marine_products/providers/user_provider.dart';
 import 'package:swag_marine_products/widget_tools/swag_platform_dialog.dart';
 
@@ -94,7 +95,7 @@ class _UserInformUpdateScreenState extends State<UserInformUpdateScreen> {
       final url = Uri.parse("${HttpIp.httpIp}/marine/users/password");
       final headers = {'Content-Type': 'application/json'};
       final data = {
-        'userId': context.read<UserProvider>().userData!.userId,
+        'userId': context.read<StoreProvider>().userId,
         'password': _userPasswordBeforeController.text.trim(),
         'newPassword': _userPasswordConfirmationController.text.trim(),
       };
@@ -116,7 +117,7 @@ class _UserInformUpdateScreenState extends State<UserInformUpdateScreen> {
       final url = Uri.parse("${HttpIp.httpIp}/marine/users/update");
       final headers = {'Content-Type': 'application/json'};
       final data = {
-        'userId': context.read<UserProvider>().userData!.userId,
+        'userId': context.read<StoreProvider>().userId,
         'name': _userNameController.text.trim(),
         'password': _userPasswordController.text.trim(),
       };
@@ -138,7 +139,7 @@ class _UserInformUpdateScreenState extends State<UserInformUpdateScreen> {
       final url = Uri.parse("${HttpIp.httpIp}/marine/users/update");
       final headers = {'Content-Type': 'application/json'};
       final data = {
-        'userId': context.read<UserProvider>().userData!.userId,
+        'userId': context.read<StoreProvider>().userId,
         'phoneNumber': _userPhoneNumberController.text.trim(),
         'password': _userPasswordController.text.trim(),
       };

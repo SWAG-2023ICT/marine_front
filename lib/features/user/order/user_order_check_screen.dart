@@ -48,10 +48,7 @@ class _UserOrderCheckScreenState extends State<UserOrderCheckScreen> {
           jsonResponse.map((data) => OrderModel.fromJson(data)).toList();
 
       setState(() {
-        _orderList = ordersList
-            .where((element) =>
-                (element.orderStatus != 3 && element.deliveryStatus == 4))
-            .toList();
+        _orderList = ordersList;
       });
     } else {
       if (!mounted) return;

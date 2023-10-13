@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:swag_marine_products/constants/http_ip.dart';
 import 'package:swag_marine_products/constants/sizes.dart';
@@ -299,7 +300,8 @@ class _UserOrderSheetState extends State<UserOrderSheet> {
                       children: [
                         Text(item.unit),
                         const Text("-"),
-                        Text("${item.priceByUnit}원"),
+                        Text(
+                            "${NumberFormat.currency(locale: 'ko_KR', symbol: '').format(item.priceByUnit)}원"),
                       ],
                     ),
                   );

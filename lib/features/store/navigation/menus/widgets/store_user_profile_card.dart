@@ -75,7 +75,7 @@ class _StoreUserProfileCardState extends State<StoreUserProfileCard> {
         ),
       ),
       title: Text(
-        context.watch<StoreProvider>().storeId!,
+        context.watch<StoreProvider>().userId!,
         style: const TextStyle(
           fontWeight: FontWeight.w600,
           fontSize: Sizes.size18,

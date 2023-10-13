@@ -29,7 +29,7 @@ class _StoreOrderScreenState extends State<StoreOrderScreen> {
   void initState() {
     super.initState();
 
-    // _initDispatch();
+    _initDispatch();
   }
 
   Future<void> _initDispatch() async {
@@ -85,7 +85,7 @@ class _StoreOrderScreenState extends State<StoreOrderScreen> {
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
-        resizeToAvoidBottomInset: true,
+        resizeToAvoidBottomInset: false,
         appBar: AppBar(
           centerTitle: true,
           backgroundColor: Colors.blue.shade50,

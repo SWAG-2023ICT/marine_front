@@ -11,6 +11,7 @@ class OrderModel {
   int orderStatus;
   String? deliveryInvoice;
   String orderUserId;
+  String? reason;
   String? storeId;
   int destinationId;
   DestinationModel destination;
@@ -26,6 +27,7 @@ class OrderModel {
     required this.orderStatus,
     this.deliveryInvoice,
     required this.orderUserId,
+    required this.reason,
     required this.storeId,
     required this.destinationId,
     required this.destination,
@@ -44,6 +46,7 @@ class OrderModel {
       deliveryInvoice: json['deliveryInvoice'] as String?,
       orderUserId: json['orderUserId'] as String,
       storeId: json['storeId'] as String?,
+      reason: json['reason'] as String?,
       destinationId: json['destinationId'] as int,
       destination: DestinationModel.fromJson(json['destination']),
       products: (json['products'] as List)
@@ -64,6 +67,7 @@ class OrderModel {
       'deliveryInvoice': deliveryInvoice,
       'orderUserId': orderUserId,
       'storeId': storeId,
+      'reason': reason,
       'destinationId': destinationId,
       'destination': destination.toJson(),
       'products': products.map((product) => product.toJson()).toList(),

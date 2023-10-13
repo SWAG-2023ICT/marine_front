@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:swag_marine_products/constants/gaps.dart';
 import 'package:swag_marine_products/constants/http_ip.dart';
@@ -483,29 +484,6 @@ class _StoreMenuEditScreenState extends State<StoreMenuEditScreen> {
                 ),
                 Gaps.v10,
                 const CenteredDivider(text: "그램별(g) 가격"),
-                // Row(
-                //   children: [
-                //     const Text(
-                //       "무게 단위 :",
-                //       style: TextStyle(fontSize: 18),
-                //     ),
-                //     Gaps.h6,
-                //     DropdownButton(
-                //       value: _weightUnit,
-                //       items: const [
-                //         DropdownMenuItem(
-                //           value: WeightUnit.g,
-                //           child: Text("그램(g)"),
-                //         ),
-                //         DropdownMenuItem(
-                //           value: WeightUnit.kg,
-                //           child: Text("킬로그램(kg)"),
-                //         ),
-                //       ],
-                //       onChanged: _onChangeOrigin,
-                //     ),
-                //   ],
-                // ),
                 Gaps.v8,
                 ListView.builder(
                   shrinkWrap: true,
@@ -521,7 +499,9 @@ class _StoreMenuEditScreenState extends State<StoreMenuEditScreen> {
                         children: [
                           Text(_priceList![index].unit),
                           const Text("-"),
-                          Text("${_priceList![index].priceByUnit}원"),
+                          // final formattedPrice = NumberFormat.currency(locale: 'ko_KR', symbol: '₩').format(price);
+                          Text(
+                              "${NumberFormat.currency(locale: 'ko_KR', symbol: '').format(_priceList![index].priceByUnit)}원"),
                           IconButton(
                             onPressed: () {
                               setState(() {
@@ -536,75 +516,30 @@ class _StoreMenuEditScreenState extends State<StoreMenuEditScreen> {
                   },
                 ),
                 Gaps.v8,
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      GestureDetector(
-                        onTap: () => setState(() {
-                          _weightUnit = WeightUnit.g;
-                        }),
-                        child: Container(
-                          child: Row(
-                            children: [
-                              Radio.adaptive(
-                                value: WeightUnit.g,
-                                groupValue: _weightUnit,
-                                onChanged: (value) => setState(() {
-                                  if (value != null) {
-                                    _weightUnit = value;
-                                  }
-                                }),
-                              ),
-                              const Text("그램(g)"),
-                            ],
-                          ),
-                        ),
+                Align(
+                  alignment: Alignment.center,
+                  child: SegmentedButton(
+                    showSelectedIcon: false,
+                    segments: const [
+                      ButtonSegment(
+                        value: WeightUnit.g,
+                        label: Text('그램(g)'),
                       ),
-                      GestureDetector(
-                        onTap: () => setState(() {
-                          _weightUnit = WeightUnit.kg;
-                        }),
-                        child: Container(
-                          child: Row(
-                            children: [
-                              Radio.adaptive(
-                                value: WeightUnit.kg,
-                                groupValue: _weightUnit,
-                                onChanged: (value) => setState(() {
-                                  if (value != null) {
-                                    _weightUnit = value;
-                                  }
-                                }),
-                              ),
-                              const Text("킬로그램(kg)"),
-                            ],
-                          ),
-                        ),
+                      ButtonSegment(
+                        value: WeightUnit.kg,
+                        label: Text('킬로그램(kg)'),
                       ),
-                      GestureDetector(
-                        onTap: () => setState(() {
-                          _weightUnit = WeightUnit.length;
-                        }),
-                        child: Container(
-                          child: Row(
-                            children: [
-                              Radio.adaptive(
-                                value: WeightUnit.length,
-                                groupValue: _weightUnit,
-                                onChanged: (value) => setState(() {
-                                  if (value != null) {
-                                    _weightUnit = value;
-                                  }
-                                }),
-                              ),
-                              const Text("마리(개수)"),
-                            ],
-                          ),
-                        ),
+                      ButtonSegment(
+                        value: WeightUnit.length,
+                        label: Text('마리(개수)'),
                       ),
                     ],
+                    selected: <WeightUnit>{_weightUnit},
+                    onSelectionChanged: (Set<WeightUnit> newSelection) {
+                      setState(() {
+                        _weightUnit = newSelection.first;
+                      });
+                    },
                   ),
                 ),
                 Gaps.v8,

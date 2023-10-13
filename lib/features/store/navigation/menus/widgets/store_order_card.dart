@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 import 'package:swag_marine_products/constants/gaps.dart';
 import 'package:swag_marine_products/constants/http_ip.dart';
 import 'package:swag_marine_products/features/sign_in_up/widgets/centered_divider.dart';
@@ -185,7 +186,7 @@ class _StoreOrderCardState extends State<StoreOrderCard> {
           ),
           Gaps.v4,
           Text(
-            "[가격] ${widget.orderData.products[0].prices[0].priceByUnit}원",
+            "[가격] ${NumberFormat.currency(locale: 'ko_KR', symbol: '').format(widget.orderData.products[0].prices[0].priceByUnit)}원",
             style: const TextStyle(fontSize: 16),
           ),
           Gaps.v4,

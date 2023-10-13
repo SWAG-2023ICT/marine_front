@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:swag_marine_products/constants/sizes.dart';
 import 'package:swag_marine_products/features/user/navigation/menus/user_bookmark_screen.dart';
+import 'package:swag_marine_products/features/user/navigation/menus/user_community_screem.dart';
 import 'package:swag_marine_products/features/user/navigation/menus/user_price_screen.dart';
 import 'package:swag_marine_products/features/user/navigation/menus/user_profile_screen.dart';
 import 'package:swag_marine_products/features/user/navigation/widgets/nav_tab.dart';
@@ -67,11 +68,10 @@ class _UserNavigationScreenState extends State<UserNavigationScreen> {
               offstage: selectedIndex != 1,
               child: const UserBookMarkScreen(),
             ),
-            // Offstage(
-            //   offstage: selectedIndex != 2,
-            //   //child: const SearchVolScreen(),
-            //   child: const UserGraphScreen(),
-            // ),
+            Offstage(
+              offstage: selectedIndex != 2,
+              child: const UserCommunityScreen(),
+            ),
             Offstage(
               offstage: selectedIndex != 3,
               //child: const SearchVolScreen(),
@@ -122,14 +122,14 @@ class _UserNavigationScreenState extends State<UserNavigationScreen> {
                   onTap: () => _onTap(1),
                   selectedIndex: selectedIndex,
                 ),
-                // NavTab(
-                //   text: "통계",
-                //   isSelected: selectedIndex == 2,
-                //   unSelectedIcon: FontAwesomeIcons.chartLine,
-                //   selectedIcon: FontAwesomeIcons.chartLine,
-                //   onTap: () => _onTap(2),
-                //   selectedIndex: selectedIndex,
-                // ),
+                NavTab(
+                  text: "커뮤니티",
+                  isSelected: selectedIndex == 2,
+                  unSelectedIcon: FontAwesomeIcons.comment,
+                  selectedIcon: FontAwesomeIcons.solidComment,
+                  onTap: () => _onTap(2),
+                  selectedIndex: selectedIndex,
+                ),
                 NavTab(
                   text: "프로필",
                   isSelected: selectedIndex == 3,

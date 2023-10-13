@@ -54,10 +54,10 @@ class _StoreUserInformInquiryScreenState
       print("가게 유저 정보 호출 : 성공!");
       print(response.body);
 
-      final jsonResponse = UserModel.fromJson(jsonDecode(response.body));
+      final jsonResponse = jsonDecode(response.body) as Map<String, dynamic>;
 
       setState(() {
-        _userData = jsonResponse;
+        _userData = UserModel.fromJson(jsonResponse);
       });
     } else {
       if (!mounted) return;
