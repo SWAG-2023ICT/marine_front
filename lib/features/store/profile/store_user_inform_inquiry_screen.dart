@@ -43,6 +43,8 @@ class _StoreUserInformInquiryScreenState
       _isFirstLoading = true;
     });
 
+    print(context.read<StoreProvider>().userId);
+
     final url = Uri.parse(
         "${HttpIp.httpIp}/marine/users/${context.read<StoreProvider>().userId}");
     final headers = {'Content-Type': 'application/json'};

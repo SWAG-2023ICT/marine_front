@@ -6,6 +6,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:swag_marine_products/constants/gaps.dart';
 import 'package:swag_marine_products/features/sign_in_up/widgets/centered_divider.dart';
 import 'package:swag_marine_products/features/store/navigation/menus/widgets/store_user_profile_card.dart';
+import 'package:swag_marine_products/features/store/order/store_order_check_screen.dart';
 import 'package:swag_marine_products/features/store/profile/store_inform_screen.dart';
 import 'package:swag_marine_products/features/store/profile/store_inform_update_screen.dart';
 import 'package:swag_marine_products/features/user/navigation/menus/widgets/profile_button.dart';
@@ -62,24 +63,27 @@ class _StoreProfileScreenState extends State<StoreProfileScreen> {
         child: Column(
           children: [
             const StoreUserProfileCard(),
-            const Padding(
-              padding: EdgeInsets.symmetric(
+            Padding(
+              padding: const EdgeInsets.symmetric(
                 horizontal: 30,
                 vertical: 10,
               ),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   ProfileButton(
+                    onPressed: () {
+                      context.pushNamed(StoreOrderCheckScreen.routeName);
+                    },
                     icon: Icons.playlist_play_rounded,
                     text: "판매 내역",
                     color: Colors.grey,
                   ),
-                  ProfileButton(
-                    icon: Icons.data_exploration_outlined,
-                    text: "판매 통계",
-                    color: Colors.grey,
-                  ),
+                  // ProfileButton(
+                  //   icon: Icons.data_exploration_outlined,
+                  //   text: "판매 통계",
+                  //   color: Colors.grey,
+                  // ),
                 ],
               ),
             ),

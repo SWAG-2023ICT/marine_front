@@ -1,24 +1,23 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 import 'package:swag_marine_products/constants/http_ip.dart';
 import 'package:swag_marine_products/features/user/order/widgets/user_order_card.dart';
 import 'package:swag_marine_products/models/database/order_model.dart';
-import 'package:swag_marine_products/providers/user_provider.dart';
+import 'package:swag_marine_products/providers/store_provider.dart';
 
-import 'package:http/http.dart' as http;
-
-class UserOrderCheckScreen extends StatefulWidget {
-  static const routeName = "user_order_check";
-  static const routeURL = "user_order_check";
-  const UserOrderCheckScreen({super.key});
+class StoreOrderCheckScreen extends StatefulWidget {
+  static const routeName = "store_order_check";
+  static const routeURL = "store_order_check";
+  const StoreOrderCheckScreen({super.key});
 
   @override
-  State<UserOrderCheckScreen> createState() => _UserOrderCheckScreenState();
+  State<StoreOrderCheckScreen> createState() => _StoreOrderCheckScreenState();
 }
 
-class _UserOrderCheckScreenState extends State<UserOrderCheckScreen> {
+class _StoreOrderCheckScreenState extends State<StoreOrderCheckScreen> {
   bool _isFirstLoading = false;
   List<dynamic>? _orderList;
 
@@ -35,7 +34,7 @@ class _UserOrderCheckScreenState extends State<UserOrderCheckScreen> {
     });
 
     final url = Uri.parse(
-        "${HttpIp.httpIp}/marine/orders/users/${context.read<UserProvider>().userData!.userId}");
+        "${HttpIp.httpIp}/marine/orders/stores/${context.read<StoreProvider>().storeId}");
     final headers = {'Content-Type': 'application/json'};
     final response = await http.get(url, headers: headers);
 
@@ -50,7 +49,7 @@ class _UserOrderCheckScreenState extends State<UserOrderCheckScreen> {
       setState(() {
         _orderList = ordersList
             .where((element) =>
-                (element.orderStatus != 3 && element.deliveryStatus == 4))
+                (element.deliveryStatus == 4 && element.orderStatus != 3))
             .toList();
       });
     } else {
@@ -80,7 +79,7 @@ class _UserOrderCheckScreenState extends State<UserOrderCheckScreen> {
         appBar: AppBar(
           centerTitle: true,
           backgroundColor: Colors.blue.shade50,
-          title: const Text("주문 내역"),
+          title: const Text("판매 내역"),
         ),
         body: Stack(
           children: [

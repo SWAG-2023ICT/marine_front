@@ -1,6 +1,7 @@
 import 'package:go_router/go_router.dart';
 import 'package:swag_marine_products/features/store/menu/store_menu_edit_screen.dart';
 import 'package:swag_marine_products/features/store/navigation/store_navigation_screen.dart';
+import 'package:swag_marine_products/features/store/order/store_order_check_screen.dart';
 import 'package:swag_marine_products/features/store/profile/store_inform_screen.dart';
 import 'package:swag_marine_products/features/store/profile/store_inform_update_screen.dart';
 import 'package:swag_marine_products/features/store/profile/store_user_inform_inquiry_screen.dart';
@@ -8,6 +9,7 @@ import 'package:swag_marine_products/features/store/profile/store_user_inform_up
 import 'package:swag_marine_products/features/user/navigation/user_navigation_screen.dart';
 import 'package:swag_marine_products/features/sign_in_up/sign_in_screen.dart';
 import 'package:swag_marine_products/features/sign_in_up/sign_up_screen.dart';
+import 'package:swag_marine_products/features/user/order/user_order_check_screen.dart';
 import 'package:swag_marine_products/features/user/order/user_order_screen.dart';
 import 'package:swag_marine_products/features/user/profile/user_inform_inquiry_screen.dart';
 import 'package:swag_marine_products/features/user/profile/user_inform_screen.dart';
@@ -87,6 +89,11 @@ final router = GoRouter(
               ],
             ),
           ],
+        ),
+        GoRoute(
+          path: UserOrderCheckScreen.routeURL,
+          name: UserOrderCheckScreen.routeName,
+          builder: (context, state) => const UserOrderCheckScreen(),
         ),
       ],
     ),
@@ -204,6 +211,11 @@ final router = GoRouter(
               ],
             ),
           ],
+        ),
+        GoRoute(
+          path: StoreOrderCheckScreen.routeURL,
+          name: StoreOrderCheckScreen.routeName,
+          builder: (context, state) => const StoreOrderCheckScreen(),
         ),
       ],
     ),

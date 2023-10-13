@@ -4,11 +4,13 @@ import 'package:swag_marine_products/constants/gaps.dart';
 class ProfileButton extends StatelessWidget {
   const ProfileButton({
     super.key,
+    required this.onPressed,
     required this.icon,
     required this.text,
     required this.color,
   });
 
+  final Function onPressed;
   final IconData icon;
   final String text;
   final Color color;
@@ -16,7 +18,7 @@ class ProfileButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () {},
+      onTap: () => onPressed(),
       customBorder: const RoundedRectangleBorder(
         borderRadius: BorderRadius.all(
           Radius.circular(20),

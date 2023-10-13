@@ -46,7 +46,6 @@ class _UserBookMarkScreenState extends State<UserBookMarkScreen> {
 
     if (response.statusCode >= 200 && response.statusCode < 300) {
       print("북마크 리스트 호출 : 성공");
-      print(response.body);
       final jsonResponse = jsonDecode(response.body) as List<dynamic>;
 
       setState(() {
