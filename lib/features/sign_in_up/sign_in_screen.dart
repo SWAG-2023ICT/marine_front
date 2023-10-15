@@ -98,6 +98,7 @@ class _SignInScreenState extends State<SignInScreen> {
         await http.post(url, headers: headers, body: jsonEncode(data));
 
     if (response.statusCode >= 200 && response.statusCode < 300) {
+      print(response.body);
       final jsonResponse = jsonDecode(response.body) as Map<String, dynamic>;
 
       if (_rememberMe) {

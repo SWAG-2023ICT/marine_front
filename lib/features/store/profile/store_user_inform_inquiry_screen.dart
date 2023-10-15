@@ -52,6 +52,7 @@ class _StoreUserInformInquiryScreenState
 
     if (response.statusCode == 200) {
       print("가게 유저 정보 호출 : 성공!");
+      print(response.body);
 
       final jsonResponse = jsonDecode(response.body) as Map<String, dynamic>;
 

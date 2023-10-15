@@ -115,6 +115,7 @@ class _SignUpFirstState extends State<SignUpFirst> {
           title: "통신 오류",
           message: response.body,
         );
+        print(response.body);
       }
     }
   }
@@ -138,6 +139,7 @@ class _SignUpFirstState extends State<SignUpFirst> {
         title: "통신 오류",
         message: response.body,
       );
+      print(response.body);
       setState(() {
         _userIdAuth = false;
       });
@@ -163,6 +165,7 @@ class _SignUpFirstState extends State<SignUpFirst> {
         title: "통신 오류",
         message: response.body,
       );
+      print(response.body);
       setState(() {
         _storeIdAuth = false;
       });

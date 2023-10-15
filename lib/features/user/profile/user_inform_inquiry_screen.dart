@@ -49,6 +49,8 @@ class _UserInformInquiryScreenState extends State<UserInformInquiryScreen> {
 
     if (response.statusCode >= 200) {
       print("유저 정보 호출 : 성공!");
+      print(response.body);
+      print(response.headers);
 
       final jsonResponse = UserModel.fromJson(jsonDecode(response.body));
 

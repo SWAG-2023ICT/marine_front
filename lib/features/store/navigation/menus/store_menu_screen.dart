@@ -52,6 +52,7 @@ class _StoreMenuScreenState extends State<StoreMenuScreen> {
 
     if (response.statusCode >= 200 && response.statusCode < 300) {
       print("가게 정보 조회 : 성공");
+      print(response.body);
       final jsonResponse = jsonDecode(response.body) as Map<String, dynamic>;
 
       setState(() {
