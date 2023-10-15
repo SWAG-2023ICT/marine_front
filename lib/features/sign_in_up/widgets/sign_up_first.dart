@@ -105,6 +105,26 @@ class _SignUpFirstState extends State<SignUpFirst> {
       final response =
           await http.post(url, headers: headers, body: jsonEncode(data));
 
+      // var uri = Uri.https('${HttpIp.httpIp}/marine/stores');
+      // var request = http.MultipartRequest('POST', uri)
+      //   ..fields['userId'] = _storeIdController.text.trim()
+      //   ..fields['password'] = _storePasswordConfirmationController.text.trim()
+      //   ..fields['name'] = _storeNameController.text.trim()
+      //   ..fields['phoneNumber'] = _storePhoneNumberController.text.trim()
+      //   ..fields['storeId'] = _storeBusinessNumberController.text.trim()
+      //   ..fields['storeName'] = _storeNameController.text.trim()
+      //   ..fields['storePhoneNumber'] = _storePhoneNumberController.text.trim()
+      //   ..fields['storeAddress'] = _storeAddressDetailController.text
+      //           .trim()
+      //           .isNotEmpty
+      //       ? "${_storeAddressController.text.trim()},${_storeAddressDetailController.text.trim()}"
+      //       : _storeAddressController.text.trim()
+      //   ..files.add(await http.MultipartFile.fromPath(
+      //     'storeImage',
+      //     _storeImage!.path,
+      //   ));
+      // var response = await request.send();
+
       if (response.statusCode >= 200 && response.statusCode < 300) {
         print("회원가입 - 가게 : 성공!");
         context.pop();
@@ -113,7 +133,7 @@ class _SignUpFirstState extends State<SignUpFirst> {
         HttpIp.errorPrint(
           context: context,
           title: "통신 오류",
-          message: response.body,
+          message: response.toString(),
         );
       }
     }
