@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:swag_marine_products/constants/sizes.dart';
-import 'package:swag_marine_products/features/user/home/user_home_screen.dart';
 import 'package:swag_marine_products/features/sign_in_up/sign_in_screen.dart';
 import 'package:swag_marine_products/features/user/profile/user_inform_inquiry_screen.dart';
 import 'package:swag_marine_products/providers/user_provider.dart';
