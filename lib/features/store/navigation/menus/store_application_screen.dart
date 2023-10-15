@@ -40,7 +40,6 @@ class _StoreApplicationScreenState extends State<StoreApplicationScreen> {
 
     if (response.statusCode >= 200 && response.statusCode < 300) {
       print("신청 목록 호출 : 성공");
-      print(response.body);
       final jsonResponse = jsonDecode(response.body) as List<dynamic>;
 
       final ordersList =
