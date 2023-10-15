@@ -60,7 +60,7 @@ dependencies:
   image_picker: ^1.0.0
 
   # xml 데이터 파싱 라이브러리
-  xml: 6.3.0
+  xml: ^6.3.0
 
   # 날짜, 단위 포맷 라이브러리
   intl: ^0.18.1
