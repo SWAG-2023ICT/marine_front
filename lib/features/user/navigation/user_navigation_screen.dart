@@ -74,6 +74,10 @@ class _UserNavigationScreenState extends State<UserNavigationScreen> {
             ),
             Offstage(
               offstage: selectedIndex != 3,
+              child: const UserPriceScreen(),
+            ),
+            Offstage(
+              offstage: selectedIndex != 4,
               //child: const SearchVolScreen(),
               child: const UserProfileScreen(),
             ),
@@ -131,11 +135,19 @@ class _UserNavigationScreenState extends State<UserNavigationScreen> {
                   selectedIndex: selectedIndex,
                 ),
                 NavTab(
-                  text: "프로필",
+                  text: "커뮤니티",
                   isSelected: selectedIndex == 3,
+                  unSelectedIcon: FontAwesomeIcons.moneyBill1,
+                  selectedIcon: FontAwesomeIcons.solidMoneyBill1,
+                  onTap: () => _onTap(3),
+                  selectedIndex: selectedIndex,
+                ),
+                NavTab(
+                  text: "프로필",
+                  isSelected: selectedIndex == 4,
                   unSelectedIcon: FontAwesomeIcons.circleUser,
                   selectedIcon: FontAwesomeIcons.solidCircleUser,
-                  onTap: () => _onTap(3),
+                  onTap: () => _onTap(4),
                   selectedIndex: selectedIndex,
                 ),
               ],

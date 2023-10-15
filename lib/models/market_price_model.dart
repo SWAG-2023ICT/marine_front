@@ -1,4 +1,4 @@
-class StoreAPIModel {
+class MarketPriceModel {
   String dates;
   String mClassName;
   String sClassName;
@@ -10,7 +10,7 @@ class StoreAPIModel {
   String marketName;
   String coName;
 
-  StoreAPIModel({
+  MarketPriceModel({
     required this.dates,
     required this.mClassName,
     required this.sClassName,
@@ -24,8 +24,8 @@ class StoreAPIModel {
   });
 
   // JSON 데이터를 MarineProduct 객체로 변환하는 fromJson 생성자
-  factory StoreAPIModel.fromJson(Map<String, dynamic> json) {
-    return StoreAPIModel(
+  factory MarketPriceModel.fromJson(Map<String, dynamic> json) {
+    return MarketPriceModel(
       dates: json['DATES'] as String,
       mClassName: json['MCLASSNAME'] as String,
       sClassName: json['SCLASSNAME'] as String,

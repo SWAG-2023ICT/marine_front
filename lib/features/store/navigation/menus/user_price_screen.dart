@@ -4,10 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:swag_marine_products/constants/gaps.dart';
 import 'package:swag_marine_products/constants/http_ip.dart';
 import 'package:swag_marine_products/constants/sizes.dart';
+import 'package:swag_marine_products/features/store/navigation/menus/widgets/store_price_card.dart';
 import 'package:swag_marine_products/models/market_price_model.dart';
 
 import 'package:http/http.dart' as http;
-import 'package:swag_marine_products/features/user/navigation/menus/widgets/user_price_card.dart';
 
 class UserPriceScreen extends StatefulWidget {
   const UserPriceScreen({Key? key}) : super(key: key);
@@ -181,7 +181,7 @@ class _UserPriceScreenState extends State<UserPriceScreen> {
                             vertical: Sizes.size10,
                             horizontal: Sizes.size20,
                           ),
-                          itemBuilder: (context, index) => UserPriceCard(
+                          itemBuilder: (context, index) => StorePriceCard(
                               marineProduct: MarketPriceModel(
                                 dates: "경매일",
                                 mClassName: "품목",
