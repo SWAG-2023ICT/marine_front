@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:swag_marine_products/constants/gaps.dart';
 import 'package:swag_marine_products/constants/http_ip.dart';
-import 'package:swag_marine_products/features/user/home/widgets/radioactivity_banner.dart';
+import 'package:swag_marine_products/features/user/navigation/menus/widgets/radioactivity_banner.dart';
 import 'package:swag_marine_products/features/user/navigation/menus/widgets/store_card.dart';
 import 'package:swag_marine_products/features/user/order/user_order_screen.dart';
 

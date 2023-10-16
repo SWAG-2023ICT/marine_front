@@ -1,15 +1,12 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:swag_marine_products/constants/gaps.dart';
 import 'package:swag_marine_products/constants/http_ip.dart';
 import 'package:swag_marine_products/models/database/order_model.dart';
-import 'package:swag_marine_products/models/store_order_model.dart';
 import 'package:swag_marine_products/providers/store_provider.dart';
-import 'package:swag_marine_products/widget_tools/swag_platform_dialog.dart';
 
 import 'package:http/http.dart' as http;
 
@@ -43,7 +40,7 @@ class _StoreApplicationScreenState extends State<StoreApplicationScreen> {
 
     if (response.statusCode >= 200 && response.statusCode < 300) {
       print("신청 목록 호출 : 성공");
-      print(response.body);
+
       final jsonResponse = jsonDecode(response.body) as List<dynamic>;
 
       final ordersList =
