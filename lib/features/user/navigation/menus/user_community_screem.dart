@@ -20,6 +20,7 @@ class _UserCommunityScreenState extends State<UserCommunityScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         centerTitle: true,
         backgroundColor: Colors.blue.shade50,
@@ -50,6 +51,22 @@ class _UserCommunityScreenState extends State<UserCommunityScreen> {
             child: const Text("검색"),
           ),
         ],
+      ),
+      floatingActionButton: Visibility(
+        visible: !_isBarriered,
+        child: AnimatedOpacity(
+          opacity: _isBarriered ? 0 : 1,
+          duration: const Duration(milliseconds: 200),
+          child: FloatingActionButton(
+            heroTag: "user_community_edit",
+            onPressed: () {},
+            backgroundColor: Colors.blue.shade400,
+            child: const FaIcon(
+              FontAwesomeIcons.penToSquare,
+              color: Colors.black,
+            ),
+          ),
+        ),
       ),
       body: Stack(
         children: [
@@ -188,5 +205,13 @@ final List<Map<String, dynamic>> _communityDumyData = [
   {
     'title': 'OOO를 사려면 어느 지역에서 저렴한가요?',
     'content': 'OOO지역에서 가까우면 되도록 좋을것같습니다.',
+  },
+  {
+    'title': '동해 수산물에 관한 정보가 필요합니다!',
+    'content': '동해에는 어떤 수산물이 저렴한가요?',
+  },
+  {
+    'title': '서해 수산물에 관한 정보가 필요합니다!',
+    'content': '서해에는 어떤 수산물이 저렴한가요?',
   },
 ];
