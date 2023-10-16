@@ -136,128 +136,129 @@ class _UserOrderSheetState extends State<UserOrderSheet> {
 
   void _onOrderTap() {
     swagPlatformDialog(
-        context: context,
-        title: "수신자 알림",
-        message: "제품을 받는사람이 본인인가요?",
-        actions: [
-          TextButton(
-            onPressed: () {
-              context.pop();
-              if (Platform.isIOS) {
-                showCupertinoDialog(
-                  context: context,
-                  builder: (_) => CupertinoAlertDialog(
-                    title: const Text(
-                      "수신자 변경",
-                      style: TextStyle(
-                        fontSize: Sizes.size18,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
-                      ),
+      context: context,
+      title: "수신자 알림",
+      message: "제품을 받는사람이 본인인가요?",
+      actions: [
+        TextButton(
+          onPressed: () {
+            context.pop();
+            if (Platform.isIOS) {
+              showCupertinoDialog(
+                context: context,
+                builder: (_) => CupertinoAlertDialog(
+                  title: const Text(
+                    "수신자 변경",
+                    style: TextStyle(
+                      fontSize: Sizes.size18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
                     ),
-                    content: SingleChildScrollView(
-                      child: Column(
-                        children: [
-                          TextFormField(
-                            controller: _nameController,
-                            keyboardType: TextInputType.name,
-                            decoration: InputDecoration(
-                              labelText: '수신자 이름(실명)',
-                              prefixIcon: Icon(
-                                Icons.badge_outlined,
-                                color: Colors.grey.shade600,
-                              ),
-                            ),
-                          ),
-                          TextFormField(
-                            controller: _phoneNumberController,
-                            keyboardType: TextInputType.phone,
-                            inputFormatters: [
-                              FilteringTextInputFormatter.digitsOnly,
-                              LengthLimitingTextInputFormatter(
-                                  11), // 최대 11자리까지 입력 허용
-                            ],
-                            decoration: InputDecoration(
-                              labelText: '수신자 전화번호',
-                              prefixIcon: Icon(
-                                Icons.phone_iphone_rounded,
-                                color: Colors.grey.shade600,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    actions: [
-                      ElevatedButton(
-                        onPressed: _onOtherSubmit,
-                        child: const Text("주문"),
-                      )
-                    ],
                   ),
-                );
-              } else if (Platform.isAndroid) {
-                showDialog(
-                  context: context,
-                  builder: (_) => AlertDialog(
-                    title: const Text(
-                      "수신자 변경",
-                      style: TextStyle(
-                        fontSize: Sizes.size18,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
-                      ),
-                    ),
-                    content: SingleChildScrollView(
-                      child: Column(
-                        children: [
-                          TextFormField(
-                            controller: _nameController,
-                            keyboardType: TextInputType.name,
-                            decoration: InputDecoration(
-                              labelText: '수신자 이름(실명)',
-                              prefixIcon: Icon(
-                                Icons.badge_outlined,
-                                color: Colors.grey.shade600,
-                              ),
+                  content: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        TextFormField(
+                          controller: _nameController,
+                          keyboardType: TextInputType.name,
+                          decoration: InputDecoration(
+                            labelText: '수신자 이름(실명)',
+                            prefixIcon: Icon(
+                              Icons.badge_outlined,
+                              color: Colors.grey.shade600,
                             ),
                           ),
-                          TextFormField(
-                            controller: _phoneNumberController,
-                            keyboardType: TextInputType.phone,
-                            inputFormatters: [
-                              FilteringTextInputFormatter.digitsOnly,
-                              LengthLimitingTextInputFormatter(
-                                  11), // 최대 11자리까지 입력 허용
-                            ],
-                            decoration: InputDecoration(
-                              labelText: '수신자 전화번호',
-                              prefixIcon: Icon(
-                                Icons.phone_iphone_rounded,
-                                color: Colors.grey.shade600,
-                              ),
+                        ),
+                        TextFormField(
+                          controller: _phoneNumberController,
+                          keyboardType: TextInputType.phone,
+                          inputFormatters: [
+                            FilteringTextInputFormatter.digitsOnly,
+                            LengthLimitingTextInputFormatter(
+                                11), // 최대 11자리까지 입력 허용
+                          ],
+                          decoration: InputDecoration(
+                            labelText: '수신자 전화번호',
+                            prefixIcon: Icon(
+                              Icons.phone_iphone_rounded,
+                              color: Colors.grey.shade600,
                             ),
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
-                    actions: [
-                      ElevatedButton(
-                        onPressed: _onOtherSubmit,
-                        child: const Text("주문"),
-                      ),
-                    ],
                   ),
-                );
-              }
-            },
-            child: const Text("아니오"),
-          ),
-          TextButton(
-            onPressed: _onSubmit,
-            child: const Text("예"),
-          ),
-        ]);
+                  actions: [
+                    ElevatedButton(
+                      onPressed: _onOtherSubmit,
+                      child: const Text("주문"),
+                    )
+                  ],
+                ),
+              );
+            } else if (Platform.isAndroid) {
+              showDialog(
+                context: context,
+                builder: (_) => AlertDialog(
+                  title: const Text(
+                    "수신자 변경",
+                    style: TextStyle(
+                      fontSize: Sizes.size18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                    ),
+                  ),
+                  content: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        TextFormField(
+                          controller: _nameController,
+                          keyboardType: TextInputType.name,
+                          decoration: InputDecoration(
+                            labelText: '수신자 이름(실명)',
+                            prefixIcon: Icon(
+                              Icons.badge_outlined,
+                              color: Colors.grey.shade600,
+                            ),
+                          ),
+                        ),
+                        TextFormField(
+                          controller: _phoneNumberController,
+                          keyboardType: TextInputType.phone,
+                          inputFormatters: [
+                            FilteringTextInputFormatter.digitsOnly,
+                            LengthLimitingTextInputFormatter(
+                                11), // 최대 11자리까지 입력 허용
+                          ],
+                          decoration: InputDecoration(
+                            labelText: '수신자 전화번호',
+                            prefixIcon: Icon(
+                              Icons.phone_iphone_rounded,
+                              color: Colors.grey.shade600,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  actions: [
+                    ElevatedButton(
+                      onPressed: _onOtherSubmit,
+                      child: const Text("주문"),
+                    ),
+                  ],
+                ),
+              );
+            }
+          },
+          child: const Text("아니오"),
+        ),
+        TextButton(
+          onPressed: _onSubmit,
+          child: const Text("예"),
+        ),
+      ],
+    );
   }
 
   @override
@@ -281,8 +282,8 @@ class _UserOrderSheetState extends State<UserOrderSheet> {
           child: CustomScrollView(
             slivers: [
               SliverToBoxAdapter(
-                child: Image.asset(
-                  "assets/images/fish.png",
+                child: Image.memory(
+                  widget.productData.productImage!,
                   width: size.width,
                   height: 250,
                 ),

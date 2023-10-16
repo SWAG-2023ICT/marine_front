@@ -14,12 +14,10 @@ import 'package:http/http.dart' as http;
 class StoreMenuCard extends StatefulWidget {
   const StoreMenuCard({
     super.key,
-    required this.image,
     required this.productData,
     required this.initStoreData,
   });
 
-  final String image;
   final ProductModel productData;
   final Function initStoreData;
 
@@ -112,9 +110,10 @@ class _StoreMenuCardState extends State<StoreMenuCard> {
             width: 0.5,
           ),
         ),
-        leading: Image.asset(
-          widget.image,
+        leading: Image.memory(
+          widget.productData.productImage!,
           width: 50,
+          height: 50,
           fit: BoxFit.fill,
         ),
         title: Text(
@@ -185,14 +184,16 @@ class _StoreMenuCardState extends State<StoreMenuCard> {
                   ),
                 ),
                 ElevatedButton(
-                  onPressed: () {
-                    context.pushNamed(
+                  onPressed: () async {
+                    await context.pushNamed(
                       StoreMenuEditScreen.routeName,
                       extra: StoreMenuEditScreenArgs(
                         editType: EditType.update,
                         productData: widget.productData,
                       ),
                     );
+
+                    widget.initStoreData();
                   },
                   child: const Text("수정"),
                 ),

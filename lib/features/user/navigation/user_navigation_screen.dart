@@ -135,7 +135,7 @@ class _UserNavigationScreenState extends State<UserNavigationScreen> {
                   selectedIndex: selectedIndex,
                 ),
                 NavTab(
-                  text: "커뮤니티",
+                  text: "도매시장",
                   isSelected: selectedIndex == 3,
                   unSelectedIcon: FontAwesomeIcons.moneyBill1,
                   selectedIcon: FontAwesomeIcons.solidMoneyBill1,

@@ -1,8 +1,11 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:http_parser/http_parser.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -76,7 +79,7 @@ class _StoreMenuEditScreenState extends State<StoreMenuEditScreen> {
   bool _isSubmitted = false;
   bool _isPriceSubmitted = false;
   List<PriceModel>? _priceList;
-  XFile? _productImage;
+  Uint8List? _productImage;
 
   @override
   void initState() {
@@ -98,26 +101,42 @@ class _StoreMenuEditScreenState extends State<StoreMenuEditScreen> {
     _productWeightUnitController = TextEditingController();
     _productDescriptionController =
         TextEditingController(text: widget.productData?.description);
+    _productImage =
+        widget.productData == null ? null : widget.productData!.productImage!;
   }
 
   void _onSubmit() async {
     if (widget.editType == EditType.add) {
-      final url = Uri.parse("${HttpIp.httpIp}/marine/product/addProduct");
-      final headers = {'Content-Type': 'application/json'};
-      final data = {
-        "storeId": context.read<StoreProvider>().storeId,
-        "origin": _productOriginController.text.trim(),
-        "cultivationType": _cultivationType == OriginStatus.natural ? 1 : 0,
-        "productName": _productNameController.text.trim(),
-        "productImage": null,
-        "description": _productDescriptionController.text.trim(),
-        "amount": 1,
-        "prices": _priceList,
-      };
-      final response =
-          await http.post(url, headers: headers, body: jsonEncode(data));
+      Dio dio = Dio();
 
-      if (response.statusCode >= 200 && response.statusCode < 300) {
+      final formData = FormData.fromMap({
+        "product": MultipartFile.fromString(
+          jsonEncode(
+            {
+              "storeId": context.read<StoreProvider>().storeId,
+              "origin": _productOriginController.text.trim(),
+              "cultivationType":
+                  _cultivationType == OriginStatus.natural ? 1 : 0,
+              "productName": _productNameController.text.trim(),
+              "productImage": null,
+              "description": _productDescriptionController.text.trim(),
+              "amount": 1,
+              "prices": _priceList,
+            },
+          ),
+          contentType: MediaType.parse('application/json'),
+        ),
+        "productImage": MultipartFile.fromBytes(
+          _productImage!,
+          filename: 'image.jpg',
+        ),
+      });
+      // dio.options.contentType = "application/json";
+      dio.options.contentType = "multipart/form-data";
+      final response = await dio
+          .post("${HttpIp.httpIp}/marine/product/addProduct", data: formData);
+
+      if (response.statusCode! >= 200 && response.statusCode! < 300) {
         print("메뉴 등록 : 성공");
         context.pop();
       } else {
@@ -125,26 +144,41 @@ class _StoreMenuEditScreenState extends State<StoreMenuEditScreen> {
         HttpIp.errorPrint(
           context: context,
           title: "통신 오류",
-          message: response.body,
+          message: response.data,
         );
       }
     } else if (widget.editType == EditType.update) {
-      final url = Uri.parse("${HttpIp.httpIp}/marine/product/updateProduct");
-      final headers = {'Content-Type': 'application/json'};
-      final data = {
-        "productId": widget.productData!.productId,
-        "origin": _productOriginController.text.trim(),
-        "cultivationType": _cultivationType == OriginStatus.natural ? 1 : 0,
-        "productName": _productNameController.text.trim(),
-        "productImage": null,
-        "description": _productDescriptionController.text.trim(),
-        "amount": 1,
-        "prices": _priceList,
-      };
-      final response =
-          await http.post(url, headers: headers, body: jsonEncode(data));
+      Dio dio = Dio();
 
-      if (response.statusCode >= 200 && response.statusCode < 300) {
+      final formData = FormData.fromMap({
+        "product": MultipartFile.fromString(
+          jsonEncode(
+            {
+              "productId": widget.productData!.productId,
+              "origin": _productOriginController.text.trim(),
+              "cultivationType":
+                  _cultivationType == OriginStatus.natural ? 1 : 0,
+              "productName": _productNameController.text.trim(),
+              "description": _productDescriptionController.text.trim(),
+              "amount": 1,
+              "prices": _priceList,
+            },
+          ),
+          contentType: MediaType.parse('application/json'),
+        ),
+        "productImage": MultipartFile.fromBytes(
+          _productImage!,
+          filename: 'image.jpg',
+        ),
+      });
+      // dio.options.contentType = "application/json";
+      dio.options.contentType = "multipart/form-data";
+      final response = await dio.post(
+        "${HttpIp.httpIp}/marine/product/updateProduct",
+        data: formData,
+      );
+
+      if (response.statusCode! >= 200 && response.statusCode! < 300) {
         print("메뉴 수정 : 성공");
         context.pop();
       } else {
@@ -152,7 +186,7 @@ class _StoreMenuEditScreenState extends State<StoreMenuEditScreen> {
         HttpIp.errorPrint(
           context: context,
           title: "통신 오류",
-          message: response.body,
+          message: response.data,
         );
       }
     } else {
@@ -180,8 +214,8 @@ class _StoreMenuEditScreenState extends State<StoreMenuEditScreen> {
           (_productNameController.text.trim().isNotEmpty &&
               _productNameErrorText == null) &&
           (_productDescriptionController.text.trim().isNotEmpty &&
-              _productDescriptionErrorText == null);
-      // (_productImage != null);
+              _productDescriptionErrorText == null) &&
+          _productImage != null;
     });
   }
 
@@ -213,9 +247,9 @@ class _StoreMenuEditScreenState extends State<StoreMenuEditScreen> {
     //pickedFile에 ImagePicker로 가져온 이미지가 담긴다.
     final XFile? pickedFile = await picker.pickImage(source: imageSource);
     if (pickedFile != null) {
-      setState(() {
-        _productImage = XFile(pickedFile.path); //가져온 이미지를 _image에 저장
-      });
+      _productImage = await pickedFile.readAsBytes(); //가져온 이미지를 _image에 저장
+      setState(() {});
+      _onCheckSubmitted();
     }
   }
 
@@ -273,7 +307,7 @@ class _StoreMenuEditScreenState extends State<StoreMenuEditScreen> {
     }
   }
 
-  // ---------------- 그램(g) ----------------
+  // ---------------- 단위 ----------------
 
   late TextEditingController _productWeightUnitController;
   String? _productWeightUnitErrorText;
@@ -322,7 +356,6 @@ class _StoreMenuEditScreenState extends State<StoreMenuEditScreen> {
 
   @override
   Widget build(BuildContext context) {
-    print(_priceList.toString());
     return Scaffold(
       // resizeToAvoidBottomInset: false,
       appBar: AppBar(
@@ -392,15 +425,18 @@ class _StoreMenuEditScreenState extends State<StoreMenuEditScreen> {
                     ],
                   ),
                 ),
-                if (_productImage != null)
-                  Image.file(
-                    File(_productImage!.path),
+                if (_productImage == null)
+                  SizedBox(
                     width: MediaQuery.of(context).size.width,
                     height: MediaQuery.of(context).size.width,
+                    child: Icon(
+                      Icons.add_a_photo_outlined,
+                      size: MediaQuery.of(context).size.width / 4,
+                    ),
                   ),
-                if (_productImage == null)
-                  Image.asset(
-                    "assets/images/fishShop.png",
+                if (_productImage != null)
+                  Image.memory(
+                    _productImage!,
                     width: MediaQuery.of(context).size.width,
                     height: MediaQuery.of(context).size.width,
                   ),

@@ -2,9 +2,12 @@
 
 import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:http_parser/http_parser.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:kpostal/kpostal.dart';
 
@@ -86,46 +89,41 @@ class _SignUpFirstState extends State<SignUpFirst> {
         );
       }
     } else {
-      final url = Uri.parse("${HttpIp.httpIp}/marine/stores");
-      final headers = {'Content-Type': 'application/json'};
-      final data = {
-        'userId': _storeIdController.text.trim(),
-        'password': _storePasswordConfirmationController.text.trim(),
-        'name': _storeNameController.text.trim(),
-        'phoneNumber': _storePhoneNumberController.text.trim(),
-        'storeId': _storeBusinessNumberController.text.trim(),
-        "storeName": _storeNameController.text.trim(),
-        "storePhoneNumber": _storePhoneNumberController.text.trim(),
-        "storeAddress": _storeAddressDetailController.text.trim().isNotEmpty
-            ? "${_storeAddressController.text.trim()},${_storeAddressDetailController.text.trim()}"
-            : _storeAddressController.text.trim(),
-        // "storeImage": base64Encode(File(_storeImage!.path).readAsBytesSync()),
-      };
+      Dio dio = Dio();
 
+      final formData = FormData.fromMap({
+        "store": MultipartFile.fromString(
+          jsonEncode(
+            {
+              'userId': _storeIdController.text.trim(),
+              'password': _storePasswordConfirmationController.text.trim(),
+              'name': _storeNameController.text.trim(),
+              'phoneNumber': _storePhoneNumberController.text.trim(),
+              'storeId': _storeBusinessNumberController.text.trim(),
+              "storeName": _storeNameController.text.trim(),
+              "storePhoneNumber": _storePhoneNumberController.text.trim(),
+              "storeAddress": _storeAddressDetailController.text
+                      .trim()
+                      .isNotEmpty
+                  ? "${_storeAddressController.text.trim()},${_storeAddressDetailController.text.trim()}"
+                  : _storeAddressController.text.trim(),
+            },
+          ),
+          contentType: MediaType.parse('application/json'),
+        ),
+        "storeImage": _storeImage != null
+            ? MultipartFile.fromBytes(
+                _storeImage!,
+                filename: 'image.jpg',
+              )
+            : null, // 이미지가 없는 경우 null을 설정할 수 있습니다.
+      });
+      // dio.options.contentType = "application/json";
+      dio.options.contentType = "multipart/form-data";
       final response =
-          await http.post(url, headers: headers, body: jsonEncode(data));
+          await dio.post("${HttpIp.httpIp}/marine/stores", data: formData);
 
-      // var uri = Uri.https('${HttpIp.httpIp}/marine/stores');
-      // var request = http.MultipartRequest('POST', uri)
-      //   ..fields['userId'] = _storeIdController.text.trim()
-      //   ..fields['password'] = _storePasswordConfirmationController.text.trim()
-      //   ..fields['name'] = _storeNameController.text.trim()
-      //   ..fields['phoneNumber'] = _storePhoneNumberController.text.trim()
-      //   ..fields['storeId'] = _storeBusinessNumberController.text.trim()
-      //   ..fields['storeName'] = _storeNameController.text.trim()
-      //   ..fields['storePhoneNumber'] = _storePhoneNumberController.text.trim()
-      //   ..fields['storeAddress'] = _storeAddressDetailController.text
-      //           .trim()
-      //           .isNotEmpty
-      //       ? "${_storeAddressController.text.trim()},${_storeAddressDetailController.text.trim()}"
-      //       : _storeAddressController.text.trim()
-      //   ..files.add(await http.MultipartFile.fromPath(
-      //     'storeImage',
-      //     _storeImage!.path,
-      //   ));
-      // var response = await request.send();
-
-      if (response.statusCode >= 200 && response.statusCode < 300) {
+      if (response.statusCode! >= 200 && response.statusCode! < 300) {
         print("회원가입 - 가게 : 성공!");
         context.pop();
       } else {
@@ -258,8 +256,8 @@ class _SignUpFirstState extends State<SignUpFirst> {
           (_storeAddressErrorText == null &&
               _storeAddressController.text.trim().isNotEmpty) &&
           (_storeBusinessPhoneNumberErrorText == null &&
-              _storeBusinessPhoneNumberController.text.trim().isNotEmpty);
-      // && (_storeImage != null);
+              _storeBusinessPhoneNumberController.text.trim().isNotEmpty) &&
+          (_storeImage != null);
     });
   }
 
@@ -469,7 +467,7 @@ class _SignUpFirstState extends State<SignUpFirst> {
   bool _storeBusinessNumberAuth = true;
   bool _storeIdAuth = false;
 
-  XFile? _storeImage;
+  Uint8List? _storeImage;
 
   Future<void> _onChangeMenuImage(ImageSource imageSource) async {
     final ImagePicker picker = ImagePicker(); //ImagePicker 초기화
@@ -477,9 +475,8 @@ class _SignUpFirstState extends State<SignUpFirst> {
     //pickedFile에 ImagePicker로 가져온 이미지가 담긴다.
     final XFile? pickedFile = await picker.pickImage(source: imageSource);
     if (pickedFile != null) {
-      setState(() {
-        _storeImage = XFile(pickedFile.path); //가져온 이미지를 _image에 저장
-      });
+      _storeImage = await pickedFile.readAsBytes(); //가져온 이미지를 _image에 저장
+      setState(() {});
     }
     _onCheckSubmitted();
   }
@@ -1535,15 +1532,18 @@ class _SignUpFirstState extends State<SignUpFirst> {
             ],
           ),
         ),
-        if (_storeImage != null)
-          Image.file(
-            File(_storeImage!.path),
+        if (_storeImage == null)
+          SizedBox(
             width: MediaQuery.of(context).size.width,
             height: MediaQuery.of(context).size.width,
+            child: Icon(
+              Icons.add_a_photo_outlined,
+              size: MediaQuery.of(context).size.width / 4,
+            ),
           ),
-        if (_storeImage == null)
-          Image.asset(
-            "assets/images/fishShop.png",
+        if (_storeImage != null)
+          Image.memory(
+            _storeImage!,
             width: MediaQuery.of(context).size.width,
             height: MediaQuery.of(context).size.width,
           ),

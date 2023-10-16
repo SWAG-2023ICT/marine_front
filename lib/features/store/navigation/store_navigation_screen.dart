@@ -4,12 +4,9 @@ import 'package:swag_marine_products/constants/sizes.dart';
 import 'package:swag_marine_products/features/store/navigation/menus/store_application_screen.dart';
 import 'package:swag_marine_products/features/store/navigation/menus/store_menu_screen.dart';
 import 'package:swag_marine_products/features/store/navigation/menus/store_order_screen.dart';
+import 'package:swag_marine_products/features/store/navigation/menus/store_price_screen.dart';
 import 'package:swag_marine_products/features/store/navigation/menus/store_profile_screen.dart';
-import 'package:swag_marine_products/features/user/navigation/menus/user_bookmark_screen.dart';
-import 'package:swag_marine_products/features/user/navigation/menus/user_price_screen.dart';
-import 'package:swag_marine_products/features/user/navigation/menus/user_profile_screen.dart';
 import 'package:swag_marine_products/features/user/navigation/widgets/nav_tab.dart';
-import 'package:swag_marine_products/features/user/navigation/menus/user_store_screen.dart';
 import 'package:swag_marine_products/models/database/store_model.dart';
 
 class StoreNavigationScreenArgs {
@@ -86,6 +83,10 @@ class _StoreNavigationScreenState extends State<StoreNavigationScreen> {
             ),
             Offstage(
               offstage: selectedIndex != 3,
+              child: const StorePriceScreen(),
+            ),
+            Offstage(
+              offstage: selectedIndex != 4,
               //child: const SearchVolScreen(),
               child: StoreProfileScreen(
                 storeData: widget.storedata,
@@ -146,11 +147,19 @@ class _StoreNavigationScreenState extends State<StoreNavigationScreen> {
                   selectedIndex: selectedIndex,
                 ),
                 NavTab(
-                  text: "프로필",
+                  text: "도매시장",
                   isSelected: selectedIndex == 3,
+                  unSelectedIcon: FontAwesomeIcons.moneyBill1,
+                  selectedIcon: FontAwesomeIcons.solidMoneyBill1,
+                  onTap: () => _onTap(3),
+                  selectedIndex: selectedIndex,
+                ),
+                NavTab(
+                  text: "프로필",
+                  isSelected: selectedIndex == 4,
                   unSelectedIcon: FontAwesomeIcons.circleUser,
                   selectedIcon: FontAwesomeIcons.solidCircleUser,
-                  onTap: () => _onTap(3),
+                  onTap: () => _onTap(4),
                   selectedIndex: selectedIndex,
                 ),
               ],

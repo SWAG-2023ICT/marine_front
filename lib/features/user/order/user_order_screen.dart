@@ -61,7 +61,6 @@ class _UserOrderScreenState extends State<UserOrderScreen> {
 
     if (response1.statusCode >= 200 && response1.statusCode < 300) {
       print("가게 정보 조회 : 성공");
-      print(response1.body);
       final jsonResponse = jsonDecode(response1.body) as Map<String, dynamic>;
 
       setState(() {
@@ -193,8 +192,8 @@ class _UserOrderScreenState extends State<UserOrderScreen> {
                         surfaceTintColor: Colors.transparent,
                       ),
                       SliverToBoxAdapter(
-                        child: Image.asset(
-                          "assets/images/fishShop.png",
+                        child: Image.memory(
+                          _storeData!.storeImage!,
                           width: size.width,
                           height: 250,
                           fit: BoxFit.fitHeight,
@@ -302,16 +301,7 @@ class _UserOrderScreenState extends State<UserOrderScreen> {
                                         color: Colors.black54,
                                       ),
                                       itemBuilder: (context, index) {
-                                        String image;
-                                        if (index % 3 == 0) {
-                                          image = "assets/images/fish3.png";
-                                        } else if (index % 2 == 0) {
-                                          image = "assets/images/fish2.png";
-                                        } else {
-                                          image = "assets/images/fish.png";
-                                        }
                                         return MenuCard(
-                                          image: image,
                                           storeId: widget.storeId,
                                           productData:
                                               _storeData!.products![index],

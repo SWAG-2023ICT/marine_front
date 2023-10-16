@@ -76,8 +76,8 @@ class StoreCard extends StatelessWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Image.asset(
-              "assets/images/fishShop.png",
+            Image.memory(
+              storeData.storeImage!,
               width: 100,
               height: 100,
             ),

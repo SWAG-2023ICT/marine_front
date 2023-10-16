@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:typed_data';
+
 import 'package:swag_marine_products/models/database/order_model.dart';
 import 'package:swag_marine_products/models/database/product_model.dart';
 
@@ -10,7 +13,7 @@ class StoreModel {
   String storeName;
   String? storePhoneNumber;
   String storeAddress;
-  List<int>? storeImage;
+  Uint8List? storeImage;
   String sellerId;
   List<OrderModel>? oreOrders;
   List<ProductModel>? products;
@@ -40,7 +43,8 @@ class StoreModel {
       storeName: json['storeName'] as String,
       storePhoneNumber: json['storePhoneNumber'] as String?,
       storeAddress: json['storeAddress'] as String,
-      storeImage: (json['storeImage'] as List<int>?),
+      storeImage:
+          json['storeImage'] != null ? base64Decode(json['storeImage']) : null,
       sellerId: json['sellerId'] as String,
       oreOrders: (json['oreOrders'] as List?)
               ?.map((orderJson) => OrderModel.fromJson(orderJson))

@@ -255,18 +255,11 @@ class _StoreProfileScreenState extends State<StoreProfileScreen> {
                       ],
                     ),
                   ),
-                  if (_productImage != null)
-                    Image.file(
-                      File(_productImage!.path),
-                      width: MediaQuery.of(context).size.width,
-                      height: MediaQuery.of(context).size.width,
-                    ),
-                  if (_productImage == null)
-                    Image.asset(
-                      "assets/images/fishShop.png",
-                      width: MediaQuery.of(context).size.width,
-                      height: MediaQuery.of(context).size.width,
-                    ),
+                  Image.memory(
+                    widget.storeData.storeImage!,
+                    width: MediaQuery.of(context).size.width,
+                    height: MediaQuery.of(context).size.width,
+                  ),
                 ],
               ),
             ),

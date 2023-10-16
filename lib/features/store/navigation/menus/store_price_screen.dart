@@ -5,19 +5,19 @@ import 'package:intl/intl.dart';
 import 'package:swag_marine_products/constants/gaps.dart';
 import 'package:swag_marine_products/constants/http_ip.dart';
 import 'package:swag_marine_products/constants/sizes.dart';
+import 'package:swag_marine_products/features/store/navigation/menus/widgets/store_price_card.dart';
 import 'package:swag_marine_products/models/market_price_model.dart';
 
 import 'package:http/http.dart' as http;
-import 'package:swag_marine_products/features/user/navigation/menus/widgets/user_price_card.dart';
 
-class UserPriceScreen extends StatefulWidget {
-  const UserPriceScreen({super.key});
+class StorePriceScreen extends StatefulWidget {
+  const StorePriceScreen({Key? key}) : super(key: key);
 
   @override
-  State<UserPriceScreen> createState() => _UserPriceScreenState();
+  State<StorePriceScreen> createState() => _StorePriceScreenState();
 }
 
-class _UserPriceScreenState extends State<UserPriceScreen> {
+class _StorePriceScreenState extends State<StorePriceScreen> {
   final TextEditingController _searchController = TextEditingController();
 
   List<MarketPriceModel>? _marketPriceList;
@@ -257,7 +257,7 @@ class _UserPriceScreenState extends State<UserPriceScreen> {
                                     ),
                                     itemBuilder: (context, index) {
                                       final item = _marketPriceList![index];
-                                      return UserPriceCard(
+                                      return StorePriceCard(
                                         marineProduct: item,
                                         index: index,
                                       );

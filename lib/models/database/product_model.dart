@@ -1,3 +1,7 @@
+import 'dart:convert';
+import 'dart:typed_data';
+
+import 'package:image_picker/image_picker.dart';
 import 'package:swag_marine_products/models/database/price_model.dart';
 
 class ProductModel {
@@ -5,7 +9,7 @@ class ProductModel {
   String origin;
   int cultivationType;
   String productName;
-  List<int>? productImage;
+  Uint8List? productImage;
   String description;
   bool productStatus;
   String? storeId;
@@ -31,7 +35,9 @@ class ProductModel {
       origin: json['origin'] as String,
       cultivationType: json['cultivationType'] as int,
       productName: json['productName'] as String,
-      productImage: (json['productImage'] as List<int>?),
+      productImage: json['productImage'] != null
+          ? base64Decode(json['productImage'])
+          : null,
       description: json['description'] as String,
       productStatus: json['productStatus'] as bool,
       storeId: json['storeId'] as String?,
@@ -48,7 +54,7 @@ class ProductModel {
       'origin': origin,
       'cultivationType': cultivationType,
       'productName': productName,
-      'productImage': productImage,
+      'productImage': productImage != null ? base64Encode(productImage!) : null,
       'description': description,
       'productStatus': productStatus,
       'storeId': storeId,

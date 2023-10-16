@@ -36,7 +36,10 @@ class _StoreMenuScreenState extends State<StoreMenuScreen> {
   void initState() {
     super.initState();
 
-    _storeData = widget.storeData;
+    // _storeData = widget.storeData;
+    // print(_storeData);
+
+    _initStoreData();
   }
 
   void _initStoreData() async {
@@ -90,120 +93,111 @@ class _StoreMenuScreenState extends State<StoreMenuScreen> {
               height: MediaQuery.of(context).size.height,
             ),
           ),
-          NestedScrollView(
-            headerSliverBuilder: (context, innerBoxIsScrolled) => [
-              SliverAppBar(
-                centerTitle: true,
-                floating: true,
-                snap: true,
-                backgroundColor: Colors.blue.shade50,
-                surfaceTintColor: Colors.transparent,
-                title: const Text("메뉴"),
-                actions: [
-                  IconButton(
-                    onPressed: () async {
-                      await context.pushNamed(
-                        StoreMenuEditScreen.routeName,
-                        extra: const StoreMenuEditScreenArgs(
-                          editType: EditType.add,
-                        ),
-                      );
+          _isFirstLoading
+              ? const Center(
+                  child: CircularProgressIndicator(),
+                )
+              : NestedScrollView(
+                  headerSliverBuilder: (context, innerBoxIsScrolled) => [
+                    SliverAppBar(
+                      centerTitle: true,
+                      floating: true,
+                      snap: true,
+                      backgroundColor: Colors.blue.shade50,
+                      surfaceTintColor: Colors.transparent,
+                      title: const Text("메뉴"),
+                      actions: [
+                        IconButton(
+                          onPressed: () async {
+                            await context.pushNamed(
+                              StoreMenuEditScreen.routeName,
+                              extra: const StoreMenuEditScreenArgs(
+                                editType: EditType.add,
+                              ),
+                            );
 
-                      _initStoreData();
-                    },
-                    icon: const Icon(
-                      Icons.add_rounded,
-                      size: 40,
-                    ),
-                  ),
-                ],
-              ),
-              SliverToBoxAdapter(
-                child: Image.asset(
-                  "assets/images/fishShop.png",
-                  width: MediaQuery.of(context).size.width,
-                  height: 250,
-                  fit: BoxFit.fitHeight,
-                ),
-              ),
-              SliverToBoxAdapter(
-                child: Container(
-                  margin: const EdgeInsets.symmetric(
-                    vertical: 10,
-                    horizontal: 50,
-                  ),
-                  padding: const EdgeInsets.all(10),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: const BorderRadius.all(
-                      Radius.circular(10),
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        offset: const Offset(1.5, 1.5),
-                        blurRadius: 1,
-                        color: Colors.grey.shade400,
-                      ),
-                    ],
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      ListTile(
-                        contentPadding: const EdgeInsets.only(left: 10),
-                        title: Text(
-                          _storeData!.storeName,
-                          style: const TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
+                            _initStoreData();
+                          },
+                          icon: const Icon(
+                            Icons.add_rounded,
+                            size: 40,
                           ),
                         ),
+                      ],
+                    ),
+                    SliverToBoxAdapter(
+                      child: Image.memory(
+                        widget.storeData.storeImage!,
+                        width: MediaQuery.of(context).size.width,
+                        height: 250,
+                        fit: BoxFit.fitHeight,
                       ),
-                      Text(
-                        "전화번호 : ${_storeData!.storePhoneNumber}",
-                        style: const TextStyle(
-                          fontSize: 16,
+                    ),
+                    SliverToBoxAdapter(
+                      child: Container(
+                        margin: const EdgeInsets.symmetric(
+                          vertical: 10,
+                          horizontal: 50,
+                        ),
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: const BorderRadius.all(
+                            Radius.circular(10),
+                          ),
+                          boxShadow: [
+                            BoxShadow(
+                              offset: const Offset(1.5, 1.5),
+                              blurRadius: 1,
+                              color: Colors.grey.shade400,
+                            ),
+                          ],
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            ListTile(
+                              contentPadding: const EdgeInsets.only(left: 10),
+                              title: Text(
+                                _storeData!.storeName,
+                                style: const TextStyle(
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                            Text(
+                              "전화번호 : ${_storeData!.storePhoneNumber}",
+                              style: const TextStyle(
+                                fontSize: 16,
+                              ),
+                            ),
+                            Text(
+                              "주소 : ${_storeData!.storeAddress}",
+                              style: const TextStyle(
+                                fontSize: 16,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                      Text(
-                        "주소 : ${_storeData!.storeAddress}",
-                        style: const TextStyle(
-                          fontSize: 16,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-            body: _isFirstLoading
-                ? const Center(
-                    child: CircularProgressIndicator(),
-                  )
-                : RefreshIndicator.adaptive(
+                    ),
+                  ],
+                  body: RefreshIndicator.adaptive(
                     onRefresh: _onRefresh,
                     child: ListView.separated(
                       // padding: const EdgeInsets.symmetric(horizontal: 10),
                       itemCount: _storeData!.products!.length,
                       separatorBuilder: (context, index) => Gaps.v6,
                       itemBuilder: (context, index) {
-                        String image;
-                        if (index % 3 == 0) {
-                          image = "assets/images/fish3.png";
-                        } else if (index % 2 == 0) {
-                          image = "assets/images/fish2.png";
-                        } else {
-                          image = "assets/images/fish.png";
-                        }
                         return StoreMenuCard(
-                          image: image,
                           productData: _storeData!.products![index],
                           initStoreData: _initStoreData,
                         );
                       },
                     ),
                   ),
-          ),
+                ),
         ],
       ),
     );

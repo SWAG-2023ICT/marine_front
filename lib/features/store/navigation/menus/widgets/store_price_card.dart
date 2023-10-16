@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:swag_marine_products/constants/sizes.dart';
 import 'package:swag_marine_products/models/market_price_model.dart';
 
@@ -10,10 +11,6 @@ class StorePriceCard extends StatelessWidget {
   });
   final int index;
   final MarketPriceModel marineProduct;
-
-  String _sumParsing(double value) {
-    return value == value.floor() ? value.toInt().toString() : value.toString();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +43,7 @@ class StorePriceCard extends StatelessWidget {
             children: [
               Expanded(
                 child: Text(
-                  "${index + 1}. ${marineProduct.mClassName} - ${marineProduct.sClassName}",
+                  "${marineProduct.rowNum}. ${marineProduct.mClassName} - ${marineProduct.sClassName}",
                   style: const TextStyle(
                     fontSize: Sizes.size16,
                   ),
@@ -57,7 +54,7 @@ class StorePriceCard extends StatelessWidget {
           ),
           const Divider(),
           Text(
-            "가격(저~고 {평균}) : ${_sumParsing(marineProduct.minPrice)} ~ ${_sumParsing(marineProduct.maxPrice)} {${_sumParsing(marineProduct.avgPrice)}}",
+            "가격[최저~최고 {평균}] : ${marineProduct.minPrice} ~ ${marineProduct.maxPrice} {${marineProduct.avgPrice}}",
             // minPrice ~ maxPrice {avgPrice}
             style: const TextStyle(fontSize: 14),
           ),
@@ -71,8 +68,16 @@ class StorePriceCard extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text("경매일 : ${marineProduct.dates}"),
-              Text("도매법인 : ${marineProduct.coName}")
+              Expanded(
+                child: Text(
+                  "경매일 : ${DateFormat("yyyy-MM-dd").format(marineProduct.dates)}",
+                ),
+              ),
+              Text(
+                "도매법인 : ${marineProduct.coName}",
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
             ],
           )
         ],

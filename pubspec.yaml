@@ -41,6 +41,12 @@ dependencies:
   # 통신 라이브러리
   http: ^0.13.5
 
+  # 이미지 통신을 위한 라이브러리
+  dio: ^5.3.3
+
+  # 통신 타입 변경 라이브러리
+  http_parser: ^4.0.2
+
   # 스토리지 만드는 라이브러리
   flutter_secure_storage: ^8.0.0
 

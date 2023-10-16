@@ -6,12 +6,10 @@ import 'package:swag_marine_products/models/database/product_model.dart';
 class MenuCard extends StatelessWidget {
   const MenuCard({
     super.key,
-    required this.image,
     required this.storeId,
     required this.productData,
   });
 
-  final String image;
   final String storeId;
   final ProductModel productData;
 
@@ -45,6 +43,12 @@ class MenuCard extends StatelessWidget {
         ),
         child: Row(
           children: [
+            Image.memory(
+              productData.productImage!,
+              width: 100,
+              height: 100,
+              fit: BoxFit.fill,
+            ),
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -71,12 +75,6 @@ class MenuCard extends StatelessWidget {
                   ],
                 ),
               ),
-            ),
-            Image.asset(
-              image,
-              width: 100,
-              height: 100,
-              fit: BoxFit.fill,
             ),
           ],
         ),
