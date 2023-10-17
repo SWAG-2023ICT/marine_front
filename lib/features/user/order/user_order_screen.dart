@@ -261,6 +261,9 @@ class _UserOrderScreenState extends State<UserOrderScreen> {
                           ),
                         ),
                       ),
+                      const SliverToBoxAdapter(
+                        child: Gaps.v10,
+                      ),
                     ],
                     body: _isFirstLoading
                         ? const Center(
@@ -268,8 +271,10 @@ class _UserOrderScreenState extends State<UserOrderScreen> {
                           )
                         : Container(
                             decoration: const BoxDecoration(
+                              color: Colors.white,
                               border: Border(
                                 top: BorderSide(
+                                  width: 2,
                                   color: Colors.black54,
                                 ),
                               ),

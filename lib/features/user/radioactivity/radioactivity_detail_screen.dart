@@ -52,7 +52,6 @@ class _RadioactivityDetailScreenState extends State<RadioactivityDetailScreen> {
 
     if (response.statusCode >= 200 && response.statusCode < 300) {
       final xmlData = XmlDocument.parse(response.body);
-      print(xmlData);
 
       final items = xmlData.findAllElements('item');
       final List<RadioactivityListModel> dataList = [];
@@ -197,8 +196,6 @@ class _RadioactivityDetailScreenState extends State<RadioactivityDetailScreen> {
                             lastDate: DateTime.now(),
                           );
 
-                          print(date?.start);
-                          print(date?.end);
                           if (date != null) {
                             setState(() {
                               _startDate = date.start;

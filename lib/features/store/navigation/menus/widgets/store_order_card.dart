@@ -70,6 +70,8 @@ class _StoreOrderCardState extends State<StoreOrderCard> {
         await http.post(url, headers: headers, body: jsonEncode(data));
 
     if (response.statusCode >= 200 && response.statusCode < 300) {
+      print("주문 취소 : 성공");
+
       widget.initDispatch();
     } else {
       if (!mounted) return;
@@ -92,6 +94,8 @@ class _StoreOrderCardState extends State<StoreOrderCard> {
         await http.post(url, headers: headers, body: jsonEncode(data));
 
     if (response.statusCode >= 200 && response.statusCode < 300) {
+      print("주문 송장 번호 등록 : 성공");
+
       widget.initDispatch();
     } else {
       if (!mounted) return;

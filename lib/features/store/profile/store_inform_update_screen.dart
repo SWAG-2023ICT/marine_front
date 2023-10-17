@@ -227,7 +227,6 @@ class _StoreInformUpdateScreenState extends State<StoreInformUpdateScreen> {
     Kpostal? result = await Navigator.push(
         context, MaterialPageRoute(builder: (_) => KpostalView()));
     if (result != null) {
-      print(result.address);
       setState(() {
         _storeAddressController.text = result.address;
       });
