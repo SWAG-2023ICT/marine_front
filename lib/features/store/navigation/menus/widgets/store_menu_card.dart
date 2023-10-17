@@ -114,7 +114,6 @@ class _StoreMenuCardState extends State<StoreMenuCard> {
           widget.productData.productImage!,
           width: 50,
           height: 50,
-          fit: BoxFit.fill,
         ),
         title: Text(
             "${widget.productData.productName} / [${widget.productData.origin}]"),

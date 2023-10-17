@@ -178,6 +178,11 @@ class _StoreApplicationScreenState extends State<StoreApplicationScreen> {
                               expandedCrossAxisAlignment:
                                   CrossAxisAlignment.start,
                               childrenPadding: const EdgeInsets.all(10),
+                              leading: Image.memory(
+                                item.products[0].productImage!,
+                                width: 50,
+                                height: 50,
+                              ),
                               title: Text(
                                 "[주문] ${item.products[0].productName} ${item.products[0].prices[0].unit}",
                                 style: const TextStyle(fontSize: 18),

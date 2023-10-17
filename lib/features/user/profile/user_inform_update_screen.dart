@@ -311,7 +311,6 @@ class _UserInformUpdateScreenState extends State<UserInformUpdateScreen> {
   void _onSearchUserAddress() async {
     Kpostal result = await Navigator.push(
         context, MaterialPageRoute(builder: (_) => KpostalView()));
-    print(result.address);
     setState(() {
       _userAddressController.text = result.address;
     });

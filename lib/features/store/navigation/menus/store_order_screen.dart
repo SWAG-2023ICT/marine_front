@@ -106,7 +106,7 @@ class _StoreOrderScreenState extends State<StoreOrderScreen> {
                 ? const Center(
                     child: CircularProgressIndicator.adaptive(),
                   )
-                : _orderList == null
+                : _orderList == null || _orderList!.isEmpty
                     ? Center(
                         child: IconButton(
                           iconSize: MediaQuery.of(context).size.width / 3,

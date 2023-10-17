@@ -131,10 +131,11 @@ class _StoreMenuEditScreenState extends State<StoreMenuEditScreen> {
           filename: 'image.jpg',
         ),
       });
-      // dio.options.contentType = "application/json";
       dio.options.contentType = "multipart/form-data";
-      final response = await dio
-          .post("${HttpIp.httpIp}/marine/product/addProduct", data: formData);
+      final response = await dio.post(
+        "${HttpIp.httpIp}/marine/product/addProduct",
+        data: formData,
+      );
 
       if (response.statusCode! >= 200 && response.statusCode! < 300) {
         print("메뉴 등록 : 성공");
@@ -171,7 +172,6 @@ class _StoreMenuEditScreenState extends State<StoreMenuEditScreen> {
           filename: 'image.jpg',
         ),
       });
-      // dio.options.contentType = "application/json";
       dio.options.contentType = "multipart/form-data";
       final response = await dio.post(
         "${HttpIp.httpIp}/marine/product/updateProduct",
@@ -215,6 +215,7 @@ class _StoreMenuEditScreenState extends State<StoreMenuEditScreen> {
               _productNameErrorText == null) &&
           (_productDescriptionController.text.trim().isNotEmpty &&
               _productDescriptionErrorText == null) &&
+          (_priceList != null && _priceList!.isNotEmpty) &&
           _productImage != null;
     });
   }
@@ -247,7 +248,7 @@ class _StoreMenuEditScreenState extends State<StoreMenuEditScreen> {
     //pickedFile에 ImagePicker로 가져온 이미지가 담긴다.
     final XFile? pickedFile = await picker.pickImage(source: imageSource);
     if (pickedFile != null) {
-      _productImage = await pickedFile.readAsBytes(); //가져온 이미지를 _image에 저장
+      _productImage = await pickedFile.readAsBytes();
       setState(() {});
       _onCheckSubmitted();
     }

@@ -125,7 +125,6 @@ class _SignInScreenState extends State<SignInScreen> {
         context.replaceNamed(UserNavigationScreen.routeName);
       } else {
         print("로그인 - 가게 : 성공!");
-        print(jsonResponse["data"]);
 
         final storeData = StoreModel.fromJson(jsonResponse["data"]);
 

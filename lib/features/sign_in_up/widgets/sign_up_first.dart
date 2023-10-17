@@ -100,7 +100,7 @@ class _SignUpFirstState extends State<SignUpFirst> {
               'name': _storeNameController.text.trim(),
               'phoneNumber': _storePhoneNumberController.text.trim(),
               'storeId': _storeBusinessNumberController.text.trim(),
-              "storeName": _storeNameController.text.trim(),
+              "storeName": _storeBusinessNameController.text.trim(),
               "storePhoneNumber": _storePhoneNumberController.text.trim(),
               "storeAddress": _storeAddressDetailController.text
                       .trim()
@@ -120,10 +120,10 @@ class _SignUpFirstState extends State<SignUpFirst> {
       });
       // dio.options.contentType = "application/json";
       dio.options.contentType = "multipart/form-data";
-      final response =
+      Response response =
           await dio.post("${HttpIp.httpIp}/marine/stores", data: formData);
 
-      if (response.statusCode! >= 200 && response.statusCode! < 300) {
+      if (response.statusCode == 200) {
         print("회원가입 - 가게 : 성공!");
         context.pop();
       } else {
@@ -397,12 +397,10 @@ class _SignUpFirstState extends State<SignUpFirst> {
     Kpostal? result = await Navigator.push(
         context, MaterialPageRoute(builder: (_) => KpostalView()));
     if (result != null) {
-      print(result.address);
       setState(() {
         _userAddressController.text = result.address;
         _userAddressZipCode = result.postCode;
       });
-      print(_userAddressZipCode);
       _onCheckSubmitted();
     }
   }
@@ -429,28 +427,28 @@ class _SignUpFirstState extends State<SignUpFirst> {
 
   // ------------------ 가게 정보 변수 및 메소드 ------------------
   final TextEditingController _storeIdController =
-      TextEditingController(text: "testStore1"); // id
+      TextEditingController(); // id
   final TextEditingController _storePasswordController =
-      TextEditingController(text: "Test@1234"); // pw
+      TextEditingController(); // pw
   final TextEditingController _storePasswordConfirmationController =
-      TextEditingController(text: "Test@1234"); // pw 확인
+      TextEditingController(); // pw 확인
   final TextEditingController _storeNameController =
-      TextEditingController(text: "테스트가게1"); // 이름
+      TextEditingController(); // 이름
   final TextEditingController _storePhoneNumberController =
-      TextEditingController(text: "01012345678"); // 개인 전화번호
+      TextEditingController(); // 개인 전화번호
   final TextEditingController _storePhoneNumberAuthController =
       TextEditingController(); // 개인 전화번호 인증 코드
   final TextEditingController _storeBusinessNumberController =
-      TextEditingController(text: "3850100868"); // 사업자 번호
+      TextEditingController(); // 사업자 번호
   final TextEditingController _storeBusinessNameController =
-      TextEditingController(text: "수산의 왕"); // 가게 이름
+      TextEditingController(); // 가게 이름
   final TextEditingController _storeAddressController =
-      TextEditingController(text: "연암공대"); // 가게 주소
+      TextEditingController(); // 가게 주소
   final TextEditingController _storeAddressDetailController =
       TextEditingController(); // 가게 상세 주소
   String? _storeAddressZipCode; // 가게 우편번호
   final TextEditingController _storeBusinessPhoneNumberController =
-      TextEditingController(text: "01012345678"); // 가게 전화번호
+      TextEditingController(); // 가게 전화번호
   final TextEditingController _storeBusinessPhoneNumberAuthController =
       TextEditingController(); // 가게 전화번호 인증 코드
 
@@ -582,7 +580,6 @@ class _SignUpFirstState extends State<SignUpFirst> {
     if (response.statusCode >= 200 && response.statusCode < 300) {
       print("통신 성공");
       final jsonResponse = json.decode(response.body);
-      print(jsonResponse);
       final List<dynamic> dataList = jsonResponse['data'];
 
       final Map<String, dynamic> data = dataList[0];
@@ -660,12 +657,10 @@ class _SignUpFirstState extends State<SignUpFirst> {
     Kpostal? result = await Navigator.push(
         context, MaterialPageRoute(builder: (_) => KpostalView()));
     if (result != null) {
-      print(result.address);
       setState(() {
         _storeAddressController.text = result.address;
         _storeAddressZipCode = result.postCode;
       });
-      print(_storeAddressZipCode);
 
       _onCheckSubmitted();
     }

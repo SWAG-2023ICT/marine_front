@@ -36,7 +36,6 @@ class UserOrderCard extends StatefulWidget {
 
 class _UserOrderCardState extends State<UserOrderCard> {
   DeliveryStatus _deliveryStatus = DeliveryStatus.prepared;
-  final OrderStatus _orderStatus = OrderStatus.available;
   String? _reasonText;
 
   @override
@@ -93,6 +92,11 @@ class _UserOrderCardState extends State<UserOrderCard> {
       child: ExpansionTile(
         expandedCrossAxisAlignment: CrossAxisAlignment.start,
         childrenPadding: const EdgeInsets.all(10),
+        leading: Image.memory(
+          widget.orderData.products[0].productImage!,
+          width: 50,
+          height: 50,
+        ),
         title: Text(
           "[주문] ${widget.orderData.products[0].productName} ${widget.orderData.products[0].prices[0].unit}",
           style: const TextStyle(fontSize: 18),
